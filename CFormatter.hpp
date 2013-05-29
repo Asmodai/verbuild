@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Thursday May 30, 2013 00:47:01 asmodai>
-// Revision:   72
+// Time-stamp: <Thursday May 30, 2013 00:58:12 asmodai>
+// Revision:   73
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -225,6 +225,7 @@ public:
       }
           
       stream << "static struct VersionNumber_s {"                       << endl
+             << "  int baseYear;"                                       << endl
              << "  int major;"                                          << endl
              << "  int minor;"                                          << endl
              << "  int patch;"                                          << endl

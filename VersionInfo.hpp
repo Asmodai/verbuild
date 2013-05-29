@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Wednesday May 29, 2013 20:52:03 asmodai>
-// Revision:   24
+// Time-stamp: <Thursday May 30, 2013 00:52:26 asmodai>
+// Revision:   26
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -129,7 +129,6 @@
    
    
    ###Example code###
-   
    @code{.cpp}
    #include "VersionInfo.hpp"
    #include <QtCore/QString>
@@ -382,6 +381,18 @@ public:
   }
   
   /**
+   * @brief Set the build number.
+   * @param value The build number to set.
+   * @note You should set the base year prior to operating on the
+   *       version information.
+   */
+  void setBuild(const int value)
+  {
+    m_build = value;
+    m_date  = QDate();
+  }
+  
+  /**
    * @brief Invalidate the build number.
    * @warning This must be used if you plan on generating a new buld
    *          number from a version that already has a build number.
@@ -391,6 +402,7 @@ public:
   void invalidateBuild(void)
   {
     m_build = 0;
+    m_date  = QDate();
   }
   
   /**

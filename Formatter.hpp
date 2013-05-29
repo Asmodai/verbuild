@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Wednesday May 29, 2013 23:10:26 asmodai>
-// Revision:   35
+// Time-stamp: <Wednesday May 29, 2013 23:57:32 asmodai>
+// Revision:   40
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -32,8 +32,8 @@
 
 // }}}
 
-#ifndef _Output_hpp_
-#define _Output_hpp_
+#ifndef __Formatter_hpp__
+#define __Formatter_hpp__
 
 /**
  * @file Formatter.hpp
@@ -42,9 +42,13 @@
  */
 
 #include <QtGlobal>
+#include <QDebug>
+
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
+#include <QtCore/QRegExp>
 
 #include "VersionInfo.hpp"
 #include "version.hpp"
@@ -417,6 +421,6 @@ FormatterMap FormatterFactory::s_map = FormatterMap();
   const std::size_t TYPE::s_id =                        \
     FormatterFactory::registerFormatter(&create, NAME);
 
-#endif // !_Formatter_hpp_
+#endif // !__Formatter_hpp__
 
 // Formatter.hpp ends here

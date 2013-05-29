@@ -1,10 +1,10 @@
 //
-// COutput.hpp --- C/C++ header output.
+// CFormatter.hpp --- C/C++ header input and output.
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Wednesday May 29, 2013 20:04:52 asmodai>
-// Revision:   15
+// Time-stamp: <Wednesday May 29, 2013 23:10:02 asmodai>
+// Revision:   23
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -32,52 +32,29 @@
 
               // }}}
 
-#ifndef _COutput_hpp_
-#define _COutput_hpp_
+#ifndef _CFormatter_hpp_
+#define _CFormatter_hpp_
 
 /**
- * @file COutput.hpp
+ * @file CFormatter.hpp
  * @author Paul Ward
  * @brief Outputs version information to C/C++ header files.
  */
 
-#include "Output.hpp"
+#include "Formatter.hpp"
 
-class COutput
-  : public Output
+class CFormatter
+  : public Formatter
 {
-  OUTPUT_PREAMBLE(COutput, "C/C++")
+  FORMATTER_PREAMBLE(CFormatter, "C/C++")
 
   
 public:
   
-  bool write(VersionInfo info)
+  bool read(QTextStream &stream,
+            VersionInfo &info)
   {
-    if (!m_fileName.isNull()) {
-      QFile file(m_fileName);
-      
-      file.open(QIODevice::WriteOnly | QIODevice::Text);
-      
-      if (file.isOpen()) {
-        QTextStream stream(&file);
-        
-        write(stream, info);
-        file.close();
-        
-        return true;
-      }
-    }
-    
     return false;
-  }
-  
-  bool write(QTextStream       &stream,
-             const OutputFlags  flags,
-             VersionInfo        info)
-  {
-    m_flags = flags;
-    
-    return write(stream, info);
   }
   
   bool write(QTextStream &stream,
@@ -94,7 +71,7 @@ public:
            << "#define __VersionInfo_Header__"                          << endl
            << endl;
     
-    if (m_flags & Output::Doxygen) {
+    if (m_flags & Formatter::Doxygen) {
       stream << "/**"                                                   << endl
              << " * @file " << m_fileName                               << endl
              << " * @author VarBuild " << VERSION_STRING                << endl
@@ -103,8 +80,8 @@ public:
              << endl;
     }
     
-    if (m_flags & Output::Basic) {
-      if (m_flags & Output::Doxygen) {
+    if (m_flags & Formatter::Basic) {
+      if (m_flags & Formatter::Doxygen) {
         stream << "/**"                                                 << endl
                << " * @def VERSION_MAJOR"                               << endl
                << " * @brief Major version number."                     << endl
@@ -148,8 +125,8 @@ public:
              << endl;
     }
     
-    if (m_flags & Output::Struct) {
-      if (m_flags & Output::Doxygen) {
+    if (m_flags & Formatter::Struct) {
+      if (m_flags & Formatter::Doxygen) {
         stream << "/**"                                                 << endl
                << " * @brief Version number structure."                 << endl
                << " *"                                                  << endl
@@ -177,7 +154,7 @@ public:
              << "  " << info.major() << ","                             << endl
              << "  " << info.minor() << ","                             << endl
              << "  " << info.patch() << ","                             << endl
-             << "  " << info.build() << ","                             << endl
+             << "  " << info.build()                                    << endl
              << "};"                                                    << endl
              << endl;
     }
@@ -190,8 +167,8 @@ public:
   
 };                              // class COutput
 
-OUTPUT_REGISTER(COutput, "C")
+FORMATTER_REGISTER(CFormatter, "C")
 
-#endif // !_COutput_hpp_
+#endif // !_CFormatter_hpp_
 
-// COutput.hpp ends here
+// CFormatter.hpp ends here

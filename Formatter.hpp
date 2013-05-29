@@ -1,10 +1,10 @@
 //
-// Output.hpp --- Output meta class.
+// Formatter.hpp --- Output meta class.
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Wednesday May 29, 2013 21:07:37 asmodai>
-// Revision:   27
+// Time-stamp: <Wednesday May 29, 2013 23:10:26 asmodai>
+// Revision:   35
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -32,13 +32,13 @@
 
 // }}}
 
-#ifndef _Output_h_
-#define _Output_h_
+#ifndef _Output_hpp_
+#define _Output_hpp_
 
 /**
- * @file Output.hpp
+ * @file Formatter.hpp
  * @author Paul Ward
- * @brief Output meta class.
+ * @brief Source formatter meta class.
  */
 
 #include <QtGlobal>
@@ -55,53 +55,53 @@
 
 
 /**
-   @def OUTPUT_PREAMBLE
+   @def FORMAT_PREAMBLE
    @brief Convenience macro for generating output subclass constructor
           methods.
-   @param TYPE The type of the output formatter module.
-   @param NAME The human-readable pretty name of the output formatter
-          module.
-   @see OUTPUT_REGISTER
+   @param TYPE The type of the formatter module.
+   @param NAME The human-readable pretty name of the formatter module.
+   @see FORMAT_REGISTER
    
    This macro is designed to save having to type the same three
    constructor methods each time a new output class is added.
    
    Example:
    @code{.cpp}
-   class FooOutput
-     : Output
+   class FooFormatter
+     : Formatter
    {
    public:
-     OUTPUT_PREAMBLE(FooOutput, "Foo Output Formatter")
+     FORMATTER_PREAMBLE(FooFormatter, "Foo Formatter")
      
      // ...
    }
    @endcode
  */
-#define OUTPUT_PREAMBLE(TYPE, NAME)                  \
-  private:                                           \
-  static const std::size_t s_id;                     \
-  static Output *create() { return new TYPE; }       \
-  public:                                            \
-  TYPE()                                             \
-    : Output()                                       \
-  { m_outputName = NAME; }                           \
-  TYPE(const QString &file)                          \
-    : Output(file)                                   \
-  { m_outputName = NAME; }                           \
-  TYPE(const QString &file, const OutputFlags flags) \
-    : Output(file, flags)                            \
-  { m_outputName = NAME; }
+#define FORMATTER_PREAMBLE(TYPE, NAME)                  \
+  private:                                              \
+    static const std::size_t s_id;                      \
+    static Formatter *create(void) { return new TYPE; } \
+  public:                                               \
+    TYPE()                                              \
+      : Formatter()                                     \
+    { m_formatterName = NAME; }                         \
+    TYPE(const QString &file)                           \
+      : Formatter(file)                                 \
+    { m_formatterName = NAME; }                         \
+    TYPE(const QString &file, const OutputFlags flags)  \
+      : Formatter(file, flags)                          \
+    { m_formatterName = NAME; }
 
 
 /**
- * @brief Output meta class.
+ * @brief Formatter meta class.
  *
  * This class is an abstraction that provides file writing
- * functionality.  What this means is that Output subclasses are
- * responsible for writing version information out to file.
+ * functionality.  What this means is that Formatter subclasses are
+ * responsible for reading and writing version information to and
+ * from files.
  */
-class Output
+class Formatter
 {  
 public:
   
@@ -146,9 +146,10 @@ public:
   
   
 protected:
-  QString     m_outputName;     //!< Output pretty name.
+  QString     m_formatterName;  //!< Formatter pretty name.
   QString     m_fileName;       //!< Version information file name.
   OutputFlags m_flags;          //!< Output flags.
+  
   
 public:
   
@@ -158,47 +159,51 @@ public:
    * Initialises the file name to a Null string and sets the output
    * flags to Output::All.
    */
-  Output()
+  Formatter()
   {
-    m_fileName = QString();
-    m_flags    = Output::All;
+    m_formatterName = QString("<unknown>");
+    m_fileName      = QString();
+    m_flags         = Formatter::All;
   }
   
   /**
    * @brief Constructor method.
-   * @param file The name of the file to write information to.
+   * @param file The name of the file to read and write.
    *
-   * Initialises the output flags to Output::All.
+   * Initialises the output flags to Formatter::All.
    */
-  Output(const QString &file)
+  Formatter(const QString &file)
     : m_fileName(file)
   {
-    m_flags = Output::All;
+    m_formatterName = QString("<unknown>");
+    m_flags         = Formatter::All;
   }
   
   /**
    * @brief Constructor method.
-   * @param file The name of the file to write information to.
+   * @param file The name of the file to read and write.
    * @param flags The output flags.
    */
-  Output(const QString &file, const OutputFlags flags)
+  Formatter(const QString &file, const OutputFlags flags)
     : m_fileName(file),
       m_flags(flags)
-  {}
-  
-  /**
-   * @brief Return the human-readable name for this output formatter.
-   * @returns The human-readable name as a QString constant.
-   */
-  virtual QString const &outputName(void) const
   {
-    return m_outputName;
+    m_formatterName = QString("<unknown>");
   }
   
   /**
-   * @brief Set the output file name to the file specified in
+   * @brief Return the human-readable name for this formatter.
+   * @returns The human-readable name as a QString constant.
+   */
+  virtual QString const &formatterName(void) const
+  {
+    return m_formatterName;
+  }
+  
+  /**
+   * @brief Set the formatter file name to the file specified in
    *        @em name.
-   * @param name The name of the output file name.
+   * @param name The name of the file.
    */
   virtual void setFileName(const QString &name)
   {
@@ -206,8 +211,8 @@ public:
   }
   
   /**
-   * @brief Return the output file name.
-   * @returns The output file name in the form of a QString.
+   * @brief Return the formatter file name.
+   * @returns The file name in the form of a QString.
    */
   virtual QString const &fileName(void) const
   {
@@ -234,12 +239,65 @@ public:
   }
   
   /**
+   * @brief Read the version information from a file.
+   * @param info Pointer to the version information object to store
+   *             the data in.
+   * @returns @c true if the read was successful; otherwise @c false
+   *          is returned.
+   */
+  virtual bool read(VersionInfo &info)
+  {
+    if (!m_fileName.isNull()) {
+      QFile file(m_fileName);
+      
+      file.open(QIODevice::ReadOnly | QIODevice::Text);
+      if (file.isOpen()) {
+        QTextStream stream(&file);
+        
+        read(stream, info);
+        file.close();
+        
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
+  /**
+   * @brief Read the version information from a file.
+   * @param stream The text stream to read the information from.
+   * @param info Pointer to the version information object to store
+   *             the data in.
+   * @returns @c true if the read was successful; otherwise @c false
+   *          is returned.
+   */
+  virtual bool read(QTextStream &stream, VersionInfo &info) = 0;
+  
+  /**
    * @brief Write the version information to a file.
    * @param info The version information to write to file.
    * @returns @c true if the write was successful; otherwise @c false
    *          is returned.
    */
-  virtual bool write(VersionInfo info) = 0;
+  virtual bool write(VersionInfo info)
+  {
+    if (!m_fileName.isNull()) {
+      QFile file(m_fileName);
+      
+      file.open(QIODevice::WriteOnly | QIODevice::Text);
+      if (file.isOpen()) {
+        QTextStream stream(&file);
+        
+        write(stream, info);
+        file.close();
+        
+        return true;
+      }
+    }
+    
+    return false;
+  }
   
   /**
    * @brief Write the version information to a file.
@@ -252,7 +310,12 @@ public:
    */
   virtual bool write(QTextStream       &stream,
                      const OutputFlags  flags,
-                     VersionInfo        info) = 0;
+                     VersionInfo        info)
+  {
+    m_flags = flags;
+    
+    return write(stream, info);
+  }
   
   /**
    * @brief Write the version information to a file.
@@ -268,37 +331,38 @@ public:
 };                              // class Output
 
 /**
- * @brief Output creation function.
+ * @brief Formatter creation function.
  */
-typedef Output *(*OutputCreateFn)(void);
+typedef Formatter *(*FormatterCreateFn)(void);
 
 /**
- * @brief Map of output names and creation functions.
+ * @brief Map of formatter names and creation functions.
  */
-typedef std::map<std::string, OutputCreateFn> OutputMap;
+typedef std::map<std::string, FormatterCreateFn> FormatterMap;
 
 /**
- * @brief Output formatter class factory.
+ * @brief Formatter class factory.
  */
-class OutputFactory
+class FormatterFactory
 {
 private:
-  static OutputMap   s_map;     //!< Map of names and creation functions.
-  static std::size_t s_id;      //!< ID of output class within list. (internal)
+  static FormatterMap s_map;    //!< Map of names and creation functions.
+  static std::size_t  s_id;     //!< ID of output class within list. (internal)
   
   
 public:
   /**
-   * @brief Register an output class creation function.
+   * @brief Register a formatter class creation function.
    * @param creator The object creation method.
-   * @param name The name of the output formatting module.
+   * @param name The name of the formatting module.
    * @returns The size of the name/class map after the new output
    *          class has been registered.
    * @note The return value is largely meaningless.
    * @note The output formatting module name is @em not the same as
    *       the human-readable name.
    */
-  static std::size_t registerOutput(OutputCreateFn creator, std::string name)
+  static std::size_t registerFormatter(FormatterCreateFn creator,
+                                       std::string       name)
   {
     assert(creator);
     assert(name.length() > 0);
@@ -316,43 +380,43 @@ public:
    * @note The output formatting module name is @em not the same as
    *       the human-readable name.
    */
-  static Output *create(std::string name)
+  static Formatter *create(std::string name)
   {
     assert(name.length() > 0);
     
     return (s_map[name])();
   }
   
-};
+};                              // class FormatterFactory
 
 /* Initial value. */
-OutputMap OutputFactory::s_map = OutputMap();
+FormatterMap FormatterFactory::s_map = FormatterMap();
 
 /**
    @def OUTPUT_REGISTER
    @brief Register an output formatter module.
-   @param TYPE The type of the output formatter module.
-   @param NAME The name of the output formatter module.
+   @param TYPE The type of the formatter module.
+   @param NAME The name of the formatter module.
    @note The name given here is not the same as the human-readable
-         name used by @c OUTPUT_PREAMBLE, so please be aware of this.
-   @see OUTPUT_PREAMBLE
+         name used by @c FORMATTER_PREAMBLE, so please be aware of this.
+   @see FORMATTER_PREAMBLE
    
    Registers a new formatter module at compile-time.
    
    Example:
    @code{.cpp}
-   class FooOutput
-     : Output
+   class FooFormatter
+     : Formatter
    {
      // ...
    }
-   OUTPUT_REGISTER(FooOutput, "Foo")
+   FORMATTER_REGISTER(FooFormatter, "Foo")
    @endcode
  */
-   
-#define OUTPUT_REGISTER(TYPE, NAME)             \
-  const std::size_t TYPE::s_id = OutputFactory::registerOutput(&create, NAME);
+#define FORMATTER_REGISTER(TYPE, NAME)                  \
+  const std::size_t TYPE::s_id =                        \
+    FormatterFactory::registerFormatter(&create, NAME);
 
-#endif // !_Output_h_
+#endif // !_Formatter_hpp_
 
-// Output.hpp ends here
+// Formatter.hpp ends here

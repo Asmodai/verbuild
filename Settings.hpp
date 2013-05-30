@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Thursday May 30, 2013 11:39:58 asmodai>
-// Revision:   12
+// Time-stamp: <Thursday May 30, 2013 11:45:52 asmodai>
+// Revision:   13
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -23,10 +23,10 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-                 //
+//
 // You should have received a copy of the GNU General Public License
-                 // along with this program; if not, see  <http:                 //www.gnu.org/licenses/>.
-                 //
+// along with this program; if not, see  <http://www.gnu.org/licenses/>.
+//
 // }}}
 // {{{ Commentary:
 

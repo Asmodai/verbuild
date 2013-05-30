@@ -15,10 +15,38 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += Settings.cpp \
+    main.cpp
 
 HEADERS += \
     VersionInfo.hpp \
     version.hpp \
-    Output.hpp \
-    COutput.hpp
+    CFormatter.hpp \
+    Formatter.hpp \
+    Settings.hpp \
+    tclap/ZshCompletionOutput.h \
+    tclap/XorHandler.h \
+    tclap/Visitor.h \
+    tclap/VersionVisitor.h \
+    tclap/ValuesConstraint.h \
+    tclap/ValueArg.h \
+    tclap/UnlabeledValueArg.h \
+    tclap/UnlabeledMultiArg.h \
+    tclap/SwitchArg.h \
+    tclap/StdOutput.h \
+    tclap/StandardTraits.h \
+    tclap/OptionalUnlabeledTracker.h \
+    tclap/MultiSwitchArg.h \
+    tclap/MultiArg.h \
+    tclap/IgnoreRestVisitor.h \
+    tclap/HelpVisitor.h \
+    tclap/DocBookOutput.h \
+    tclap/Constraint.h \
+    tclap/CmdLineOutput.h \
+    tclap/CmdLineInterface.h \
+    tclap/CmdLine.h \
+    tclap/ArgTraits.h \
+    tclap/ArgException.h \
+    tclap/Arg.h
+
+INCLUDEPATH += .

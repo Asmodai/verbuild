@@ -3,21 +3,30 @@
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 
+#include "Settings.hpp"
 #include "VersionInfo.hpp"
 #include "CFormatter.hpp"
 
-int main(int argc, char *argv[])
-{
-  //QCoreApplication a(argc, argv);
+#include <iostream>
 
+int main(int argc, char **argv)
+{
   VersionInfo v1 = VersionInfo(10, 5, 8, 1983);
   VersionInfo v2 = VersionInfo();
-  QString file = "foo.h";
-
   Formatter *foo = FormatterFactory::create("C");
+  Settings settings(argc, argv);
 
   qDebug() << "Formatter name: " << foo->formatterName();
 
+  if (settings.useStdOut()) {
+    qDebug() << "Using STDOUT.";
+  } else {
+    qDebug() << "Writing to" << settings.filePath();
+  }
+
+  qDebug() << "Version format" << settings.versionFormat();
+
+  /*
   foo->setFileName("foo.h");
   foo->read(v2);
 
@@ -38,6 +47,7 @@ int main(int argc, char *argv[])
            << "Built on " << v2.buildDate() << endl;
 
   foo->write(v2);
+  */
 
   return 0; //a.exec();
 }

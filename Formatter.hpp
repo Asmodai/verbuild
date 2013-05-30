@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Wednesday May 29, 2013 23:57:32 asmodai>
-// Revision:   40
+// Time-stamp: <Thursday May 30, 2013 01:02:00 asmodai>
+// Revision:   41
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -23,7 +23,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-                 //
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //
@@ -42,8 +42,6 @@
  */
 
 #include <QtGlobal>
-#include <QDebug>
-
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QFile>
@@ -59,12 +57,12 @@
 
 
 /**
-   @def FORMAT_PREAMBLE
+   @def FORMATTER_PREAMBLE
    @brief Convenience macro for generating output subclass constructor
           methods.
    @param TYPE The type of the formatter module.
    @param NAME The human-readable pretty name of the formatter module.
-   @see FORMAT_REGISTER
+   @see FORMATTER_REGISTER
    
    This macro is designed to save having to type the same three
    constructor methods each time a new output class is added.
@@ -397,7 +395,7 @@ public:
 FormatterMap FormatterFactory::s_map = FormatterMap();
 
 /**
-   @def OUTPUT_REGISTER
+   @def FORMATTER_REGISTER
    @brief Register an output formatter module.
    @param TYPE The type of the formatter module.
    @param NAME The name of the formatter module.

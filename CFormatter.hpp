@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Thursday May 30, 2013 00:58:12 asmodai>
-// Revision:   73
+// Time-stamp: <Thursday May 30, 2013 11:04:20 asmodai>
+// Revision:   79
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -30,10 +30,10 @@
 // }}}
 // {{{ Commentary:
 
-              // }}}
+// }}}
 
-#ifndef _CFormatter_hpp_
-#define _CFormatter_hpp_
+#ifndef __CFormatter_hpp__
+#define __CFormatter_hpp__
 
 /**
  * @file CFormatter.hpp
@@ -43,13 +43,53 @@
 
 #include "Formatter.hpp"
 
+/**
+   @def DRE
+   @brief Regular expression to find 'VERSION_' definitions in C/C++
+          headers.
+ 
+   This regular expression is designed to match the second portion of
+   the definition name and its value, e.g.
+   @code{.cpp}
+   #define VERSION_MAJOR     24
+   @endcode
+   will result in two match groups: @em MAJOR and @em 24.
+ */
 #define DRE                                     \
   "(?:VERSION[_])(\\w+)(?:\\s+)(\\d+)"
 
+/**
+   @def SRE
+   @brief Regular expression to find the C structure definition for
+          the version information.
+   
+   Each component of the structure instance will be contaned in a
+   match group, e.g.
+   @code{.cpp}
+   static struct VersionNumber_s {
+     int baseYear;
+     int major;
+     int minor;
+     int patch;
+     int build;
+   } VersionNumber = {
+     1983,
+     10,
+     5,
+     8,
+     36530
+   };
+   @endcode
+   will result in five match groups: @em 1983, @em 10, @em 5, @em 8,
+   and @em 36530.
+ */
 #define SRE                                             \
   "(?:[{]\\s*)(\\d+)(?:[,]\\s+)(\\d+)(?:[,]\\s+)(\\d+)" \
   "(?:[,]\\s+)(\\d+)(?:[,]\\s+)(\\d+)(?:\\s*[}])"
 
+/**
+ * @brief C/C++ formatter.
+ */
 class CFormatter
   : public Formatter
 {
@@ -104,7 +144,8 @@ public:
       if (!found) {
         QRegExp re(DRE);
         int     cnt = 0;
-        int     pos = 0;
+        int pos  = 0;
+        int find = 0;
         
         while ((pos = re.indexIn(buffer, pos)) != -1)
         {
@@ -113,18 +154,29 @@ public:
           
           if (re.cap(1).contains("BASE_YEAR")) {
             info.setBaseYear(re.cap(2).toInt());
+            find++;
           } else if (re.cap(1).contains("MAJOR")) {
             info.setMajor(re.cap(2).toInt());
+            find++;
           } else if (re.cap(1).contains("MINOR")) {
             info.setMinor(re.cap(2).toInt());
+            find++;
           } else if (re.cap(1).contains("PATCH")) {
             info.setPatch(re.cap(2).toInt());
+            find++;
           } else if (re.cap(1).contains("BUILD")) {
             info.setBuild(re.cap(2).toInt());
+            find++;
           }
         }
         
-        found = true;
+        /*
+         * Only mark it as found if all 5 defines can be found in the
+         * file.
+         */
+        if (find == 5) {
+          found = true;
+        }
       }
       
       return found;
@@ -250,6 +302,6 @@ public:
 
 FORMATTER_REGISTER(CFormatter, "C")
 
-#endif // !_CFormatter_hpp_
+#endif // !__CFormatter_hpp__
 
 // CFormatter.hpp ends here

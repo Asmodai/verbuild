@@ -3,8 +3,8 @@
  *
  * Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
  *
- * Time-stamp: <Thursday May 30, 2013 11:03:16 asmodai>
- * Revision:   1
+ * Time-stamp: <Thursday May 30, 2013 11:53:46 asmodai>
+ * Revision:   2
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -44,6 +44,7 @@
  */
 
 #if defined(_WIN32) || defined(_WIN64)
+
 # define HAVE_CLASS_STRSTREAM
 # define HAVE_INTTYPES_H
 # define HAVE_LONG_LONG
@@ -58,6 +59,24 @@
 # define HAVE_SYS_STAT_H
 # define HAVE_SYS_TYPES_H
 # undef HAVE_UNISTD_H
+
+#elif defined(__linux) || defined(__linux__) || defined(__gnu_linux__)
+
+# define HAVE_CLASS_STRSTREAM
+# define HAVE_INTTYPES_H
+# define HAVE_LONG_LONG
+# define HAVE_MEMORY_H
+# define HAVE_NAMESPACE
+# define HAVE_SSTREAM
+# define HAVE_STDINT_H
+# define HAVE_STDLIB_H
+# define HAVE_STRINGS_H
+# define HAVE_STRING_H
+# define HAVE_STRSTREAM
+# define HAVE_SYS_STAT_H
+# define HAVE_SYS_TYPES_H
+# define HAVE_UNISTD_H
+
 #endif
 
 #endif /* !_config_h_ */

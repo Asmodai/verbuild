@@ -217,22 +217,7 @@ which yields:
 
 To deal with a file, one can use:
 
-    $ verbuild -t c -y 2010 -i months -f 13.04.*.1 -g basic -g doxygen -v -o test.h -c
-    
-    Settings:
-    
-        Output formatter: c
-           Output groups: basic, doxygen
-          Version format: 13.04.*.1
-          Increment type: Months
-               File name: test.h
-               Base year: 2010
-      Create output file? true
-       Overflow shifting? false
-            Using stdout? false
-    
-    Parsed version: 0.0.0.0
-    New version:    13.4.0.1
+    $ verbuild -t c -y 2010 -i months -f 13.04.*.1 -g basic -g doxygen -o test.h -c
 
 The resulting file will look like this:
 

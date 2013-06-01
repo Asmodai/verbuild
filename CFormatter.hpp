@@ -4,7 +4,7 @@
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
 // Time-stamp: <Saturday Jun  1, 2013 11:00:31 asmodai>
-// Revision:   84
+// Revision:   85
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -209,7 +209,7 @@ public:
     if (m_flags & OutputDoxygen) {
       stream << "/**"                                                   << endl
              << " * @file " << QFileInfo(m_fileName).fileName()         << endl
-             << " * @author VarBuild " << VERSION_STRING                << endl
+             << " * @author VerBuild " << VERSION_STRING                << endl
              << " * @brief Provides version information."               << endl
              << " */"                                                   << endl
              << endl;

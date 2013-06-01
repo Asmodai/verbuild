@@ -1,60 +1,137 @@
+//
+// main.cpp --- Version numbering.
+//
+// Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
+//
+// Time-stamp: <Saturday Jun  1, 2013 09:38:34 asmodai>
+// Revision:   3
+//
+// Author:     Paul Ward <asmodai@gmail.com>
+// Maintainer: Paul Ward <asmodai@gmail.com>
+// Created:    01 Jun 2013 09:12:33
+// Keywords:   
+// URL:        not distributed yet
+//
+// {{{ License:
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 3
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, see  <http://www.gnu.org/licenses/>.
+//
+// }}}
+// {{{ Commentary:
+//
+// }}}
+
 #include <QDebug>
+
 #include <QtCore/QString>
-#include <QtCore/QFile>
 #include <QtCore/QTextStream>
 
 #include "Enums.hpp"
-#include "Settings.hpp"
 #include "VersionInfo.hpp"
+#include "Formatter.hpp"
 #include "CFormatter.hpp"
+#include "Settings.hpp"
 
-#include <iostream>
+#include <cstdlib> // for EXIT_SUCCESS
 
-int main(int argc, char **argv)
+/**
+ * @brief Main routine.
+ * @param argc Count of arguments.
+ * @param argv Array of arguments.
+ * @returns @c EXIT_SUCCESS, always.  For now.
+ */
+int
+main(int argc, char **argv)
 {
-  VersionInfo v2 = VersionInfo();
-  Formatter *foo = FormatterFactory::create("C");
-  Settings settings(argc, argv);
-
+  Settings     settings(argc, argv);
+  VersionInfo  info = VersionInfo();
+  Formatter   *fmtr = NULL;
+  
   if (settings.verbose()) {
     settings.dump();
   }
-
-  if (!settings.useStdOut()) {
-    foo->setFileName(settings.filePath());
+  
+  // Do we have a valid formatter?
+  if (settings.formatter().isEmpty() ||
+      settings.formatter().isNull())
+  {
+    qFatal("No output formatter was specified.");
   }
-
-  foo->read(v2);
-
+  
+  // Attempt to create the formatter instance.
+  fmtr = FormatterFactory::create(settings.formatter().toStdString());
+  
+  // Check we have a valid formatter.
+  if (fmtr == NULL) {
+    qFatal("Could not instantiate chosen formatter.  Aborting...");
+  }
+  
+  // Were we given a file to work on?
+  if (!settings.useStdOut()) {
+    QFile file(settings.filePath());
+    
+    // Check it exists.
+    if (!file.exists() && !settings.createFile()) {
+      qFatal("The specified file does not exist.  Aborting...");
+    }
+    
+    // It exists, so let's use it.
+    fmtr->setFileName(settings.filePath());
+  }
+  
+  // If there is no filename set, nothing will happen here.
+  fmtr->read(info);
+  
+  // Print out the version read.
   if (settings.verbose()) {
     QTextStream out(stdout);
-
-    out << "Read in version:     " << v2.toString() << endl;
+    
+    out << "Parsed version: " << info.toString() << endl;
   }
-
-  v2.setBuildType(settings.incrementType());
-  v2.increment(settings.incrementFields());
-
+  
+  // Configure the build type.
+  info.setBuildType(settings.incrementType());
+  
+  // Set up any initial version numbers.
   for (int i = 0; i < 4; ++i) {
     InitialValues v = settings.initialVersion()[i];
-
+    
     if (v.use) {
       switch (i) {
-        case 0: v2.setMajor(v.value); break;
-        case 1: v2.setMinor(v.value); break;
-        case 2: v2.setBuild(v.value); break;
-        case 3: v2.setPatch(v.value); break;
+        case 0: info.setMajor(v.value); break;
+        case 1: info.setMinor(v.value); break;
+        case 2: info.setBuild(v.value); break;
+        case 3: info.setPatch(v.value); break;
       }
     }
   }
-
+  
+  // Perform the increment.
+  info.increment(settings.incrementFields());
+  
+  // Print out the new version.
   if (settings.verbose()) {
     QTextStream out(stdout);
-
-    out << "Writing out version: " << v2.toString() << endl;
+    
+    out << "New version:    " << info.toString() << endl;
   }
-
-  //foo->write(v2);
-
-  return 0;
+  
+  // Write out the new version.
+  fmtr->write(info);
+  
+  // We're done.
+  return EXIT_SUCCESS;
 }
+
+// main.cpp ends here

@@ -145,8 +145,8 @@ number will contain the following components:
    ----------|---------------------------
    10        | The major version will always have the value 10.
    *         | The minor number will be left as-is.
-   +         | The patch number will be incremented.
-   *         | The build number will be left as-is. 
+   +         | The build number will be incremented.
+   *         | The patch number will be left as-is. 
    
 Therefore, if the version number is read in from a header as `5.5.8.1`, then
 after processing, the format will result in a new version number of

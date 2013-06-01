@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 12:17:18 asmodai>
-// Revision:   30
+// Time-stamp: <Saturday Jun  1, 2013 12:44:01 asmodai>
+// Revision:   31
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -91,8 +91,8 @@
    :--------:|---------------------------
    @b 10     | The major version will always have the value 10.
    @b \*     | The minor number will be left as-is.
-   @b \+     | The patch number will be incremented.
-   @b \*     | The build number will be left as-is. 
+   @b \+     | The build number will be incremented.
+   @b \*     | The patch number will be left as-is. 
    
    Therefore, if the version number is read in from a header as
    @em 5.5.8.1, then after processing, the format will result in a

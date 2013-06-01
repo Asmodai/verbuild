@@ -4,7 +4,7 @@
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
 // Time-stamp: <Saturday Jun  1, 2013 06:11:25 asmodai>
-// Revision:   34
+// Revision:   35
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -44,6 +44,7 @@
 #include <QtGlobal>
 #include <QtCore/QDate>
 #include <QtCore/QString>
+#include <QtCore/QRegExp>
 
 #include "Enums.hpp"
 #include <limits.h>

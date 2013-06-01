@@ -11,3 +11,15 @@
 *.lai
 *.la
 *.a
+
+# qmake output
+Makefile
+
+# Backup files
+*~
+*.bak
+*.BAK
+
+# Junk
+*.exe
+

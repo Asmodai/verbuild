@@ -4,7 +4,7 @@
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
 // Time-stamp: <Saturday Jun  1, 2013 10:12:29 asmodai>
-// Revision:   4
+// Revision:   5
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -103,10 +103,23 @@ main(int argc, char **argv)
   // Configure the build type.
   info.setBuildType(settings.incrementType());
   
-  // Set up any initial version numbers.
+  // Override the base year, if required.
+  if (settings.baseYear() > 0) {
+    info.setBaseYear(settings.baseYear());
+  }
+  
+  // Perform the increment.
+  info.increment(settings.incrementFields());
+
+  // Force initial version numbers.
   for (int i = 0; i < 4; ++i) {
     InitialValues v = settings.initialVersion()[i];
-    
+
+    std::cout << "i=" << i
+              << " v.use=" << std::boolalpha << v.use
+              << " v.value=" << v.value
+                 << std::endl;
+
     if (v.use) {
       switch (i) {
         case 0: info.setMajor(v.value); break;
@@ -116,14 +129,6 @@ main(int argc, char **argv)
       }
     }
   }
-
-  // Override the base year, if required.
-  if (settings.baseYear() > 0) {
-    info.setBaseYear(settings.baseYear());
-  }
-  
-  // Perform the increment.
-  info.increment(settings.incrementFields());
   
   // Print out the new version.
   if (settings.verbose()) {

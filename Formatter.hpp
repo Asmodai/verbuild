@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 05:04:36 asmodai>
-// Revision:   42
+// Time-stamp: <Saturday Jun  1, 2013 06:08:02 asmodai>
+// Revision:   44
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -255,7 +255,7 @@ public:
    */
   virtual bool read(VersionInfo &info)
   {
-    if (!m_fileName.isNull()) {
+    if (!m_fileName.isNull() && !m_fileName.isEmpty()) {
       QFile file(m_fileName);
       
       file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -267,7 +267,7 @@ public:
         
         return true;
       }
-    }
+    }      
     
     return false;
   }
@@ -290,7 +290,7 @@ public:
    */
   virtual bool write(VersionInfo info)
   {
-    if (!m_fileName.isNull()) {
+    if (!m_fileName.isNull() && !m_fileName.isEmpty()) {
       QFile file(m_fileName);
       
       file.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -302,6 +302,10 @@ public:
         
         return true;
       }
+    } else {
+      QTextStream stream(stdout);
+      
+      write(stream, info);
     }
     
     return false;

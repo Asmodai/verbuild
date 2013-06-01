@@ -40,8 +40,8 @@
  */
 #define VERSION_MAJOR      0
 #define VERSION_MINOR      1
-#define VERSION_PATCH      0
 #define VERSION_BUILD      529
+#define VERSION_PATCH      0
 
 #define VERSION_BASE_YEAR  2013
 #define VERSION_DATE       "Wed May 29 2013"

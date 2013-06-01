@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Thursday May 30, 2013 11:04:20 asmodai>
-// Revision:   79
+// Time-stamp: <Saturday Jun  1, 2013 02:45:42 asmodai>
+// Revision:   80
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -118,19 +118,17 @@ public:
        */
       {
         QRegExp re(SRE);
-        int     cnt = 0;
         int     pos = 0;
         
         while ((pos = re.indexIn(buffer, pos)) != -1)
         {  
-          ++cnt;
           pos += re.matchedLength();
           
           info.setBaseYear(re.cap(1).toInt());
           info.setMajor(re.cap(2).toInt());
           info.setMinor(re.cap(3).toInt());
-          info.setPatch(re.cap(4).toInt());
-          info.setBuild(re.cap(5).toInt());
+          info.setBuild(re.cap(4).toInt());
+          info.setPatch(re.cap(5).toInt());
           
           found = true;
         }
@@ -144,8 +142,8 @@ public:
       if (!found) {
         QRegExp re(DRE);
         int     cnt = 0;
-        int pos  = 0;
-        int find = 0;
+        int     pos  = 0;
+        int     find = 0;
         
         while ((pos = re.indexIn(buffer, pos)) != -1)
         {
@@ -161,11 +159,11 @@ public:
           } else if (re.cap(1).contains("MINOR")) {
             info.setMinor(re.cap(2).toInt());
             find++;
-          } else if (re.cap(1).contains("PATCH")) {
-            info.setPatch(re.cap(2).toInt());
-            find++;
           } else if (re.cap(1).contains("BUILD")) {
             info.setBuild(re.cap(2).toInt());
+            find++;
+          } else if (re.cap(1).contains("PATCH")) {
+            info.setPatch(re.cap(2).toInt());
             find++;
           }
         }
@@ -217,11 +215,11 @@ public:
                << " * @def VERSION_MINOR"                               << endl
                << " * @brief Minor version number."                     << endl
                << " *"                                                  << endl
-               << " * @def VERSION_PATCH"                               << endl
-               << " * @brief Patch number."                             << endl
-               << " *"                                                  << endl
                << " * @def VERSION_BUILD"                               << endl
                << " * @brief Build number."                             << endl
+               << " *"                                                  << endl
+               << " * @def VERSION_PATCH"                               << endl
+               << " * @brief Patch number."                             << endl
                << " *"                                                  << endl
                << " * @def VERSION_BASE_YEAR"                           << endl
                << " * @brief The year the project was started."         << endl
@@ -240,12 +238,12 @@ public:
       
       stream << "#define VERSION_MAJOR      " << info.major()           << endl
              << "#define VERSION_MINOR      " << info.minor()           << endl
-             << "#define VERSION_PATCH      " << info.patch()           << endl
              << "#define VERSION_BUILD      " << info.build()           << endl
+             << "#define VERSION_PATCH      " << info.patch()           << endl
              << endl
              << "#define VERSION_BASE_YEAR  " << info.baseYear()        << endl
              << "#define VERSION_DATE       "
-                << "\"" << info.buildDate().toString() << "\""          << endl
+                << "\"" << info.toDate().toString() << "\""             << endl
              << "#define VERSION_TIME       "
                 << "\"" << QTime::currentTime().toString() << "\""      << endl
              << "#define VERSION_STRING     "
@@ -280,14 +278,14 @@ public:
              << "  int baseYear;"                                       << endl
              << "  int major;"                                          << endl
              << "  int minor;"                                          << endl
-             << "  int patch;"                                          << endl
              << "  int build;"                                          << endl
+             << "  int patch;"                                          << endl
              << "} VersionNumber = {"                                   << endl
              << "  " << info.baseYear() << ","                          << endl
              << "  " << info.major() << ","                             << endl
              << "  " << info.minor() << ","                             << endl
-             << "  " << info.patch() << ","                             << endl
-             << "  " << info.build()                                    << endl
+             << "  " << info.build() << ","                             << endl
+             << "  " << info.patch()                                    << endl
              << "};"                                                    << endl
              << endl;
     }

@@ -3,6 +3,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 
+#include "Enums.hpp"
 #include "Settings.hpp"
 #include "VersionInfo.hpp"
 #include "CFormatter.hpp"
@@ -11,7 +12,7 @@
 
 int main(int argc, char **argv)
 {
-  VersionInfo v1 = VersionInfo(10, 5, 8, 1983);
+  VersionInfo v1 = VersionInfo(10, 5, 8, 5, 1983, BuildType::Simple);
   VersionInfo v2 = VersionInfo();
   Formatter *foo = FormatterFactory::create("C");
   Settings settings(argc, argv);
@@ -24,19 +25,21 @@ int main(int argc, char **argv)
     qDebug() << "Writing to" << settings.filePath();
   }
 
-  qDebug() << "Version format" << settings.versionFormat();
+  settings.dump();
 
-  /*
   foo->setFileName("foo.h");
   foo->read(v2);
+  v2.setBuildType(BuildType::ByMonths);
+  v2.increment();
 
-  qDebug() << "Version - Base year: " << v2.baseYear() << endl
-           << "          Major    : " << v2.major() << endl
-           << "          Minor    : " << v2.minor() << endl
-           << "          Patch    : " << v2.patch() << endl
-           << "          Build    : " << v2.build() << endl;
-
-  v2.incrementMajor();
+  /*
+  v1.increment();
+  qDebug() << "Version - Base year: " << v1.baseYear() << endl
+           << "          Major    : " << v1.major() << endl
+           << "          Minor    : " << v1.minor() << endl
+           << "          Patch    : " << v1.patch() << endl
+           << "          Build    : " << v1.build() << endl;
+  */
 
   qDebug() << "Incrementing." << endl << endl
            << "Version - Base year: " << v2.baseYear() << endl
@@ -44,8 +47,9 @@ int main(int argc, char **argv)
            << "          Minor    : " << v2.minor() << endl
            << "          Patch    : " << v2.patch() << endl
            << "          Build    : " << v2.build() << endl
-           << "Built on " << v2.buildDate() << endl;
+           << "Built on " << v2.toDate().toString() << endl;
 
+  /*
   foo->write(v2);
   */
 

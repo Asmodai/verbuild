@@ -47,6 +47,7 @@ HEADERS += \
     tclap/CmdLine.h \
     tclap/ArgTraits.h \
     tclap/ArgException.h \
-    tclap/Arg.h
+    tclap/Arg.h \
+    Enums.hpp
 
 INCLUDEPATH += .

@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Thursday May 30, 2013 00:52:26 asmodai>
-// Revision:   26
+// Time-stamp: <Saturday Jun  1, 2013 02:48:37 asmodai>
+// Revision:   28
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -45,204 +45,118 @@
 #include <QtCore/QDate>
 #include <QtCore/QString>
 
+#include "Enums.hpp"
+
+
 /**
    @brief Version information class.
- 
-   This class contains the version number information of a project.
- 
-   It is designed to compose a version number out of four components:
- 
-     Component | Description
-     ----------|------------
-     major     | Major version number.
-     minor     | Minor version number.
-     patch     | Patch number.
-     build     | A number generated from the build time.
- 
-   The output of the version number will look like
-   @em 'major.minor.patch.build'.
+   
+   The version number used by this class contains four components:
+   
+   Component | Description
+   :--------:|-------------------
+   Major     | The major version number of a project.
+   Minor     | The minor version number of a project.
+   Build     | The build number of a project, see below.
+   Patch     | The patch or the service pack.
+   
+   Of special interest is the build number, which can be generated and
+   incremented using a few methods:
+   
+   ###Simple incrementation###
+   This is the most simple method whereby the build number is
+   incremented sequentially, i.e. a build number of 1 increments to 2,
+   or a build number of 41 increments to 42.
+   
+   ###Month offset incrementation###
+   Otherwise known as the @em Microsoft @em Office method.  The build
+   number is composed using the following method:
+   
+   1. Set a 'base year' for the project.
+   2. Compute the difference in months between January 1st of the base
+      year and the current month, this becomes the first group of
+      digits.
+   3. Take the day number of the current month, this becomes the
+      second group of digits.
+   
+   For example, let us imagine we have a project started in 2003.
+   This project goes along quite nicely, and we're compiling it from
+   source on October 17th, 2005, 34 months after the start year.  The
+   build number would be @b 3417.  Or, 17th day of the 34th month
+   after January 2003.
 
+   ###Year offset incrementation###
+   Otherwise known as the @em Microsoft @em Visual @em C++
+   @em compiler method. The build number is composed using the
+   following method:
    
-   ###Creating version information###
-   The constructor has three different overloads:
-   @code{.cpp}
-   VersionInfo vers = VersionInfo();
-   @endcode
-   The major, patch, and build number will default to 0.
-   The minor number will default to 1.
-   The start year of the project will default to the current year.
+   1. Set a 'base year' for the project.
+   2. Compute the difference in years between the current year and the
+      base year, this becomes the first group of digits.
+   3. Add the two-digit month number for the current month.
+   4. Add the two-digit day number for the current month.
    
-   @code{.cpp}
-   VersionInfo vers = VersionInfo(4, 0, 1);
-   @endcode
-   The major, minor, and patch numbers are specified in the
-   constructor.
-   The build number will default to 0.
-   The start year of the project will default to the current year.
+   For example, let us imagine we have a project started in 2005.
+   This project goes along quite nicely, and we're compiling it from
+   source on September 4th, 2007.  2 years after the start year.  The
+   build number would be @b 20904.
    
-   @code{.cpp}
-   VersionInfo vers = VersionInfo(4, 0, 1, 1988);
-   @endcode
-   The major, minor, patch, and base year are specified in the
-   constructor.
-   The build number will default to 0.
+   ###Date incrementation###
+   The second-simplest method, otherwise known as @em ISO @em 8601.
+   The build number is just the date encoded as yyyymmdd.
    
-   ###Specifying version information###
-   As well as giving values during the construtor, the version
-   information can be updated using methods:
-   @code{.cpp}
-   // 'vers' will essentially contain version 0.1.0.0
-   VersionInfo vers = VersionInfo();
-   
-   // Set 'vers' to 10.5.8.0
-   vers.setMajor(10);
-   vers.setMinor(5);
-   vers.setPatch(8);
-   @endcode
-   
-   ###Incrementing version information###
-   The version information can be incremented using simple methods
-   such as:
-   @code{.cpp}
-   // 'vers' will contain 10.5.8.0
-   VersionInfo vers = VersionInfo(10, 5, 8, 2000);
-   
-   // Increment to 11.6.9.0
-   vers.incrementMajor();
-   vers.incrementMinor();
-   vers.incrementPatch();
-   @endcode
-   
-   
-   ###The build number###
-   The method @c build() will return the build number of the project.
-   The build number is defined using the current date, so it cannot be
-   operated upon in the same way as the major, minor, and patch
-   numbers.
-   
-   Simply calling @c build() will generate a new build number.  See
-   the documentation for how it is generated.
-   
-   If you wish to re-generate a build number once an initial one has
-   been returned, you will need to invalidate the cache with
-   @c invalidateBuild().
-   
-   
-   ###Example code###
-   @code{.cpp}
-   #include "VersionInfo.hpp"
-   #include <QtCore/QString>
-   #include <iostream>
-   
-   int
-   main(int argc, char *argv)
-   {
-     VersionInfo ver = VersionInfo();
-     
-     ver.setMajor(10);
-     ver.setMinor(5);
-     ver.setPatch(8);
-     ver.setBaseYear(1983);
-     
-     std::cout << "Version is:" << ver.toString().toStdString()
-               << std::endl;
-               
-     return 0;
-   }
-   @endcode
-   
-   The output will be:
-   @verbatim
-   Version is: 10.5.8.36529
-   @endverbatim
  */
 class VersionInfo
 {
 private:
-  int     m_major;              //!< Major version number.
-  int     m_minor;              //!< Minor version number.
-  int     m_patch;              //!< Patch number.
-  int     m_build;              //!< Build number cache.
-  int     m_baseYear;           //!< Year the project was started.
-  QString m_string;             //!< String cache for string output.
-  QDate   m_date;               //!< Date cache for build date output.
+  int        m_major;           //!< Major version number.
+  int        m_minor;           //!< Minor version number.
+  int        m_build;           //!< Build number.
+  int        m_patch;           //!< Patch or service pack number.
+  int        m_baseYear;        //!< Base year for the project.
+  BuildTypes m_buildType;       //!< Incrementation type for build number.
   
   
 public:
   
   /**
    * @brief Constructor method.
-   *
-   * Generates a default version number of '0.1.0.x', where 'x' will
-   * be the generated build number.
    */
   VersionInfo()
     : m_major(0),
-      m_minor(1),
+      m_minor(0),
+      m_build(0),
       m_patch(0),
-      m_build(0)
-  {
-    m_baseYear = QDate::currentDate().year();
-    m_string   = QString();
-    m_date     = QDate();
-  }
-  
-  /**
-   * @brief Constructor method
-   * @param major Major version number,
-   * @param minor Minor version number.
-   * @param patch Patch number.
-   *
-   * Generates a version number composed of @em 'major.minor.patch.x',
-   * where @em 'x' will be the generated build number.
-   */
-  VersionInfo(const int major,
-              const int minor,
-              const int patch)
-    : m_major(major),
-      m_minor(minor),
-      m_patch(patch),
-      m_build(0)
-  {
-    m_baseYear = QDate::currentDate().year();
-    m_string   = QString();
-    m_date     = QDate();
-    
-    makeString();
-    unmakeBuild();
-  }
+      m_baseYear(1970),
+      m_buildType(BuildType::Simple)
+  {}
   
   /**
    * @brief Constructor method.
-   * @param major Major verison number.
+   * @param major Major version number.
    * @param minor Minor version number.
-   * @param patch Patch number,
-   * @param baseYear Year project was started.
-   *
-   * Generates a version number composed of @em 'major.minor.patch.x',
-   * where @em 'x' will be the generated build number.
+   * @param build Build number.
+   * @param patch Patch or service pack number.
+   * @param baseYear Year that the project was started.
+   * @param type Incrementation type.
+   * @see BuildType
    */
   VersionInfo(const int major,
               const int minor,
-              const int patch,
-              const int baseYear)
+              const int build       = 0,
+              const int patch       = 0, 
+              const int baseYear    = 1970,
+              const BuildTypes type = BuildType::Simple)
     : m_major(major),
       m_minor(minor),
+      m_build(build),
       m_patch(patch),
-      m_build(0)
-  {
-    m_baseYear = (baseYear > 0)
-      ? baseYear
-      : QDate::currentDate().year();
-    m_string   = QString();
-    m_date     = QDate();
-    
-    makeString();
-    unmakeBuild();
-  }
+      m_baseYear(baseYear),
+      m_buildType(type)
+  {}
   
   /**
-   * @brief Major version number component.
+   * @brief Return the major version number.
    * @returns The major version number.
    */
   int const &major(void) const
@@ -251,30 +165,16 @@ public:
   }
   
   /**
-   * @brief Set the major version number component.
-   * @param value The major verison number.
-   *
-   * This method will invalidate the cached version string.
+   * @brief Set the major version number.
+   * @param value The value to set.
    */
   void setMajor(const int value)
   {
-    m_major  = value;
-    m_string = QString();
+    m_major = value;
   }
   
   /**
-   * @brief Increment the major version number.
-   *
-   * This method will invalidate the cached version string.
-   */
-  void incrementMajor(void)
-  {
-    m_major++;
-    m_string = QString();
-  }
-  
-  /**
-   * @brief Minor version number component.
+   * @brief Return the minor version number.
    * @returns The minor version number.
    */
   int const &minor(void) const
@@ -283,31 +183,35 @@ public:
   }
   
   /**
-   * @brief Set the minor version number component.
-   * @param value The minor version number.
-   *
-   * This method will invalidate the cached version string.
+   * @brief Set the minor version number.
+   * @param value The value to set.
    */
   void setMinor(const int value)
   {
-    m_minor  = value;
-    m_string = QString();
+    m_minor = value;
   }
   
   /**
-   * @brief Increment the minor version number.
-   *
-   * This method will invalidate the cached string.
+   * @brief Return the build number.
+   * @returns The build number.
    */
-  void incrementMinor(void)
+  int const &build(void) const
   {
-    m_minor++;
-    m_string = QString();
+    return m_build;
   }
   
   /**
-   * @brief Patch number component.
-   * @returns The patch number.
+   * @brief Set the build number.
+   * @param value The value to set.
+   */
+  void setBuild(const int value)
+  {
+    m_build = value;
+  }
+  
+  /**
+   * @brief Return the patch or service pack number.
+   * @returns The patch or service pack number.
    */
   int const &patch(void) const
   {
@@ -315,31 +219,17 @@ public:
   }
   
   /**
-   * @brief Set the patch version component.
-   * @param value The patch number.
-   *
-   * This method will invalidate the cached version string.
+   * @brief Set the patch or service pack number.
+   * @param value The value to set.
    */
   void setPatch(const int value)
   {
-    m_patch  = value;
-    m_string = QString();
+    m_patch = value;
   }
   
   /**
-   * @brief Increment the patch number.
-   *
-   * This method will invalidate the cached string.
-   */
-  void incrementPatch(void)
-  {
-    m_patch++;
-    m_string = QString();
-  }
-  
-  /**
-   * @brief Project base year.
-   * @returns The year the project was started.
+   * @brief Return the base year of the project.
+   * @returns The base year of the project.
    */
   int const &baseYear(void) const
   {
@@ -348,218 +238,229 @@ public:
   
   /**
    * @brief Set the base year of the project.
-   * @param value The base year.
-   *
-   * The @em base @em year is essentially the year in which the
-   * project was started.  This is used to compute the build number.
+   * @param value The value to set.
    */
   void setBaseYear(const int value)
   {
     m_baseYear = value;
-    m_string   = QString();
-    m_date     = QDate();
   }
   
   /**
-   * @brief Build number component.
-   * @returns The build number.
-   *
-   * This method will only compute a build number if there is no
-   * cached build number.  It will also invalidate both the cached
-   * string and the cached date.
+   * @brief Return the build number incrementation type.
+   * @returns The incrementation type.
    */
-  int build(void)
+  BuildTypes const &buildType(void) const
   {
-    if (m_build == 0) {
-      makeBuild();
+    return m_buildType;
+  }
+  
+  /**
+   * @brief Set the build number incrementation type.
+   * @param value The value to set.
+   */
+  void setBuildType(const BuildTypes value)
+  {
+    m_buildType = value;
+  }
+  
+  /**
+   * @brief Increment the version number.
+   * @param what A bitfield defining which number(s) should be
+   *             incremented.
+   * @see Increment
+   */
+  void increment(const Increments what = Increment::MinorAndBuild)
+  {
+    if (what & Increment::Major) {
+      m_major++;
     }
     
-    m_string = QString();
-    m_date   = QDate();
+    if (what & Increment::Minor) {
+      m_minor++;
+    }
     
-    return m_build;
-  }
-  
-  /**
-   * @brief Set the build number.
-   * @param value The build number to set.
-   * @note You should set the base year prior to operating on the
-   *       version information.
-   */
-  void setBuild(const int value)
-  {
-    m_build = value;
-    m_date  = QDate();
-  }
-  
-  /**
-   * @brief Invalidate the build number.
-   * @warning This must be used if you plan on generating a new buld
-   *          number from a version that already has a build number.
-   *          The algorithm is highly dependant on the current date,
-   *          so once it is generated, it is cached.
-   */
-  void invalidateBuild(void)
-  {
-    m_build = 0;
-    m_date  = QDate();
+    if (what & Increment::Build) {
+      incrementBuild();
+    }
+    
+    if (what & Increment::Patch) {
+      m_patch++;
+    }
   }
   
   /**
    * @brief Convert the version number to a string.
-   * @returns A string containing the version number in the format of
-   *          a.b.c.d
-   *
-   * This method will only compute a version string if there is no
-   * cached string.
+   * @returns A QString containing the version number.
    */
-  QString toString(void)
+  QString toString(void) const
   {
-    if (m_string.isNull()) {
-      makeString();
-    }
+    QString ret = QString();
+    QTextStream(&ret) << m_major << "."
+                      << m_minor << "."
+                      << m_build << "."
+                      << m_patch;
     
-    return m_string;
+    return ret;
   }
   
   /**
-   * @brief Build date.
-   * @returns The build date.
-   *
-   * This method will only compute a build date if there is no cached
-   * date.
+   * @brief Return the build date this version number corresponds to.
+   * @returns If the incrementation type encodes date information into
+   *          the build number, then a QDate containing that date will
+   *          be returned; otherwise an empty QDate is returned.
    */
-  QDate buildDate(void)
+  QDate toDate(void) const
   {
-    if (m_date.isNull()) {
-      m_date = unmakeBuild();
+    QDate date = QDate();
+    
+    if (m_build > 0 && m_baseYear > 0) {
+      switch (m_buildType) {
+        case BuildType::ByDate:
+          {
+            QString buf = QString(m_build);
+            QRegExp re("(\\d{4,4})(\\d{2,2})(\\d{2,2})");
+            int     pos = 0;
+            int     dd  = 0;
+            int     mm  = 0;
+            int     yy  = 0;
+            bool    ok  = true;
+            
+            while ((pos = re.indexIn(buf, pos)) != -1)
+            {
+              pos += re.matchedLength();
+              
+              yy = re.cap(1).toInt(&ok, 10);
+              mm = re.cap(2).toInt(&ok, 10);
+              dd = re.cap(3).toInt(&ok, 10);
+            }
+            
+            if (ok) {
+              date.setDate(yy, mm, dd);
+            }
+          }
+          break;
+          
+        case BuildType::ByYears:
+          {
+            QString buf = QString(m_build);
+            QRegExp re("(\\d+)(\\d{2,2})(\\d{2,2})");
+            int     pos = 0;
+            int     dd  = 0;
+            int     mm  = 0;
+            int     yy  = 0;
+            bool    ok  = true;
+            
+            while ((pos = re.indexIn(buf, pos)) != -1)
+            {
+              pos += re.matchedLength();
+              
+              dd = re.cap(1).toInt(&ok, 10);
+              mm = re.cap(2).toInt(&ok, 10);
+              yy = re.cap(3).toInt(&ok, 10);
+            }
+            
+            if (ok) {
+              date.setDate(m_baseYear + yy, mm, dd);
+            }
+          }
+          break;
+          
+        case BuildType::ByMonths:
+          date.setDate(m_baseYear,
+                       1,
+                       (int)m_build % 100);
+          date = date.addMonths((m_build / 100) - 1);
+          break;
+      }
     }
     
-    return m_date;
-  }
+    return date;
+  }                             // QDate toDate() const
+
   
   /**
    * @brief Equality test.
-   * @param other A QDate to test against.
-   * @returns @c true if the build date is the same as the given date;
-   *          otherwise @c false is returned.
-   *
-   * If there is no cached date, this method will make one prior to
-   * the equality check.  This means that this method will never be a
-   * constant method.
+   * @param other The other object to compare with.
+   * @returns @c true if both objects are equal; otherwise @c false is
+   *          returned.
    */
-  bool operator == (const QDate &other)
-  {
-    if (m_date.isNull()) {
-      m_date = unmakeBuild();
-    }
-    
-    return m_date == other;
-  }
-  
-  /**
-   * @brief Inequality test.
-   * @param other A QDate to test against.
-   * @returns @c true if the build date is not the same as the given date;
-   *          otherwise @c false is returned.
-   *
-   * If there is no cached date, this method will make one prior to
-   * the equality check.  This means that this method will never be a
-   * constant method.
-   */
-  bool operator != (const QDate &other)
-  {
-    if (m_date.isNull()) {
-      m_date = unmakeBuild();
-    }
-    
-    return m_date != other;
-  }
-  
-  /**
-   * @brief Equality test.
-   * @param other A VersionInfo to test against.
-   * @returns @c true if the version data is the same as the given version;
-   *          otherwise @c false is returned.
-   *
-   * If there is no cached string, this method will make one prior to
-   * the equality check.  This means that this method will never be a
-   * constant method.
-   */
-  bool operator == (VersionInfo &other)
+  bool operator == (const VersionInfo &other)
   {
     return (m_major == other.m_major)
       && (m_minor == other.m_minor)
-      && (m_patch == other.m_patch)
-      && (build() == other.build());
+      && (m_build == other.m_build)
+      && (m_patch == other.m_patch);
   }
   
   /**
    * @brief Inequality test.
-   * @param other A VersionInfo to test against.
-   * @returns @c true if the version data is not the same as the given
-   *          version; otherwise @c false is returned.
-   *
-   * If there is no cached string, this method will make one prior to
-   * the equality check.  This means that this method will never be a
-   * constant method.
+   * @param other The other object to compare with.
+   * @returns @c if both objects are inequal; otherwise @c false is
+   *          returned.
    */
-  bool operator != (VersionInfo &other)
+  bool operator != (const VersionInfo &other)
   {
     return (m_major != other.m_major)
       || (m_minor != other.m_minor)
-      || (m_patch != other.m_patch)
-      || (build() != other.build());
+      || (m_build != other.m_build)
+      || (m_patch != other.m_patch);
   }
   
   
 private:
   
   /**
-   * @brief Compute a build number.
+   * @brief Increments the build number.
+   * @see BuildType
    *
-   * The build number is generated by the following:
-   *
-   *  * Take the year in which the project started.
-   *  * Call January of that year 'month 1'.
-   *  * The first two digits are the number of months since month 1.
-   *  * The last two digits are the day of that month.
+   * Does the actual work when it comes to incrementing the build number.
    */
-  void makeBuild(void)
+  void incrementBuild()
   {
-    m_build = (((((QDate::currentDate().year() - m_baseYear) * 12)
-                + QDate::currentDate().month()) * 100)
-               + QDate::currentDate().day());
-  }
-  
-  /**
-   * @brief Convert the version information to a printable string.
-   */
-  void makeString(void)
-  {
-    QTextStream(&m_string) << m_major << "."
-                           << m_minor << "."
-                           << m_patch << "."
-                           << build();
-  }
-  
-  /**
-   * @brief Return the date that a build number corresponds to.
-   * @returns A QDate containing the year, month, and day of the build.
-   *
-   * Decomposes the build date from the build number.
-   */
-  QDate unmakeBuild(void)
-  {
-    QDate date = QDate();
-    
-    date.setDate(m_baseYear,
-                 1,
-                 (int)m_build % 100);
-    date = date.addMonths((m_build / 100) - 1);
-    
-    return date;
-  }
+    switch (m_buildType) {
+      case BuildType::Simple:   // Simple incrementing.
+        m_build++;
+        break;
+        
+      case BuildType::ByMonths: // Increment by months.
+        if (m_baseYear > 0) {
+          m_build = (((((QDate::currentDate().year() - m_baseYear) * 12)
+                       + QDate::currentDate().month()) * 100)
+                     + QDate::currentDate().day());
+        }
+        break;
+        
+      case BuildType::ByYears:  // Increment by years.
+        {
+          QString str = QString();
+          bool    ok;
+          
+          str.sprintf("%d%02d%02d",
+                      QDate::currentDate().year() - m_baseYear,
+                      QDate::currentDate().month(),
+                      QDate::currentDate().day());
+          
+          m_build = str.toInt(&ok, 10);
+          
+          if (!ok) {
+            m_build = 0;
+          }
+        }
+        break;
+        
+      case BuildType::ByDate:   // Increment by date.
+        {
+          bool ok;
+          
+          m_build = QDate::currentDate().toString("yyyyMMdd").toInt(&ok, 10);
+          
+          if (!ok) {
+            m_build = 0;
+          }
+        }
+        break;
+    }
+  }                             // void incrementBuild()
   
 };                              // class VersionInfo
 

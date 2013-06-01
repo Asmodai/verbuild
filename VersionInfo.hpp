@@ -4,7 +4,7 @@
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
 // Time-stamp: <Saturday Jun  1, 2013 06:11:25 asmodai>
-// Revision:   33
+// Revision:   34
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -323,7 +323,7 @@ public:
           {
             QString      buf = QString(m_build);
             QRegExp      re("(\\d{4,4})(\\d{2,2})(\\d{2,2})");
-            unsigned int pos = 0;
+            int          pos = 0;
             unsigned int dd  = 0;
             unsigned int mm  = 0;
             unsigned int yy  = 0;
@@ -348,7 +348,7 @@ public:
           {
             QString      buf = QString(m_build);
             QRegExp      re("(\\d+)(\\d{2,2})(\\d{2,2})");
-            unsigned int pos = 0;
+            int          pos = 0;
             unsigned int dd  = 0;
             unsigned int mm  = 0;
             unsigned int yy  = 0;
@@ -413,7 +413,7 @@ public:
   
 private:
   
-  unsigned int const incr(const unsigned int lhs) const
+  unsigned int incr(const unsigned int lhs) const
   {
     if (m_overflow) {
       if ((UINT_MAX - 1) < lhs) {
@@ -424,8 +424,8 @@ private:
     return lhs + 1;
   }
   
-  unsigned int const add(const unsigned int lhs,
-                         const unsigned int rhs) const
+  unsigned int add(const unsigned int lhs,
+                   const unsigned int rhs) const
   {
     if (m_overflow) {
       if ((UINT_MAX - rhs) < lhs) {

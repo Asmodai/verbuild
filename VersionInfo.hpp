@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 05:43:01 asmodai>
-// Revision:   32
+// Time-stamp: <Saturday Jun  1, 2013 06:11:25 asmodai>
+// Revision:   33
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -273,7 +273,7 @@ public:
    *             incremented.
    * @see Increment
    */
-  void increment(const Increments what = IncrementMinorAndBuild)
+  void increment(const Increments what = IncrementBuild)
   {
     if (what & IncrementMajor) {
       m_major = incr(m_major);

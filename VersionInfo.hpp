@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 06:11:25 asmodai>
-// Revision:   35
+// Time-stamp: <Saturday Jun  1, 2013 10:10:22 asmodai>
+// Revision:   36
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -48,6 +48,8 @@
 
 #include "Enums.hpp"
 #include <limits.h>
+
+#include <iostream>
 
 
 /**
@@ -322,21 +324,21 @@ public:
       switch (m_buildType) {
         case BuildByDate:
           {
-            QString      buf = QString(m_build);
+            QString      buf;
             QRegExp      re("(\\d{4,4})(\\d{2,2})(\\d{2,2})");
-            int          pos = 0;
-            unsigned int dd  = 0;
-            unsigned int mm  = 0;
-            unsigned int yy  = 0;
-            bool         ok  = true;
+            unsigned int dd = 0;
+            unsigned int mm = 0;
+            unsigned int yy = 0;
+            bool         ok = true;
             
-            while ((pos = re.indexIn(buf, pos)) != -1)
-            {
-              pos += re.matchedLength();
-              
+            buf.setNum(m_build);
+
+            if (re.indexIn(buf) != -1) {
               yy = re.cap(1).toUInt(&ok, 10);
               mm = re.cap(2).toUInt(&ok, 10);
               dd = re.cap(3).toUInt(&ok, 10);
+            } else {
+              ok = false;
             }
             
             if (ok) {
@@ -347,21 +349,39 @@ public:
           
         case BuildByYears:
           {
-            QString      buf = QString(m_build);
-            QRegExp      re("(\\d+)(\\d{2,2})(\\d{2,2})");
+            QString      buf;
             int          pos = 0;
             unsigned int dd  = 0;
             unsigned int mm  = 0;
             unsigned int yy  = 0;
             bool         ok  = true;
-            
-            while ((pos = re.indexIn(buf, pos)) != -1)
-            {
-              pos += re.matchedLength();
-              
-              dd = re.cap(1).toUInt(&ok, 10);
-              mm = re.cap(2).toUInt(&ok, 10);
-              yy = re.cap(3).toUInt(&ok, 10);
+
+            // Set the build number into the buffer.
+            buf.setNum(m_build);
+
+            // Are we in the same year of the project start date?
+            if (buf.length() > 3) {
+              // Nope, carry on.
+              QRegExp re("(\\d*)(\\d{2,2})(\\d{2,2})");
+
+              if (re.indexIn(buf) != -1) {
+                yy = re.cap(1).toUInt(&ok, 10);
+                mm = re.cap(2).toUInt(&ok, 10);
+                dd = re.cap(3).toUInt(&ok, 10);
+              } else {
+                ok = false;
+              }
+            } else {
+              // Yep, so use a different regexp.
+              QRegExp re("(\\d{1,2})(\\d{2,2})");
+
+              if (re.indexIn(buf, pos) != -1) {
+                yy = 0;
+                mm = re.cap(1).toUInt(&ok, 10);
+                dd = re.cap(2).toUInt(&ok, 10);
+              } else {
+                ok = false;
+              }
             }
             
             if (ok) {

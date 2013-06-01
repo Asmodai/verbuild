@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 10:11:40 asmodai>
-// Revision:   26
+// Time-stamp: <Saturday Jun  1, 2013 12:17:18 asmodai>
+// Revision:   30
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -49,6 +49,9 @@
 #include <QtCore/QFlags>
 
 #include <tclap/CmdLine.h>
+
+#include <string>
+#include <vector>
 
 #include "Enums.hpp"
 #include "version.hpp"
@@ -219,9 +222,13 @@ public:
   
 };                              // class YearConstraint
 
+/**
+ * @brief Structure for holding initial values parsed from the command
+ *        line.
+ */
 typedef struct _initialValues {
-  bool         use;
-  unsigned int value;
+  bool         use;             //!< Is this segment to be used?
+  unsigned int value;           //!< The value to use for this segment.
 } InitialValues;
 
 
@@ -231,16 +238,51 @@ typedef struct _initialValues {
 class Settings
 {  
 private:
-  QString                m_filePath; //!< Path to the file to output info.
-  QString                m_format; //!< Version number format string.
-  bool                   m_useStdOut; //!< Write output to stdout?
-  bool                   m_createFile; //!< Create the output file.
-  bool                   m_overflow; //!< Overflow shifting enabled?
-  bool                   m_verbose; //!< Verbose output?
-  unsigned int           m_baseYear; //!< The base year of the project.
-  QVector<InitialValues> m_static; //!< Static version numbers.
-  BuildTypes             m_incrType; //!< Increment type.
-  QString                m_formatter; //!< Output formatter type.
+  /**
+   * @var m_filePath
+   * @brief Path to the file to output info.
+   *
+   * @var m_format
+   * @brief Version number format string.
+   *
+   * @var m_useStdOut
+   * @brief Write output to stdout?
+   *
+   * @var m_createFile
+   * @brief Create the output file.
+   *
+   * @var m_overflow
+   * @brief Overflow shifting enabled?
+   *
+   * @var m_verbose
+   * @brief Verbose output?
+   *
+   * @var m_baseYear
+   * @brief The base year of the project.
+   *
+   * @var m_static
+   * @brief Static version numbers.
+   *
+   * @var m_incrType
+   * @brief Increment type.
+   *
+   * @var m_formatter
+   * @brief Output formatter type.
+   *
+   * @var m_groups
+   * @brief Groups to generate.
+   */
+  QString                  m_filePath;
+  QString                  m_format;
+  bool                     m_useStdOut;
+  bool                     m_createFile;
+  bool                     m_overflow;
+  bool                     m_verbose;
+  unsigned int             m_baseYear;
+  QVector<InitialValues>   m_static;
+  BuildTypes               m_incrType;
+  QString                  m_formatter;
+  std::vector<std::string> m_groups;
   
   
 public:
@@ -363,6 +405,13 @@ public:
   {
     return m_createFile;
   }
+  
+  /**
+   * @brief Return the output format group flags.
+   * @returns Returns the bitmasked output format flags used by
+   *          Formatter to control what gets written to file.
+   */
+  OutputFlags outputFlags(void) const;
 
   /**
    * @brief Dump the settings to standard output.

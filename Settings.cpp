@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 10:11:29 asmodai>
-// Revision:   22
+// Time-stamp: <Saturday Jun  1, 2013 12:19:20 asmodai>
+// Revision:   27
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -44,6 +44,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <algorithm>
 
 #include "Settings.hpp"
@@ -154,8 +155,16 @@ Settings::Settings(int argc, char **argv)
     /* Constraint definitions. */
     FormatConstraint         allowedFmt(nullStrVec);
     YearConstraint           allowedYear(nullIntVec);
+    std::vector<std::string> allowedGroupsVec;
     std::vector<std::string> allowedIncrsVec;
     std::vector<std::string> allowedFmatrsVec;
+    
+    /* Output group values. */
+    allowedGroupsVec.push_back("basic");
+    allowedGroupsVec.push_back("struct");
+    allowedGroupsVec.push_back("doxygen");
+    allowedGroupsVec.push_back("all");
+    TCLAP::ValuesConstraint<std::string> allowedGroups(allowedGroupsVec);
     
     /* Incrementation constraint values. */
     allowedIncrsVec.push_back("simple");
@@ -226,6 +235,11 @@ Settings::Settings(int argc, char **argv)
                         true,
                         "",
                         &allowedFmtrs);
+    TCLAP::MultiArg<std::string> groups("g",
+                                        "groups",
+                                        "Output group to generate",
+                                        false,
+                                        &allowedGroups);
     
     /* Add them in reverse alphabetic order. */
     cmd.add(baseYear);          // y
@@ -234,6 +248,7 @@ Settings::Settings(int argc, char **argv)
     cmd.add(overFlow);          // s
     cmd.add(fileName);          // o
     cmd.add(incrType);          // i
+    cmd.add(groups);            // g
     cmd.add(verFmt);            // f
     cmd.add(createFile);        // c
     cmd.parse(argc, argv);
@@ -249,6 +264,7 @@ Settings::Settings(int argc, char **argv)
     m_overflow   = overFlow.getValue();
     m_verbose    = verbose.getValue();
     m_createFile = createFile.getValue();
+    m_groups     = groups.getValue();
 
     /* Extract the incrementation type. */
     if (incrType.getValue().compare("date") == 0) {
@@ -330,11 +346,44 @@ Settings::incrementFields(void)
   return ret;
 }
 
+OutputFlags Settings::outputFlags(void) const
+{
+  OutputFlags ret;
+  
+  for (std::vector<std::string>::const_iterator it = m_groups.begin();
+       it != m_groups.end();
+       ++it)
+  {
+    if ((*it).compare("basic") == 0) {
+      ret |= OutputBasic;
+    } else if ((*it).compare("struct") == 0) {
+      ret |= OutputStruct;
+    } else if ((*it).compare("doxygen") == 0) {
+      ret |= OutputDoxygen;
+    } else if ((*it).compare("all") == 0) {
+      ret |= OutputAll;
+    }
+  }
+  
+  if (ret == 0) {
+    qFatal("No output groups specified. Aborting...");
+  }
+
+  return ret;
+}
+
 void
 Settings::dump(void) const
 {
   QTextStream out(stdout);
   QString     incrType = QString();
+  QStringList tmp;
+
+  for (std::vector<std::string>::const_iterator it = m_groups.begin();
+       it != m_groups.end();
+       ++it) {
+    tmp << fromConstStdString(*it);
+  }
   
   switch (m_incrType) {
     case BuildByMonths: incrType = QString("Months"); break;
@@ -345,6 +394,7 @@ Settings::dump(void) const
 
   out << endl << "Settings:" << endl << endl
       << "    Output formatter: " << m_formatter << endl
+      << "       Output groups: " << tmp.join(", ") << endl
       << "      Version format: " << m_format << endl
       << "      Increment type: " << incrType << endl
       << "           File name: " << valueOrEmpty(m_filePath) << endl

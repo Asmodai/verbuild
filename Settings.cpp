@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 04:27:45 asmodai>
-// Revision:   10
+// Time-stamp: <Saturday Jun  1, 2013 06:19:43 asmodai>
+// Revision:   13
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -180,10 +180,14 @@ Settings::Settings(int argc, char **argv)
                               "overflow",
                               "Perform overflow checking and shifting.",
                               false);
-    
+    TCLAP::SwitchArg verbose("v",
+                             "verbose",
+                             "Verbose output.",
+                             false);
     
     /* Add them in reverse alphabetic order. */
     cmd.add(baseYear);          // y
+    cmd.add(verbose);           // v
     cmd.add(overFlow);          // s
     cmd.add(fileName);          // o
     cmd.add(incrType);          // i
@@ -195,6 +199,7 @@ Settings::Settings(int argc, char **argv)
     m_format   = fromStdString(verFmt.getValue());
     m_baseYear = baseYear.getValue();
     m_overflow = overFlow.getValue();
+    m_verbose  = verbose.getValue();
 
     /* Extract the incrementation type. */
     if (incrType.getValue().compare("date") == 0) {     
@@ -228,7 +233,7 @@ Settings::dump(void) const
 {
   QTextStream out(stdout);
 
-  out << "Settings" << endl << endl
+  out << endl << "Settings:" << endl << endl
       << "     Version format: " << m_format << endl
       << "     Increment type: " << m_incrType << endl
       << "          File name: " << valueOrEmpty(m_filePath) << endl

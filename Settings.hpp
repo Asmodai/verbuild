@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 04:40:19 asmodai>
-// Revision:   20
+// Time-stamp: <Saturday Jun  1, 2013 06:17:00 asmodai>
+// Revision:   21
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -229,6 +229,7 @@ private:
   QString    m_format;          //!< Version number format string.
   bool       m_useStdOut;       //!< Write output to stdout?
   bool       m_overflow;        //!< Overflow shifting enabled?
+  bool       m_verbose;         //!< Verbose output?
   int        m_baseYear;        //!< The base year of the project.
   BuildTypes m_incrType;        //!< Increment type.
   
@@ -307,6 +308,16 @@ public:
   const bool &overflowShift(void) const
   {
     return m_overflow;
+  }
+  
+  /**
+   * @brief Verbose output enabled?
+   * @returns @c true if we're using verbose output; otherwise
+   *          @c false is returned.
+   */
+  const bool &verbose(void) const
+  {
+    return m_verbose;
   }
 
   /**

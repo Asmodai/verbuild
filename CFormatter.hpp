@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 10:30:03 asmodai>
-// Revision:   82
+// Time-stamp: <Saturday Jun  1, 2013 11:00:31 asmodai>
+// Revision:   83
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -205,7 +205,7 @@ public:
            << "#define __VersionInfo_Header__"                          << endl
            << endl;
     
-    if (m_flags & Formatter::Doxygen) {
+    if (m_flags & OutputDoxygen) {
       stream << "/**"                                                   << endl
              << " * @file " << QFileInfo(m_fileName).fileName()         << endl
              << " * @author VarBuild " << VERSION_STRING                << endl
@@ -214,8 +214,8 @@ public:
              << endl;
     }
     
-    if (m_flags & Formatter::Basic) {
-      if (m_flags & Formatter::Doxygen) {
+    if (m_flags & OutputBasic) {
+      if (m_flags & OutputDoxygen) {
         stream << "/**"                                                 << endl
                << " * @def VERSION_MAJOR"                               << endl
                << " * @brief Major version number."                     << endl
@@ -259,8 +259,8 @@ public:
              << endl;
     }
     
-    if (m_flags & Formatter::Struct) {
-      if (m_flags & Formatter::Doxygen) {
+    if (m_flags & OutputStruct) {
+      if (m_flags & OutputDoxygen) {
         stream << "/**"                                                 << endl
                << " * @brief Version number structure."                 << endl
                << " *"                                                  << endl

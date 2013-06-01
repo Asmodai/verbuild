@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 10:29:50 asmodai>
-// Revision:   55
+// Time-stamp: <Saturday Jun  1, 2013 11:00:56 asmodai>
+// Revision:   56
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -49,6 +49,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QRegExp>
 
+#include "Enums.hpp"
 #include "VersionInfo.hpp"
 #include "version.hpp"
 
@@ -107,49 +108,7 @@
  * from files.
  */
 class Formatter
-{  
-public:
-  
-  /**
-   * @enum OutputFlag
-   * @brief Output flags
-   * 
-   * Controls how version information is written out to file.
-   *
-   * @b Basic writes out the version information in the most basic
-   * form possible -- i.e. for C or C++, the information is written
-   * out as a series of preprocessor statements.
-   *
-   * @b Struct writes out the version information in the form of some
-   * form of structure -- i.e. for C or C++, the information is
-   * written out as a @c struct statement.
-   *
-   * @b Doxygen causes documentation that Doxygen can use to be
-   * written out to the file.
-   *
-   * @b All does what you think it would do.
-   *
-   * @var Basic
-   * @brief Basic version information.
-   *
-   * @var Struct
-   * @brief A structure is created containing version information.
-   *
-   * @var Doxygen
-   * @brief Doxygen documentation is included.
-   *
-   * @var All
-   * @brief Everything possible is included.
-   */
-  enum OutputFlag {
-    Basic   = 0x01,
-    Struct  = 0x02,
-    Doxygen = 0x04,
-    All     = Basic | Struct | Doxygen
-  };
-  Q_DECLARE_FLAGS(OutputFlags, OutputFlag)
-  
-  
+{
 protected:
   QString     m_formatterName;  //!< Formatter pretty name.
   QString     m_fileName;       //!< Version information file name.
@@ -162,26 +121,26 @@ public:
    * @brief Default constructor method.
    *
    * Initialises the file name to a Null string and sets the output
-   * flags to Output::All.
+   * flags to OutputAll.
    */
   Formatter()
   {
     m_formatterName = QString("<unknown>");
     m_fileName      = QString();
-    m_flags         = Formatter::All;
+    m_flags         = OutputAll;
   }
   
   /**
    * @brief Constructor method.
    * @param file The name of the file to read and write.
    *
-   * Initialises the output flags to Formatter::All.
+   * Initialises the output flags to OutputAll.
    */
   Formatter(const QString &file)
     : m_fileName(file)
   {
     m_formatterName = QString("<unknown>");
-    m_flags         = Formatter::All;
+    m_flags         = OutputAll;
   }
   
   /**

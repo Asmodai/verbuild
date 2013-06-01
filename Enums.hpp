@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 06:55:04 asmodai>
-// Revision:   6
+// Time-stamp: <Saturday Jun  1, 2013 11:59:22 asmodai>
+// Revision:   9
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -25,7 +25,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, see  <http://www.gnu.org/licenses/>.
+// along with this program; if not, see <http://www.gnu.org/licenses/>.
 //
 // }}}
 // {{{ Commentary:
@@ -97,6 +97,45 @@ enum Increment {
   IncrementAll                = IncrementMajor | IncrementMinorBuildAndPatch
 };
 Q_DECLARE_FLAGS(Increments, Increment)
+
+/**
+ * @enum OutputFlag
+ * @brief Output flags
+ * 
+ * Controls how version information is written out to file.
+ *
+ * @b OutputBasic writes out the version information in the most basic
+ * form possible -- i.e. for C or C++, the information is written
+ * out as a series of preprocessor statements.
+ *
+ * @b OutputStruct writes out the version information in the form of some
+ * form of structure -- i.e. for C or C++, the information is
+ * written out as a @c struct statement.
+ *
+ * @b OutputDoxygen causes documentation that Doxygen can use to be
+ * written out to the file.
+ *
+ * @b OutputAll does what you think it would do.
+ *
+ * @var OutputBasic
+ * @brief Basic version information.
+ *
+ * @var OutputStruct
+ * @brief A structure is created containing version information.
+ *
+ * @var OutputDoxygen
+ * @brief Doxygen documentation is included.
+ *
+ * @var OutputAll
+ * @brief Everything possible is included.
+ */
+enum OutputFlag {
+  OutputBasic   = 0x01,
+  OutputStruct  = 0x02,
+  OutputDoxygen = 0x04,
+  OutputAll     = OutputBasic | OutputStruct | OutputDoxygen
+};
+Q_DECLARE_FLAGS(OutputFlags, OutputFlag)
 
 #endif // !__Enums_hpp__
 

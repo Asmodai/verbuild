@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 10:18:15 asmodai>
-// Revision:   6
+// Time-stamp: <Saturday Jun  1, 2013 11:59:59 asmodai>
+// Revision:   8
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -25,12 +25,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, see  <http://www.gnu.org/licenses/>.
+// along with this program; if not, see <http://www.gnu.org/licenses/>.
 //
 // }}}
 // {{{ Commentary:
 //
 // }}}
+
+/**
+ * @file main.cpp
+ * @author Paul Ward
+ * @brief Main function.
+ */
 
 #include <QDebug>
 
@@ -99,6 +105,9 @@ main(int argc, char **argv)
     
     out << "Parsed version: " << info.toString() << endl;
   }
+  
+  // Configure what we want to output.
+  fmtr->setFlags(settings.outputFlags());
   
   // Configure the build type.
   info.setBuildType(settings.incrementType());

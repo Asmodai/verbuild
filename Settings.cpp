@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 07:53:21 asmodai>
-// Revision:   20
+// Time-stamp: <Saturday Jun  1, 2013 09:38:00 asmodai>
+// Revision:   21
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -149,7 +149,7 @@ Settings::Settings(int argc, char **argv)
 {
   try {
     TCLAP::CmdLine cmd("", ' ', VERSION_STRING, true);
-    std::string fmtrMsg = std::string("Output formatter type: ");
+    std::string    fmtrMsg = std::string("Output formatter type: ");
     
     /* Constraint definitions. */
     FormatConstraint         allowedFmt(nullStrVec);
@@ -204,7 +204,7 @@ Settings::Settings(int argc, char **argv)
                     &allowedYear);
     StringOpt incrType("i",
                        "increment",
-                       "Incrementation type.",
+                       "Type of increment used.",
                        false,
                        "simple",
                        &allowedIncrs);
@@ -216,6 +216,10 @@ Settings::Settings(int argc, char **argv)
                              "verbose",
                              "Verbose output.",
                              false);
+    TCLAP::SwitchArg createFile("c",
+                                "create",
+                                "Create the output file if it does not exist?",
+                                false);
     StringOpt formatter("t",
                         "formatter",
                         fmtrMsg,
@@ -231,18 +235,20 @@ Settings::Settings(int argc, char **argv)
     cmd.add(fileName);          // o
     cmd.add(incrType);          // i
     cmd.add(verFmt);            // f
+    cmd.add(createFile);        // c
     cmd.parse(argc, argv);
     
     /* Fill the static vector here. */
     m_static.fill(nullInitial, 4);
     
     /* Extract the options. */
-    m_filePath  = fromStdString(fileName.getValue());
-    m_format    = fromStdString(verFmt.getValue());
-    m_formatter = fromStdString(formatter.getValue());
-    m_baseYear  = baseYear.getValue();
-    m_overflow  = overFlow.getValue();
-    m_verbose   = verbose.getValue();
+    m_filePath   = fromStdString(fileName.getValue());
+    m_format     = fromStdString(verFmt.getValue());
+    m_formatter  = fromStdString(formatter.getValue());
+    m_baseYear   = baseYear.getValue();
+    m_overflow   = overFlow.getValue();
+    m_verbose    = verbose.getValue();
+    m_createFile = createFile.getValue();
 
     /* Extract the incrementation type. */
     if (incrType.getValue().compare("date") == 0) {
@@ -338,13 +344,14 @@ Settings::dump(void) const
   }
 
   out << endl << "Settings:" << endl << endl
-      << "   Output formatter: " << m_formatter << endl
-      << "     Version format: " << m_format << endl
-      << "     Increment type: " << incrType << endl
-      << "          File name: " << valueOrEmpty(m_filePath) << endl
-      << "          Base year: " << m_baseYear << endl
-      << "  Overflow shifting? " << fromBool(m_overflow) << endl
-      << "       Using stdout? " << fromBool(m_useStdOut) << endl
+      << "    Output formatter: " << m_formatter << endl
+      << "      Version format: " << m_format << endl
+      << "      Increment type: " << incrType << endl
+      << "           File name: " << valueOrEmpty(m_filePath) << endl
+      << "           Base year: " << m_baseYear << endl
+      << "  Create output file? " << fromBool(m_createFile) << endl
+      << "   Overflow shifting? " << fromBool(m_overflow) << endl
+      << "        Using stdout? " << fromBool(m_useStdOut) << endl
       << endl;
 }
 

@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 07:03:48 asmodai>
-// Revision:   24
+// Time-stamp: <Saturday Jun  1, 2013 09:36:20 asmodai>
+// Revision:   25
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -231,14 +231,15 @@ typedef struct _initialValues {
 class Settings
 {  
 private:
-  QString                m_filePath;  //!< Path to the file to output info to.
-  QString                m_format;    //!< Version number format string.
+  QString                m_filePath; //!< Path to the file to output info.
+  QString                m_format; //!< Version number format string.
   bool                   m_useStdOut; //!< Write output to stdout?
-  bool                   m_overflow;  //!< Overflow shifting enabled?
-  bool                   m_verbose;   //!< Verbose output?
-  unsigned int           m_baseYear;  //!< The base year of the project.
-  QVector<InitialValues> m_static;    //!< Static version numbers.
-  BuildTypes             m_incrType;  //!< Increment type.
+  bool                   m_createFile; //!< Create the output file.
+  bool                   m_overflow; //!< Overflow shifting enabled?
+  bool                   m_verbose; //!< Verbose output?
+  unsigned int           m_baseYear; //!< The base year of the project.
+  QVector<InitialValues> m_static; //!< Static version numbers.
+  BuildTypes             m_incrType; //!< Increment type.
   QString                m_formatter; //!< Output formatter type.
   
   
@@ -351,6 +352,16 @@ public:
   const QString &formatter(void) const
   {
     return m_formatter;
+  }
+  
+  /**
+   * @brief Create the output file if it does not exist?
+   * @returns @c true if the desired action is to create the file;
+   *          otherwise @c false is returned to signal an abort.
+   */
+  const bool &createFile(void) const
+  {
+    return m_createFile;
   }
 
   /**

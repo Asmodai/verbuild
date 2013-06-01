@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Thursday May 30, 2013 01:02:00 asmodai>
-// Revision:   41
+// Time-stamp: <Saturday Jun  1, 2013 05:04:36 asmodai>
+// Revision:   42
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -192,6 +192,12 @@ public:
   {
     m_formatterName = QString("<unknown>");
   }
+  
+  /**
+   * @brief Destructor method.
+   */
+  virtual ~Formatter()
+  {}
   
   /**
    * @brief Return the human-readable name for this formatter.

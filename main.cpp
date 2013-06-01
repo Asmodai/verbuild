@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 10:12:29 asmodai>
-// Revision:   5
+// Time-stamp: <Saturday Jun  1, 2013 10:18:15 asmodai>
+// Revision:   6
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -114,11 +114,6 @@ main(int argc, char **argv)
   // Force initial version numbers.
   for (int i = 0; i < 4; ++i) {
     InitialValues v = settings.initialVersion()[i];
-
-    std::cout << "i=" << i
-              << " v.use=" << std::boolalpha << v.use
-              << " v.value=" << v.value
-                 << std::endl;
 
     if (v.use) {
       switch (i) {

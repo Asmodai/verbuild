@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 12:19:20 asmodai>
-// Revision:   27
+// Time-stamp: <Saturday Jun  1, 2013 22:32:57 asmodai>
+// Revision:   28
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -227,7 +227,7 @@ Settings::Settings(int argc, char **argv)
                              false);
     TCLAP::SwitchArg createFile("c",
                                 "create",
-                                "Create the output file if it does not exist?",
+                                "Create the output file if it does not exist.",
                                 false);
     StringOpt formatter("t",
                         "formatter",
@@ -237,15 +237,22 @@ Settings::Settings(int argc, char **argv)
                         &allowedFmtrs);
     TCLAP::MultiArg<std::string> groups("g",
                                         "groups",
-                                        "Output group to generate",
+                                        "Output groups generated.",
                                         false,
                                         &allowedGroups);
+    StringOpt outPref("p",
+                      "prefix",
+                      "String to prepend to symbols created by the formatter.",
+                      false,
+                      "",
+                      "string");
     
     /* Add them in reverse alphabetic order. */
     cmd.add(baseYear);          // y
     cmd.add(verbose);           // v
     cmd.add(formatter);         // t
     cmd.add(overFlow);          // s
+    cmd.add(outPref);           // p
     cmd.add(fileName);          // o
     cmd.add(incrType);          // i
     cmd.add(groups);            // g
@@ -257,14 +264,15 @@ Settings::Settings(int argc, char **argv)
     m_static.fill(nullInitial, 4);
     
     /* Extract the options. */
-    m_filePath   = fromStdString(fileName.getValue());
-    m_format     = fromStdString(verFmt.getValue());
-    m_formatter  = fromStdString(formatter.getValue());
-    m_baseYear   = baseYear.getValue();
-    m_overflow   = overFlow.getValue();
-    m_verbose    = verbose.getValue();
-    m_createFile = createFile.getValue();
-    m_groups     = groups.getValue();
+    m_filePath     = fromStdString(fileName.getValue());
+    m_format       = fromStdString(verFmt.getValue());
+    m_formatter    = fromStdString(formatter.getValue());
+    m_baseYear     = baseYear.getValue();
+    m_overflow     = overFlow.getValue();
+    m_verbose      = verbose.getValue();
+    m_createFile   = createFile.getValue();
+    m_groups       = groups.getValue();
+    m_outputPrefix = fromStdString(outPref.getValue());
 
     /* Extract the incrementation type. */
     if (incrType.getValue().compare("date") == 0) {
@@ -399,6 +407,7 @@ Settings::dump(void) const
       << "      Increment type: " << incrType << endl
       << "           File name: " << valueOrEmpty(m_filePath) << endl
       << "           Base year: " << m_baseYear << endl
+      << "       Output prefix: " << m_outputPrefix << endl
       << "  Create output file? " << fromBool(m_createFile) << endl
       << "   Overflow shifting? " << fromBool(m_overflow) << endl
       << "        Using stdout? " << fromBool(m_useStdOut) << endl

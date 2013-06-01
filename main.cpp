@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 11:59:59 asmodai>
-// Revision:   8
+// Time-stamp: <Saturday Jun  1, 2013 22:41:27 asmodai>
+// Revision:   9
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -95,6 +95,9 @@ main(int argc, char **argv)
     // It exists, so let's use it.
     fmtr->setFileName(settings.filePath());
   }
+  
+  // Configure any prefix that might be needed.
+  fmtr->setPrefix(settings.outputPrefix());
   
   // If there is no filename set, nothing will happen here.
   fmtr->read(info);

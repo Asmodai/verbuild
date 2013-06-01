@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 11:00:31 asmodai>
-// Revision:   85
+// Time-stamp: <Saturday Jun  1, 2013 22:39:40 asmodai>
+// Revision:   86
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -202,6 +202,8 @@ public:
            << " * ----------------------------------------------------" << endl
            << " */"                                                     << endl
            << endl
+           << "#pragma once"                                            << endl
+           << endl
            << "#ifndef __VersionInfo_Header__"                          << endl
            << "#define __VersionInfo_Header__"                          << endl
            << endl;
@@ -218,44 +220,49 @@ public:
     if (m_flags & OutputBasic) {
       if (m_flags & OutputDoxygen) {
         stream << "/**"                                                 << endl
-               << " * @def VERSION_MAJOR"                               << endl
+               << " * @def " << upcasePrefix() << "VERSION_MAJOR"       << endl
                << " * @brief Major version number."                     << endl
                << " *"                                                  << endl
-               << " * @def VERSION_MINOR"                               << endl
+               << " * @def " << upcasePrefix() << "VERSION_MINOR"       << endl
                << " * @brief Minor version number."                     << endl
                << " *"                                                  << endl
-               << " * @def VERSION_BUILD"                               << endl
+               << " * @def " << upcasePrefix() << "VERSION_BUILD"       << endl
                << " * @brief Build number."                             << endl
                << " *"                                                  << endl
-               << " * @def VERSION_PATCH"                               << endl
+               << " * @def " << upcasePrefix() << "VERSION_PATCH"       << endl
                << " * @brief Patch number."                             << endl
                << " *"                                                  << endl
-               << " * @def VERSION_BASE_YEAR"                           << endl
+               << " * @def " << upcasePrefix() << "VERSION_BASE_YEAR"   << endl
                << " * @brief The year the project was started."         << endl
                << " *"                                                  << endl
-               << " * @def VERSION_DATE"                                << endl
+               << " * @def " << upcasePrefix() << "VERSION_DATE"        << endl
                << " * @brief The date this build was compiled."         << endl
                << " *"                                                  << endl
-               << " * @def VERSION_TIME"                                << endl
+               << " * @def " << upcasePrefix() << "VERSION_TIME"        << endl
                << " * @brief The time this build was compiled."         << endl
                << " *"                                                  << endl
-               << " * @def VERSION_STRING"                              << endl
+               << " * @def " << upcasePrefix() << "VERSION_STRING"      << endl
                << " * @brief String representation of the version."     << endl
                << " */"
                << endl;
       }
       
-      stream << "#define VERSION_MAJOR      " << info.major()           << endl
-             << "#define VERSION_MINOR      " << info.minor()           << endl
-             << "#define VERSION_BUILD      " << info.build()           << endl
-             << "#define VERSION_PATCH      " << info.patch()           << endl
+      stream << "#define " << upcasePrefix() << "VERSION_MAJOR      "
+                << info.major()                                         << endl
+             << "#define " << upcasePrefix() << "VERSION_MINOR      "
+                << info.minor()                                         << endl
+             << "#define " << upcasePrefix() << "VERSION_BUILD      "
+                << info.build()                                         << endl
+             << "#define " << upcasePrefix() << "VERSION_PATCH      "
+                << info.patch()                                         << endl
              << endl
-             << "#define VERSION_BASE_YEAR  " << info.baseYear()        << endl
-             << "#define VERSION_DATE       "
+             << "#define " << upcasePrefix() << "VERSION_BASE_YEAR  "
+                << info.baseYear()        << endl
+             << "#define " << upcasePrefix() << "VERSION_DATE       "
                 << "\"" << info.toDate().toString() << "\""             << endl
-             << "#define VERSION_TIME       "
+             << "#define " << upcasePrefix() << "VERSION_TIME       "
                 << "\"" << QTime::currentTime().toString() << "\""      << endl
-             << "#define VERSION_STRING     "
+             << "#define " << upcasePrefix() << "VERSION_STRING     "
                 << "\"" << info.toString() << "\""                      << endl
              << endl;
     }
@@ -283,13 +290,13 @@ public:
                << endl;
       }
           
-      stream << "static struct VersionNumber_s {"                       << endl
+      stream << "static struct " << prefix() << "VersionNumber_s {"     << endl
              << "  int baseYear;"                                       << endl
              << "  int major;"                                          << endl
              << "  int minor;"                                          << endl
              << "  int build;"                                          << endl
              << "  int patch;"                                          << endl
-             << "} VersionNumber = {"                                   << endl
+             << "} " << prefix() << "VersionNumber = {"                 << endl
              << "  " << info.baseYear() << ","                          << endl
              << "  " << info.major() << ","                             << endl
              << "  " << info.minor() << ","                             << endl

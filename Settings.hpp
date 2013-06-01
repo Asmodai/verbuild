@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 12:44:01 asmodai>
-// Revision:   31
+// Time-stamp: <Saturday Jun  1, 2013 22:25:25 asmodai>
+// Revision:   32
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -271,6 +271,9 @@ private:
    *
    * @var m_groups
    * @brief Groups to generate.
+   *
+   * @var m_outputPrefix
+   * @brief A value to prepend to symbols written by the formatter.
    */
   QString                  m_filePath;
   QString                  m_format;
@@ -283,6 +286,7 @@ private:
   BuildTypes               m_incrType;
   QString                  m_formatter;
   std::vector<std::string> m_groups;
+  QString                  m_outputPrefix;
   
   
 public:
@@ -412,6 +416,15 @@ public:
    *          Formatter to control what gets written to file.
    */
   OutputFlags outputFlags(void) const;
+  
+  /**
+   * @brief Return any prefix to be used by the formatter.
+   * @returns Either a string value or an empty string.
+   */
+  const QString &outputPrefix(void) const
+  {
+    return m_outputPrefix;
+  }
 
   /**
    * @brief Dump the settings to standard output.

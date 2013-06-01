@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 07:27:41 asmodai>
-// Revision:   19
+// Time-stamp: <Saturday Jun  1, 2013 07:53:21 asmodai>
+// Revision:   20
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -43,8 +43,14 @@
 #include <QtCore/QTextStream>
 
 #include <iostream>
+#include <string>
+#include <algorithm>
 
 #include "Settings.hpp"
+
+#define _EXTERNAL_
+#include "Formatter.hpp"
+#undef _EXTERNAL_
 
 /**
  * @brief Empty vector for convenience.
@@ -125,6 +131,7 @@ valueOrEmpty(const QString &string)
 }
 
 
+
 bool
 FormatConstraint::check(const std::string &value) const
 {
@@ -134,24 +141,47 @@ FormatConstraint::check(const std::string &value) const
   return re.exactMatch(val);
 }
 
+
 InitialValues nullInitial = { false, 0 };
+
 
 Settings::Settings(int argc, char **argv)
 {
   try {
     TCLAP::CmdLine cmd("", ' ', VERSION_STRING, true);
+    std::string fmtrMsg = std::string("Output formatter type: ");
     
     /* Constraint definitions. */
     FormatConstraint         allowedFmt(nullStrVec);
     YearConstraint           allowedYear(nullIntVec);
     std::vector<std::string> allowedIncrsVec;
+    std::vector<std::string> allowedFmatrsVec;
     
-    /* Constraint values. */
+    /* Incrementation constraint values. */
     allowedIncrsVec.push_back("simple");
     allowedIncrsVec.push_back("date");
     allowedIncrsVec.push_back("months");
     allowedIncrsVec.push_back("years");
     TCLAP::ValuesConstraint<std::string> allowedIncrs(allowedIncrsVec);
+    
+    /* Formatter constraint values. */
+    {
+      size_t cnt = FormatterFactory::size();
+
+      for (FormatterFnMap::iterator it = FormatterFactory::begin();
+           it != FormatterFactory::end();
+           ++it)
+      {
+        allowedFmatrsVec.push_back(it->first);
+        fmtrMsg += it->first + " = "
+            + FormatterFactory::nameForFormatter(it->first);
+
+        if (cnt > 1) {
+          fmtrMsg += ", ";
+        }
+      }
+    }
+    TCLAP::ValuesConstraint<std::string> allowedFmtrs(allowedFmatrsVec);
     
     /* Arguments. */
     StringOpt fileName("o",
@@ -186,10 +216,17 @@ Settings::Settings(int argc, char **argv)
                              "verbose",
                              "Verbose output.",
                              false);
+    StringOpt formatter("t",
+                        "formatter",
+                        fmtrMsg,
+                        true,
+                        "",
+                        &allowedFmtrs);
     
     /* Add them in reverse alphabetic order. */
     cmd.add(baseYear);          // y
     cmd.add(verbose);           // v
+    cmd.add(formatter);         // t
     cmd.add(overFlow);          // s
     cmd.add(fileName);          // o
     cmd.add(incrType);          // i
@@ -200,14 +237,15 @@ Settings::Settings(int argc, char **argv)
     m_static.fill(nullInitial, 4);
     
     /* Extract the options. */
-    m_filePath = fromStdString(fileName.getValue()); 
-    m_format   = fromStdString(verFmt.getValue());
-    m_baseYear = baseYear.getValue();
-    m_overflow = overFlow.getValue();
-    m_verbose  = verbose.getValue();
+    m_filePath  = fromStdString(fileName.getValue());
+    m_format    = fromStdString(verFmt.getValue());
+    m_formatter = fromStdString(formatter.getValue());
+    m_baseYear  = baseYear.getValue();
+    m_overflow  = overFlow.getValue();
+    m_verbose   = verbose.getValue();
 
     /* Extract the incrementation type. */
-    if (incrType.getValue().compare("date") == 0) {     
+    if (incrType.getValue().compare("date") == 0) {
       m_incrType = BuildByDate;
     } else if (incrType.getValue().compare("months") == 0) {
       m_incrType = BuildByMonths;
@@ -300,6 +338,7 @@ Settings::dump(void) const
   }
 
   out << endl << "Settings:" << endl << endl
+      << "   Output formatter: " << m_formatter << endl
       << "     Version format: " << m_format << endl
       << "     Increment type: " << incrType << endl
       << "          File name: " << valueOrEmpty(m_filePath) << endl

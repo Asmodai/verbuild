@@ -239,6 +239,7 @@ private:
   unsigned int           m_baseYear;  //!< The base year of the project.
   QVector<InitialValues> m_static;    //!< Static version numbers.
   BuildTypes             m_incrType;  //!< Increment type.
+  QString                m_formatter; //!< Output formatter type.
   
   
 public:
@@ -341,6 +342,15 @@ public:
   const QVector<InitialValues> initialVersion(void) const
   {
     return m_static;
+  }
+
+  /**
+   * @brief Return the output formatter.
+   * @return The name of the output formatter.
+   */
+  const QString &formatter(void) const
+  {
+    return m_formatter;
   }
 
   /**

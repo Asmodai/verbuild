@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 04:19:25 asmodai>
-// Revision:   5
+// Time-stamp: <Saturday Jun  1, 2013 06:55:04 asmodai>
+// Revision:   6
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -81,6 +81,9 @@ Q_DECLARE_FLAGS(BuildTypes, BuildType)
  *
  * @var IncrementMinorBuildAndPatch
  * @brief Increment the minor, build, and patch numbers.
+ *
+ * @var IncrementAll
+ * @brief Increment all the version numbers.
  */
 enum Increment {
   IncrementMajor = 0x01,
@@ -88,9 +91,10 @@ enum Increment {
   IncrementBuild = 0x04,
   IncrementPatch = 0x08,
   
-  IncrementBuildAndPatch = IncrementBuild | IncrementPatch,
-  IncrementMinorAndBuild = IncrementMinor | IncrementBuild,
-  IncrementMinorBuildAndPatch = IncrementMinorAndBuild | IncrementPatch
+  IncrementBuildAndPatch      = IncrementBuild | IncrementPatch,
+  IncrementMinorAndBuild      = IncrementMinor | IncrementBuild,
+  IncrementMinorBuildAndPatch = IncrementMinorAndBuild | IncrementPatch,
+  IncrementAll                = IncrementMajor | IncrementMinorBuildAndPatch
 };
 Q_DECLARE_FLAGS(Increments, Increment)
 

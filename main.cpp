@@ -12,46 +12,49 @@
 
 int main(int argc, char **argv)
 {
-  VersionInfo v1 = VersionInfo(10, 5, 8, 5, 1983, BuildSimple);
   VersionInfo v2 = VersionInfo();
   Formatter *foo = FormatterFactory::create("C");
   Settings settings(argc, argv);
 
-  qDebug() << "Formatter name: " << foo->formatterName();
-
-  if (settings.useStdOut()) {
-    qDebug() << "Using STDOUT.";
-  } else {
-    qDebug() << "Writing to" << settings.filePath();
+  if (settings.verbose()) {
+    settings.dump();
   }
 
-  settings.dump();
+  if (!settings.useStdOut()) {
+    foo->setFileName(settings.filePath());
+  }
 
-  foo->setFileName("foo.h");
   foo->read(v2);
-  v2.setBuildType(BuildByMonths);
-  v2.increment();
 
-  /*
-  v1.increment();
-  qDebug() << "Version - Base year: " << v1.baseYear() << endl
-           << "          Major    : " << v1.major() << endl
-           << "          Minor    : " << v1.minor() << endl
-           << "          Patch    : " << v1.patch() << endl
-           << "          Build    : " << v1.build() << endl;
-  */
+  if (settings.verbose()) {
+    QTextStream out(stdout);
 
-  qDebug() << "Incrementing." << endl << endl
-           << "Version - Base year: " << v2.baseYear() << endl
-           << "          Major    : " << v2.major() << endl
-           << "          Minor    : " << v2.minor() << endl
-           << "          Patch    : " << v2.patch() << endl
-           << "          Build    : " << v2.build() << endl
-           << "Built on " << v2.toDate().toString() << endl;
+    out << "Read in version:     " << v2.toString() << endl;
+  }
 
-  /*
-  foo->write(v2);
-  */
+  v2.setBuildType(settings.incrementType());
+  v2.increment(settings.incrementFields());
 
-  return 0; //a.exec();
+  for (int i = 0; i < 4; ++i) {
+    InitialValues v = settings.initialVersion()[i];
+
+    if (v.use) {
+      switch (i) {
+        case 0: v2.setMajor(v.value); break;
+        case 1: v2.setMinor(v.value); break;
+        case 2: v2.setBuild(v.value); break;
+        case 3: v2.setPatch(v.value); break;
+      }
+    }
+  }
+
+  if (settings.verbose()) {
+    QTextStream out(stdout);
+
+    out << "Writing out version: " << v2.toString() << endl;
+  }
+
+  //foo->write(v2);
+
+  return 0;
 }

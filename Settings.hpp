@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 06:17:00 asmodai>
-// Revision:   21
+// Time-stamp: <Saturday Jun  1, 2013 07:03:48 asmodai>
+// Revision:   24
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -42,6 +42,7 @@
  */
 
 #include <QtCore/QString>
+#include <QtCore/QVector>
 #include <QtCore/QFile>
 #include <QtCore/QDate>
 #include <QtCore/QRegExp>
@@ -218,6 +219,11 @@ public:
   
 };                              // class YearConstraint
 
+typedef struct _initialValues {
+  bool         use;
+  unsigned int value;
+} InitialValues;
+
 
 /**
  * @brief Command-line parser and program settings.
@@ -225,13 +231,14 @@ public:
 class Settings
 {  
 private:
-  QString    m_filePath;        //!< Path to the file to output info to.
-  QString    m_format;          //!< Version number format string.
-  bool       m_useStdOut;       //!< Write output to stdout?
-  bool       m_overflow;        //!< Overflow shifting enabled?
-  bool       m_verbose;         //!< Verbose output?
-  int        m_baseYear;        //!< The base year of the project.
-  BuildTypes m_incrType;        //!< Increment type.
+  QString                m_filePath;  //!< Path to the file to output info to.
+  QString                m_format;    //!< Version number format string.
+  bool                   m_useStdOut; //!< Write output to stdout?
+  bool                   m_overflow;  //!< Overflow shifting enabled?
+  bool                   m_verbose;   //!< Verbose output?
+  unsigned int           m_baseYear;  //!< The base year of the project.
+  QVector<InitialValues> m_static;    //!< Static version numbers.
+  BuildTypes             m_incrType;  //!< Increment type.
   
   
 public:
@@ -285,7 +292,7 @@ public:
    * @brief Return the base year of the project.
    * @returns An integer containing the base year.
    */
-  const int &baseYear(void) const
+  const unsigned int &baseYear(void) const
   {
     return m_baseYear;
   }
@@ -298,6 +305,12 @@ public:
   {
     return m_incrType;
   }
+  
+  /**
+   * @brief Ascertain which version fields should be incremented.
+   * @returns A bitmask containing the computed increment flags.
+   */
+  const Increments incrementFields(void);
   
   /**
    * @brief Do we do any integer overflow testing and shift
@@ -318,6 +331,16 @@ public:
   const bool &verbose(void) const
   {
     return m_verbose;
+  }
+  
+  /**
+   * @brief Return the initial version numbers (if any).
+   * @returns A QVector containing the version numbers read in from
+   *          the command line 'format' argument.
+   */
+  const QVector<InitialValues> initialVersion(void) const
+  {
+    return m_static;
   }
 
   /**

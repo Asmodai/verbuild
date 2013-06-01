@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 06:19:43 asmodai>
-// Revision:   13
+// Time-stamp: <Saturday Jun  1, 2013 07:27:41 asmodai>
+// Revision:   19
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -39,6 +39,7 @@
  */
 
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtCore/QTextStream>
 
 #include <iostream>
@@ -133,6 +134,7 @@ FormatConstraint::check(const std::string &value) const
   return re.exactMatch(val);
 }
 
+InitialValues nullInitial = { false, 0 };
 
 Settings::Settings(int argc, char **argv)
 {
@@ -194,6 +196,9 @@ Settings::Settings(int argc, char **argv)
     cmd.add(verFmt);            // f
     cmd.parse(argc, argv);
     
+    /* Fill the static vector here. */
+    m_static.fill(nullInitial, 4);
+    
     /* Extract the options. */
     m_filePath = fromStdString(fileName.getValue()); 
     m_format   = fromStdString(verFmt.getValue());
@@ -228,14 +233,75 @@ Settings::Settings(int argc, char **argv)
   }
 }                               // Settings::Settings()
 
+const Increments
+Settings::incrementFields(void)
+{
+  QStringList segments = m_format.split('.');
+  Increments  ret      = 0;
+
+  for (int i = 0; i < 4; ++i) {
+    if (segments.at(i).compare("+") == 0) {
+      /*
+       * Increment... now compute which segment.
+       */
+      switch (i) {
+        case 0: ret |= IncrementMajor; break;
+        case 1: ret |= IncrementMinor; break;
+        case 2: ret |= IncrementBuild; break;
+        case 3: ret |= IncrementPatch; break;
+      }
+    } else {
+      /*
+       * Not incrementing... but do we use a constant value?
+       */
+      if (segments.at(i).compare("*") != 0) {
+        /*
+         * Yes, we're using a constant value.
+         */
+        unsigned int val;
+        bool         ok;
+        
+        val = segments.at(i).toUInt(&ok, 10);
+        
+        if (ok) {
+          m_static[i].use = true;
+          m_static[i].value = val;
+        }
+      }
+      
+      /*
+       * Well, given we're not incrementing, doesn't matter if we're
+       * keeping the existing value or using a constant value, we
+       * don't want to increment... unset the right bits.
+       */
+      switch (i) {
+        case 0: ret &= ~IncrementMajor; break;
+        case 1: ret &= ~IncrementMinor; break;
+        case 2: ret &= ~IncrementBuild; break;
+        case 3: ret &= ~IncrementPatch; break;
+      }
+    }
+  }
+  
+  return ret;
+}
+
 void
 Settings::dump(void) const
 {
   QTextStream out(stdout);
+  QString incrType = QString();
+  
+  switch (m_incrType) {
+    case BuildByMonths: incrType = QString("Months"); break;
+    case BuildByYears:  incrType = QString("Years");  break;
+    case BuildByDate:   incrType = QString("Date");   break;
+    case BuildSimple:   incrType = QString("Simple"); break;
+  }
 
   out << endl << "Settings:" << endl << endl
       << "     Version format: " << m_format << endl
-      << "     Increment type: " << m_incrType << endl
+      << "     Increment type: " << incrType << endl
       << "          File name: " << valueOrEmpty(m_filePath) << endl
       << "          Base year: " << m_baseYear << endl
       << "  Overflow shifting? " << fromBool(m_overflow) << endl

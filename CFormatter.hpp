@@ -41,7 +41,11 @@
  * @brief Outputs version information to C/C++ header files.
  */
 
+#define _EXTERNAL_
 #include "Formatter.hpp"
+#undef _EXTERNAL_
+
+#define C_PRETTY "C/C++"
 
 /**
    @def DRE
@@ -93,7 +97,7 @@
 class CFormatter
   : public Formatter
 {
-  FORMATTER_PREAMBLE(CFormatter, "C/C++")
+  FORMATTER_PREAMBLE(CFormatter, C_PRETTY)
 
   
 public:
@@ -302,7 +306,7 @@ public:
   
 };                              // class COutput
 
-FORMATTER_REGISTER(CFormatter, "C")
+FORMATTER_REGISTER(CFormatter, "c", C_PRETTY)
 
 #endif // !__CFormatter_hpp__
 

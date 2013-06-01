@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 06:08:02 asmodai>
-// Revision:   44
+// Time-stamp: <Saturday Jun  1, 2013 08:07:45 asmodai>
+// Revision:   53
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -54,6 +54,7 @@
 #include <cassert>
 #include <vector>
 #include <utility>
+#include <algorithm>
 
 
 /**
@@ -350,7 +351,8 @@ typedef Formatter *(*FormatterCreateFn)(void);
 /**
  * @brief Map of formatter names and creation functions.
  */
-typedef std::map<std::string, FormatterCreateFn> FormatterMap;
+typedef std::map<std::string, FormatterCreateFn> FormatterFnMap;
+typedef std::map<std::string, std::string> FormatterNameMap;
 
 /**
  * @brief Formatter class factory.
@@ -358,8 +360,19 @@ typedef std::map<std::string, FormatterCreateFn> FormatterMap;
 class FormatterFactory
 {
 private:
-  static FormatterMap s_map;    //!< Map of names and creation functions.
-  static std::size_t  s_id;     //!< ID of output class within list. (internal)
+  /**
+   * @var s_mapFn
+   * @brief Map of names and creation functions.
+   *
+   * @var s_mapNames
+   * @brief Map of names and pretty names.
+   *
+   * @var s_id
+   * @brief ID of output class within list. (internal)
+   */
+  static FormatterFnMap   s_mapFn;
+  static FormatterNameMap s_mapNames;
+  static std::size_t      s_id;
   
   
 public:
@@ -367,6 +380,7 @@ public:
    * @brief Register a formatter class creation function.
    * @param creator The object creation method.
    * @param name The name of the formatting module.
+   * @param pretty The pretty name of the formatting module.
    * @returns The size of the name/class map after the new output
    *          class has been registered.
    * @note The return value is largely meaningless.
@@ -374,14 +388,19 @@ public:
    *       the human-readable name.
    */
   static std::size_t registerFormatter(FormatterCreateFn creator,
-                                       std::string       name)
+                                       std::string       name,
+                                       std::string       pretty)
   {
     assert(creator);
     assert(name.length() > 0);
+    assert(pretty.length() > 0);
     
-    s_map[name] = creator;
+    std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
+    s_mapFn[name]    = creator;
+    s_mapNames[name] = pretty;
     
-    return s_map.size();
+    return s_mapFn.size();
   }
   
   /**
@@ -396,19 +415,45 @@ public:
   {
     assert(name.length() > 0);
     
-    return (s_map[name])();
+    std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
+    return (s_mapFn[name])();
+  }
+  
+  static FormatterFnMap::size_type size(void)
+  {
+    return s_mapFn.size();
+  }
+  
+  static FormatterFnMap::iterator begin(void)
+  {
+    return s_mapFn.begin();
+  }
+  
+  static FormatterFnMap::iterator end(void)
+  {
+    return s_mapFn.end();
+  }
+
+  static std::string nameForFormatter(std::string formatter)
+  {
+    return s_mapNames[formatter];
   }
   
 };                              // class FormatterFactory
 
+#ifndef _EXTERNAL_
 /* Initial value. */
-FormatterMap FormatterFactory::s_map = FormatterMap();
+FormatterFnMap FormatterFactory::s_mapFn      = FormatterFnMap();
+FormatterNameMap FormatterFactory::s_mapNames = FormatterNameMap();
+#endif
 
 /**
    @def FORMATTER_REGISTER
    @brief Register an output formatter module.
    @param TYPE The type of the formatter module.
    @param NAME The name of the formatter module.
+   @param PRETTY The pretty name of the formatter module.
    @note The name given here is not the same as the human-readable
          name used by @c FORMATTER_PREAMBLE, so please be aware of this.
    @see FORMATTER_PREAMBLE
@@ -425,9 +470,9 @@ FormatterMap FormatterFactory::s_map = FormatterMap();
    FORMATTER_REGISTER(FooFormatter, "Foo")
    @endcode
  */
-#define FORMATTER_REGISTER(TYPE, NAME)                  \
+#define FORMATTER_REGISTER(TYPE, NAME, PRETTY)          \
   const std::size_t TYPE::s_id =                        \
-    FormatterFactory::registerFormatter(&create, NAME);
+    FormatterFactory::registerFormatter(&create, NAME, PRETTY);
 
 #endif // !__Formatter_hpp__
 

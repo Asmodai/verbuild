@@ -4,7 +4,7 @@
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
 // Time-stamp: <Saturday Jun  1, 2013 10:29:50 asmodai>
-// Revision:   54
+// Revision:   55
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -52,6 +52,7 @@
 #include "VersionInfo.hpp"
 #include "version.hpp"
 
+#include <map>
 #include <cassert>
 #include <vector>
 #include <utility>

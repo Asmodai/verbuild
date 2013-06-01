@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 09:38:00 asmodai>
-// Revision:   21
+// Time-stamp: <Saturday Jun  1, 2013 10:11:29 asmodai>
+// Revision:   22
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -200,7 +200,7 @@ Settings::Settings(int argc, char **argv)
                     "base-year",
                     "The year the project was started.",
                     false,
-                    1970,
+                    0,
                     &allowedYear);
     StringOpt incrType("i",
                        "increment",
@@ -334,7 +334,7 @@ void
 Settings::dump(void) const
 {
   QTextStream out(stdout);
-  QString incrType = QString();
+  QString     incrType = QString();
   
   switch (m_incrType) {
     case BuildByMonths: incrType = QString("Months"); break;

@@ -55,7 +55,8 @@ is composed using the following method:
 For example, let us imagine we have a project started in 2005. This project
 goes along quite nicely, and we're compiling it from source on September 4th,
 2007.  2 years after the start year.  The build number would be 20904.
-   
+
+
 Date incrementation
 -------------------
 The second-simplest method, otherwise known as ISO 8601. The build number is
@@ -64,7 +65,6 @@ just the date encoded as yyyymmdd.
 
 Output
 ------
-
 The verbuild tool can, as of right now, only handle output to C/C++ files, but
 even then it has two ways of outputting information -- #define statements and
 a structure.
@@ -74,15 +74,13 @@ Hopefully more output formats will be added in the near future.
 
 Input
 -----
-
 The verbuild tool can parse existing headers for version information.  To see
 what is required, please take a look at the CFormatting.hpp file.
 
 
 Flags and options
 -----------------
-
-USAGE:
+Usage:
 
     verbuild  [-c] [-f <x.x.x.x>] [-g <basic|struct|doxygen|all>] ...
               [-i <simple|date|months|years>] [-o <string>] [-s] -t <c> [-v]
@@ -127,6 +125,32 @@ Where:
     
     -h,  --help
        Displays usage information and exits.
+
+
+Format specifier
+----------------
+The format required for a version number is 'x.x.x.x', where x can be one of
+the following:
+   
+   Format | Description
+   -------|--------------------------------
+   *      | Number component is left as-is.
+   +      | Number component is incremented.
+   [0-9]+ | Number component is a constant.
+   
+As an example, if we have a format string of `10.*.+.*`, then the version
+number will contain the following components:
+   
+   Component | Description
+   ----------|---------------------------
+   10        | The major version will always have the value 10.
+   *         | The minor number will be left as-is.
+   +         | The patch number will be incremented.
+   *         | The build number will be left as-is. 
+   
+Therefore, if the version number is read in from a header as `5.5.8.1`, then
+after processing, the format will result in a new version number of
+`10.5.9.1`.
 
 
 Examples

@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 02:48:37 asmodai>
-// Revision:   28
+// Time-stamp: <Saturday Jun  1, 2013 05:43:01 asmodai>
+// Revision:   32
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -46,6 +46,7 @@
 #include <QtCore/QString>
 
 #include "Enums.hpp"
+#include <limits.h>
 
 
 /**
@@ -109,12 +110,13 @@
 class VersionInfo
 {
 private:
-  int        m_major;           //!< Major version number.
-  int        m_minor;           //!< Minor version number.
-  int        m_build;           //!< Build number.
-  int        m_patch;           //!< Patch or service pack number.
-  int        m_baseYear;        //!< Base year for the project.
-  BuildTypes m_buildType;       //!< Incrementation type for build number.
+  unsigned int m_major;         //!< Major version number.
+  unsigned int m_minor;         //!< Minor version number.
+  unsigned int m_build;         //!< Build number.
+  unsigned int m_patch;         //!< Patch or service pack number.
+  unsigned int m_baseYear;      //!< Base year for the project.
+  BuildTypes   m_buildType;     //!< Incrementation type for build number.
+  bool         m_overflow;      //!< Overflow checking enabled?
   
   
 public:
@@ -128,7 +130,8 @@ public:
       m_build(0),
       m_patch(0),
       m_baseYear(1970),
-      m_buildType(BuildSimple)
+      m_buildType(BuildSimple),
+      m_overflow(false)
   {}
   
   /**
@@ -141,25 +144,26 @@ public:
    * @param type Incrementation type.
    * @see BuildType
    */
-  VersionInfo(const int major,
-              const int minor,
-              const int build       = 0,
-              const int patch       = 0, 
-              const int baseYear    = 1970,
-              const BuildTypes type = BuildSimple)
+  VersionInfo(const unsigned int major,
+              const unsigned int minor,
+              const unsigned int build    = 0,
+              const unsigned int patch    = 0, 
+              const unsigned int baseYear = 1970,
+              const BuildTypes   type     = BuildSimple)
     : m_major(major),
       m_minor(minor),
       m_build(build),
       m_patch(patch),
       m_baseYear(baseYear),
-      m_buildType(type)
+      m_buildType(type),
+      m_overflow(false)
   {}
   
   /**
    * @brief Return the major version number.
    * @returns The major version number.
    */
-  int const &major(void) const
+  unsigned int const &major(void) const
   {
     return m_major;
   }
@@ -168,7 +172,7 @@ public:
    * @brief Set the major version number.
    * @param value The value to set.
    */
-  void setMajor(const int value)
+  void setMajor(const unsigned int value)
   {
     m_major = value;
   }
@@ -177,7 +181,7 @@ public:
    * @brief Return the minor version number.
    * @returns The minor version number.
    */
-  int const &minor(void) const
+  unsigned int const &minor(void) const
   {
     return m_minor;
   }
@@ -186,7 +190,7 @@ public:
    * @brief Set the minor version number.
    * @param value The value to set.
    */
-  void setMinor(const int value)
+  void setMinor(const unsigned int value)
   {
     m_minor = value;
   }
@@ -195,7 +199,7 @@ public:
    * @brief Return the build number.
    * @returns The build number.
    */
-  int const &build(void) const
+  unsigned int const &build(void) const
   {
     return m_build;
   }
@@ -204,7 +208,7 @@ public:
    * @brief Set the build number.
    * @param value The value to set.
    */
-  void setBuild(const int value)
+  void setBuild(const unsigned int value)
   {
     m_build = value;
   }
@@ -213,7 +217,7 @@ public:
    * @brief Return the patch or service pack number.
    * @returns The patch or service pack number.
    */
-  int const &patch(void) const
+  unsigned int const &patch(void) const
   {
     return m_patch;
   }
@@ -222,7 +226,7 @@ public:
    * @brief Set the patch or service pack number.
    * @param value The value to set.
    */
-  void setPatch(const int value)
+  void setPatch(const unsigned int value)
   {
     m_patch = value;
   }
@@ -231,7 +235,7 @@ public:
    * @brief Return the base year of the project.
    * @returns The base year of the project.
    */
-  int const &baseYear(void) const
+  unsigned int const &baseYear(void) const
   {
     return m_baseYear;
   }
@@ -240,7 +244,7 @@ public:
    * @brief Set the base year of the project.
    * @param value The value to set.
    */
-  void setBaseYear(const int value)
+  void setBaseYear(const unsigned int value)
   {
     m_baseYear = value;
   }
@@ -272,11 +276,11 @@ public:
   void increment(const Increments what = IncrementMinorAndBuild)
   {
     if (what & IncrementMajor) {
-      m_major++;
+      m_major = incr(m_major);
     }
     
     if (what & IncrementMinor) {
-      m_minor++;
+      m_minor = incr(m_minor);
     }
     
     if (what & IncrementBuild) {
@@ -284,7 +288,7 @@ public:
     }
     
     if (what & IncrementPatch) {
-      m_patch++;
+      m_patch = incr(m_patch);
     }
   }
   
@@ -317,21 +321,21 @@ public:
       switch (m_buildType) {
         case BuildByDate:
           {
-            QString buf = QString(m_build);
-            QRegExp re("(\\d{4,4})(\\d{2,2})(\\d{2,2})");
-            int     pos = 0;
-            int     dd  = 0;
-            int     mm  = 0;
-            int     yy  = 0;
-            bool    ok  = true;
+            QString      buf = QString(m_build);
+            QRegExp      re("(\\d{4,4})(\\d{2,2})(\\d{2,2})");
+            unsigned int pos = 0;
+            unsigned int dd  = 0;
+            unsigned int mm  = 0;
+            unsigned int yy  = 0;
+            bool         ok  = true;
             
             while ((pos = re.indexIn(buf, pos)) != -1)
             {
               pos += re.matchedLength();
               
-              yy = re.cap(1).toInt(&ok, 10);
-              mm = re.cap(2).toInt(&ok, 10);
-              dd = re.cap(3).toInt(&ok, 10);
+              yy = re.cap(1).toUInt(&ok, 10);
+              mm = re.cap(2).toUInt(&ok, 10);
+              dd = re.cap(3).toUInt(&ok, 10);
             }
             
             if (ok) {
@@ -342,21 +346,21 @@ public:
           
         case BuildByYears:
           {
-            QString buf = QString(m_build);
-            QRegExp re("(\\d+)(\\d{2,2})(\\d{2,2})");
-            int     pos = 0;
-            int     dd  = 0;
-            int     mm  = 0;
-            int     yy  = 0;
-            bool    ok  = true;
+            QString      buf = QString(m_build);
+            QRegExp      re("(\\d+)(\\d{2,2})(\\d{2,2})");
+            unsigned int pos = 0;
+            unsigned int dd  = 0;
+            unsigned int mm  = 0;
+            unsigned int yy  = 0;
+            bool         ok  = true;
             
             while ((pos = re.indexIn(buf, pos)) != -1)
             {
               pos += re.matchedLength();
               
-              dd = re.cap(1).toInt(&ok, 10);
-              mm = re.cap(2).toInt(&ok, 10);
-              yy = re.cap(3).toInt(&ok, 10);
+              dd = re.cap(1).toUInt(&ok, 10);
+              mm = re.cap(2).toUInt(&ok, 10);
+              yy = re.cap(3).toUInt(&ok, 10);
             }
             
             if (ok) {
@@ -368,7 +372,7 @@ public:
         case BuildByMonths:
           date.setDate(m_baseYear,
                        1,
-                       (int)m_build % 100);
+                       (unsigned int)m_build % 100);
           date = date.addMonths((m_build / 100) - 1);
           break;
       }
@@ -409,6 +413,29 @@ public:
   
 private:
   
+  unsigned int const incr(const unsigned int lhs) const
+  {
+    if (m_overflow) {
+      if ((UINT_MAX - 1) < lhs) {
+        return UINT_MAX;
+      }
+    }
+     
+    return lhs + 1;
+  }
+  
+  unsigned int const add(const unsigned int lhs,
+                         const unsigned int rhs) const
+  {
+    if (m_overflow) {
+      if ((UINT_MAX - rhs) < lhs) {
+        return UINT_MAX;
+      }
+    }
+    
+    return lhs + rhs;
+  }
+  
   /**
    * @brief Increments the build number.
    * @see BuildType
@@ -418,15 +445,15 @@ private:
   void incrementBuild()
   {
     switch (m_buildType) {
-      case BuildSimple:   // Simple incrementing.
+      case BuildSimple:         // Simple incrementing.
         m_build++;
         break;
         
-      case BuildByMonths: // Increment by months.
+      case BuildByMonths:       // Increment by months.
         if (m_baseYear > 0) {
-          m_build = (((((QDate::currentDate().year() - m_baseYear) * 12)
-                       + QDate::currentDate().month()) * 100)
-                     + QDate::currentDate().day());
+          m_build = add((QDate::currentDate().year() - m_baseYear) * 12,
+                        QDate::currentDate().month());
+          m_build = add(m_build * 100, QDate::currentDate().day());
         }
         break;
         
@@ -440,7 +467,7 @@ private:
                       QDate::currentDate().month(),
                       QDate::currentDate().day());
           
-          m_build = str.toInt(&ok, 10);
+          m_build = str.toUInt(&ok, 10);
           
           if (!ok) {
             m_build = 0;
@@ -452,7 +479,7 @@ private:
         {
           bool ok;
           
-          m_build = QDate::currentDate().toString("yyyyMMdd").toInt(&ok, 10);
+          m_build = QDate::currentDate().toString("yyyyMMdd").toUInt(&ok, 10);
           
           if (!ok) {
             m_build = 0;

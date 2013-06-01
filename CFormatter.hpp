@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 02:45:42 asmodai>
-// Revision:   80
+// Time-stamp: <Saturday Jun  1, 2013 05:58:39 asmodai>
+// Revision:   81
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -118,19 +118,22 @@ public:
        */
       {
         QRegExp re(SRE);
-        int     pos = 0;
+        int  pos = 0;
+        bool ok  = false;
         
         while ((pos = re.indexIn(buffer, pos)) != -1)
         {  
           pos += re.matchedLength();
           
-          info.setBaseYear(re.cap(1).toInt());
-          info.setMajor(re.cap(2).toInt());
-          info.setMinor(re.cap(3).toInt());
-          info.setBuild(re.cap(4).toInt());
-          info.setPatch(re.cap(5).toInt());
+          info.setBaseYear(re.cap(1).toUInt(&ok, 10));
+          info.setMajor(re.cap(2).toUInt(&ok, 10));
+          info.setMinor(re.cap(3).toUInt(&ok, 10));
+          info.setBuild(re.cap(4).toUInt(&ok, 10));
+          info.setPatch(re.cap(5).toUInt(&ok, 10));
           
-          found = true;
+          if (ok) {
+            found = true;
+          }
         }
       }
       
@@ -141,9 +144,10 @@ public:
        */
       if (!found) {
         QRegExp re(DRE);
-        int     cnt = 0;
+        int     cnt  = 0;
         int     pos  = 0;
         int     find = 0;
+        bool    ok   = false;
         
         while ((pos = re.indexIn(buffer, pos)) != -1)
         {
@@ -151,19 +155,19 @@ public:
           pos += re.matchedLength();
           
           if (re.cap(1).contains("BASE_YEAR")) {
-            info.setBaseYear(re.cap(2).toInt());
+            info.setBaseYear(re.cap(2).toUInt(&ok, 10));
             find++;
           } else if (re.cap(1).contains("MAJOR")) {
-            info.setMajor(re.cap(2).toInt());
+            info.setMajor(re.cap(2).toUInt(&ok, 10));
             find++;
           } else if (re.cap(1).contains("MINOR")) {
-            info.setMinor(re.cap(2).toInt());
+            info.setMinor(re.cap(2).toUInt(&ok, 10));
             find++;
           } else if (re.cap(1).contains("BUILD")) {
-            info.setBuild(re.cap(2).toInt());
+            info.setBuild(re.cap(2).toUInt(&ok, 10));
             find++;
           } else if (re.cap(1).contains("PATCH")) {
-            info.setPatch(re.cap(2).toInt());
+            info.setPatch(re.cap(2).toUInt(&ok, 10));
             find++;
           }
         }
@@ -172,7 +176,7 @@ public:
          * Only mark it as found if all 5 defines can be found in the
          * file.
          */
-        if (find == 5) {
+        if (find == 5 && ok) {
           found = true;
         }
       }

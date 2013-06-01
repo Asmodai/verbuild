@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2013 Paul Ward <asmodai@gmail.com>
 //
-// Time-stamp: <Saturday Jun  1, 2013 09:38:34 asmodai>
-// Revision:   3
+// Time-stamp: <Saturday Jun  1, 2013 10:12:29 asmodai>
+// Revision:   4
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
@@ -115,6 +115,11 @@ main(int argc, char **argv)
         case 3: info.setPatch(v.value); break;
       }
     }
+  }
+
+  // Override the base year, if required.
+  if (settings.baseYear() > 0) {
+    info.setBaseYear(settings.baseYear());
   }
   
   // Perform the increment.

@@ -12,7 +12,7 @@
 
 int main(int argc, char **argv)
 {
-  VersionInfo v1 = VersionInfo(10, 5, 8, 5, 1983, BuildType::Simple);
+  VersionInfo v1 = VersionInfo(10, 5, 8, 5, 1983, BuildSimple);
   VersionInfo v2 = VersionInfo();
   Formatter *foo = FormatterFactory::create("C");
   Settings settings(argc, argv);
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 
   foo->setFileName("foo.h");
   foo->read(v2);
-  v2.setBuildType(BuildType::ByMonths);
+  v2.setBuildType(BuildByMonths);
   v2.increment();
 
   /*

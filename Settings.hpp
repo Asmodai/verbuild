@@ -304,7 +304,7 @@ public:
    * @returns @c true if overflow detection and shifting is desired;
    *          otherwise return @c false.
    */
-  const int &overflowShift(void) const
+  const bool &overflowShift(void) const
   {
     return m_overflow;
   }

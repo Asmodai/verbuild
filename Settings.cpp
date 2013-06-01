@@ -198,13 +198,13 @@ Settings::Settings(int argc, char **argv)
 
     /* Extract the incrementation type. */
     if (incrType.getValue().compare("date") == 0) {     
-      m_incrType = BuildType::ByDate;
+      m_incrType = BuildByDate;
     } else if (incrType.getValue().compare("months") == 0) {
-      m_incrType = BuildType::ByMonths;
+      m_incrType = BuildByMonths;
     } else if (incrType.getValue().compare("years") == 0) {
-      m_incrType = BuildType::ByYears;
+      m_incrType = BuildByYears;
     } else {
-      m_incrType = BuildType::Simple;
+      m_incrType = BuildSimple;
     }
     
     /* Are we to use stdout? */

@@ -128,7 +128,7 @@ public:
       m_build(0),
       m_patch(0),
       m_baseYear(1970),
-      m_buildType(BuildType::Simple)
+      m_buildType(BuildSimple)
   {}
   
   /**
@@ -146,7 +146,7 @@ public:
               const int build       = 0,
               const int patch       = 0, 
               const int baseYear    = 1970,
-              const BuildTypes type = BuildType::Simple)
+              const BuildTypes type = BuildSimple)
     : m_major(major),
       m_minor(minor),
       m_build(build),
@@ -269,21 +269,21 @@ public:
    *             incremented.
    * @see Increment
    */
-  void increment(const Increments what = Increment::MinorAndBuild)
+  void increment(const Increments what = IncrementMinorAndBuild)
   {
-    if (what & Increment::Major) {
+    if (what & IncrementMajor) {
       m_major++;
     }
     
-    if (what & Increment::Minor) {
+    if (what & IncrementMinor) {
       m_minor++;
     }
     
-    if (what & Increment::Build) {
+    if (what & IncrementBuild) {
       incrementBuild();
     }
     
-    if (what & Increment::Patch) {
+    if (what & IncrementPatch) {
       m_patch++;
     }
   }
@@ -315,7 +315,7 @@ public:
     
     if (m_build > 0 && m_baseYear > 0) {
       switch (m_buildType) {
-        case BuildType::ByDate:
+        case BuildByDate:
           {
             QString buf = QString(m_build);
             QRegExp re("(\\d{4,4})(\\d{2,2})(\\d{2,2})");
@@ -340,7 +340,7 @@ public:
           }
           break;
           
-        case BuildType::ByYears:
+        case BuildByYears:
           {
             QString buf = QString(m_build);
             QRegExp re("(\\d+)(\\d{2,2})(\\d{2,2})");
@@ -365,7 +365,7 @@ public:
           }
           break;
           
-        case BuildType::ByMonths:
+        case BuildByMonths:
           date.setDate(m_baseYear,
                        1,
                        (int)m_build % 100);
@@ -418,11 +418,11 @@ private:
   void incrementBuild()
   {
     switch (m_buildType) {
-      case BuildType::Simple:   // Simple incrementing.
+      case BuildSimple:   // Simple incrementing.
         m_build++;
         break;
         
-      case BuildType::ByMonths: // Increment by months.
+      case BuildByMonths: // Increment by months.
         if (m_baseYear > 0) {
           m_build = (((((QDate::currentDate().year() - m_baseYear) * 12)
                        + QDate::currentDate().month()) * 100)
@@ -430,7 +430,7 @@ private:
         }
         break;
         
-      case BuildType::ByYears:  // Increment by years.
+      case BuildByYears:  // Increment by years.
         {
           QString str = QString();
           bool    ok;
@@ -448,7 +448,7 @@ private:
         }
         break;
         
-      case BuildType::ByDate:   // Increment by date.
+      case BuildByDate:   // Increment by date.
         {
           bool ok;
           

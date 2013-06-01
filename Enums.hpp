@@ -50,47 +50,47 @@
  * component.
  */
 enum BuildType {
-  ByMonths,                     //!< Use month difference.
-  ByYears,                      //!< Use month and day.
-  ByDate,                       //!< Encode date in ISO 8601 format.
-  Simple                        //!< Simply increment the number.
-};                              // 
+  BuildByMonths,                //!< Use month difference.
+  BuildByYears,                 //!< Use month and day.
+  BuildByDate,                  //!< Encode date in ISO 8601 format.
+  BuildSimple                   //!< Simply increment the number.
+};
 Q_DECLARE_FLAGS(BuildTypes, BuildType)
 
 /**
  * @enum Increment
  * @brief Incrementation types.
  *
- * @var Major
+ * @var IncrementMajor
  * @brief Increment the major version number.
  *
- * @var Minor
+ * @var IncrementMinor
  * @brief Increment the minor version number.
  *
- * @var Build
+ * @var IncrementBuild
  * @brief Increment the build number.
  *
- * @var Patch
+ * @var IncrementPatch
  * @brief Increment the patch number.
  *
- * @var BuildAndPatch
+ * @var IncrementBuildAndPatch
  * @brief Increment both the build and patch numbers
  *
- * @var MinorAndBuild
+ * @var IncrementMinorAndBuild
  * @brief Increment both the minor and build numbers.
  *
- * @var MinorBuildAndPatch
+ * @var IncrementMinorBuildAndPatch
  * @brief Increment the minor, build, and patch numbers.
  */
 enum Increment {
-  Major = 0x01,
-  Minor = 0x02,
-  Build = 0x04,
-  Patch = 0x08,
+  IncrementMajor = 0x01,
+  IncrementMinor = 0x02,
+  IncrementBuild = 0x04,
+  IncrementPatch = 0x08,
   
-  BuildAndPatch = Build | Patch,
-  MinorAndBuild = Minor | Build,
-  MinorBuildAndPatch = Minor | Build | Patch
+  IncrementBuildAndPatch = IncrementBuild | IncrementPatch,
+  IncrementMinorAndBuild = IncrementMinor | IncrementBuild,
+  IncrementMinorBuildAndPatch = IncrementMinorAndBuild | IncrementPatch
 };
 Q_DECLARE_FLAGS(Increments, Increment)
 

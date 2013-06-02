@@ -308,4 +308,6 @@ The resulting file will look like this:
     
     #endif // !__VersionInfo_Header__
 
+For an example on using verbuild with Windows resource files, see
+resource.rc.
 

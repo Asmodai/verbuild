@@ -7,6 +7,7 @@ Version number auto-incrementing and build numbering tool.
 
 
 Building From Source
+====================
 
 Requirements
 ------------
@@ -31,7 +32,6 @@ verbuild has been tested with the following compilers:
  * GCC 5.4.0,
  * Microsoft Visual Studio 2017 with version 19.11.25547 of the compiler,
  * Clang **not yet**
-
 
 Building
 --------
@@ -61,6 +61,112 @@ ctest --verbose
 ```
 
 With Visual Studio, start the tests via `CMake > Run Tests > CMakeLists.txt`.
+
+
+Contributing
+============
+
+You are welcome to contribute to this project, but please keep the following
+guidelines in mind:
+
+Indentation
+-----------
+
+Any code submitted for consideration must match the existing indentation scheme
+used in the source code.  This is a modification of the One True Brace style,
+and can be summarised thusly:
+
+``` c++
+namespace SomeNamespace
+{
+
+  static
+  int
+  some_standard_c_function(void *some_pointer,
+                           int   some_value)
+  {
+    int   some_thing      = 12;
+    void *another_pointer = nullptr;
+    
+    if (some_pointer == nullptr) {
+      /* Complain loudly and send flames via email. */
+    }
+    
+    if (some_value > 12 &&
+        (some_value <= 41 || some_value == meaning_of_life))
+    {
+      /* Huh? */
+    }
+    
+    /* some function body */
+    
+    return -12;
+  }
+  
+  class SomeClass
+    : public SomeInheritedClass
+  {
+  private
+    bool some_private_variable_
+      
+  public:
+    SomeClass();
+    ~SomeClass();
+    
+    const bool &get_something() const;
+    void        set_something(const bool);
+    
+    void do_something();
+  };
+
+  /* ... */
+  
+  void
+  SomeClass::do_something()
+  {
+    switch (some_value) {
+      case HERP:
+        /* Do something. */
+        break;
+        
+      case DERP:
+        /* Do something else. */
+        break;
+        
+      default:
+        /* Uh oh. */
+    }
+  }
+
+}
+```
+
+Header-only class implementations should strive for clarity, so that others do
+not have to filter lots of text in order to see your interface.
+
+Pull Requests
+-------------
+
+Pull requests without notification of some kind will probably go unnoticed for
+several years.  This is a project with quite a low submission rate, so if you do
+send a PR, please drop me an email.
+
+PRs without descriptive commit messages will probably be rejected.
+
+If the PR's intent is to fix a bug, please ensure the bug is listed in the issue
+tracker first, and do not close an issue after submitting a PR as that is
+something I will do should the PR be accepted.
+
+Feature Requests
+----------------
+
+This project is intended to scratch a specific itch, but I am open to new ideas
+-- within reason, this is a version building tool, not a programming language!
+
+If you have an idea for an enhancement, please open an issue with the
+*enhancement* label and drop me an email too.
+
+Other requests will be evaluated on a case-by-case version.
 
 
 Incrementing

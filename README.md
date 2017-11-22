@@ -1,8 +1,70 @@
+Hi, Emacs: -*- mode: gfm -*-
+
 verbuild
 ========
 
 Version number auto-incrementing and build numbering tool.
 
+
+Building From Source
+
+Requirements
+------------
+
+verbuild requires Boost 1.65.0 or later.  This might mean that you have to build
+Boost from source on your system.
+
+If there are Boost binaries provided for your system, you require at least the
+following libraries:
+
+  * program_options
+  * date_time
+  * unit_test_framework
+
+CMake 2.6 or higher is required in order to build the software, though CMake
+3.5.1 or higher is highly recommended.
+
+You also require a C++ compiler that is capable of at least C++14.
+
+verbuild has been tested with the following compilers:
+
+ * GCC 5.4.0,
+ * Microsoft Visual Studio 2017 with version 19.11.25547 of the compiler,
+ * Clang **not yet**
+
+
+Building
+--------
+
+To build verbuild on a Unix or Unix-like, issue the following commands:
+``` shell
+mkdir build
+cd build
+cmake ..
+make
+```
+To build in Windows, either execute cmake in a similar manner from a shell, or
+use cmake-gui.
+
+If you wish to use Visual Studio 2017, then open the verbuild folder with
+`Open > Folder`, then use the `CMake` menu to generate a cache
+`CMake > Cache > Generate > CMakeLists.txt`, and then build the project via
+`CMake > Build All`.
+
+If you wish to run the tests, then on a Unix or Unix-like execute
+``` shell
+make test
+```
+or, if you prefer a more verbose output
+``` shell
+ctest --verbose
+```
+
+With Visual Studio, start the tests via `CMake > Run Tests > CMakeLists.txt`.
+
+
+Incrementing
+============
 
 This tool maintains version numbers with 4 components:
 

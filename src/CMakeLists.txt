@@ -34,7 +34,6 @@ add_executable(
         "verbuild/Console.cpp"
         "verbuild/IncrModeParser.cpp"
         "verbuild/VersionInfo.cpp"
-        "verbuild/Settings.cpp"
         "verbuild/Opts.cpp"
         "verbuild/main.cpp"
         "verbuild/resource.rc"

@@ -49,7 +49,7 @@ class IncrModeParser
 {
 private:
   IncrementMode mode_;
-
+  std::string   str_;
 
 public:
   IncrModeParser();
@@ -58,9 +58,13 @@ public:
 
   const IncrementMode &get_mode() const;
   void set_mode(const IncrementMode);
+  void set_mode(const std::string &);
+
+  const std::string &to_string() const;
 
 private:
   void parse(const std::string &);
+  void cache_string();
 
 public:
   friend std::ostream &operator<<(std::ostream &, const IncrModeParser &);

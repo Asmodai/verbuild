@@ -55,11 +55,18 @@ get_git_head_revision(GIT_REFSPEC GIT_SHA1)
 add_definitions(-D_GIT_SHA1="${GIT_SHA1}")
 
 # Boost
-#add_definitions(-DBOOST_ALL_DYN_LINK)
-set(Boost_USE_STATIC_LIBS ON)
+if(UNIX)
+  add_definitions(-DBOOST_ALL_DYN_LINK)
+  set(Boost_USE_STATIC_LIBS OFF)
+else()
+  set(Boost_USE_STATIC_LIBS ON)
+endif()
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost 1.65.0 REQUIRED
+find_package(Boost 1.65.0 REQUIRED COMPONENTS
+  system
+  filesystem
+  locale
   program_options
   date_time
   unit_test_framework)

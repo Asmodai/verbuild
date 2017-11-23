@@ -37,13 +37,38 @@
 #ifndef _Opts_hpp_
 #define _Opts_hpp_
 
+#include "Support.hpp"
+#include "Enums.hpp"
+#include "Utils.hpp"
+#include "IncrModeParser.hpp"
+
+#include <string>
+
+#include <boost/program_options.hpp>
+namespace po = boost::program_options;
+
 class Opts
 {
+private:
+  po::variables_map       vmap_;
+  po::options_description desc_;
+
+private:
+  std::uint32_t base_year_;
+  IncrementMode incr_mode_;
+
 public:
   Opts();
+  Opts(const Opts &) = delete;
   ~Opts();
 
   void parse(int, char **);
+
+  const std::uint32_t  get_base_year() const;
+  const IncrementMode &get_increment_mode() const;
+
+private:
+  void show_help() const;
 };
 
 #endif // !_Opts_hpp_

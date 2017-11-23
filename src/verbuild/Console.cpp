@@ -36,6 +36,11 @@
 #include "Console.hpp"
 
 #include <iostream>
+#include <sstream>
+#include <string>
+#include <cstring>
+
+using namespace std;
 
 #define ANSI_LIGHT_RED     "\033[1;31m"
 #define ANSI_LIGHT_GREEN   "\033[1;32m"
@@ -46,8 +51,8 @@
 #define ANSI_WHITE         "\033[1;37m"
 #define ANSI_NONE          "\033[0m"
 
-static std::ostream nullout(nullptr);
-static Console      nullcon(&nullout);
+static ostream nullout(nullptr);
+static Console nullcon(&nullout);
 
 bool verbose    = false;
 int debug_level = 
@@ -106,7 +111,7 @@ debug_level_met(int level)
 
 static
 void
-print_preamble(std::ostream *stm,
+print_preamble(ostream *stm,
                const char   *color,
                const char   *prefix)
 {
@@ -117,10 +122,10 @@ print_preamble(std::ostream *stm,
 }
 
 Console::Console()
-  : Console(&std::cerr)
+  : Console(&cerr)
 {}
 
-Console::Console(std::ostream *stm)
+Console::Console(ostream *stm)
   : out_(stm)
 {
 #if PLATFORM_EQ(PLATFORM_WINDOWS)
@@ -128,10 +133,43 @@ Console::Console(std::ostream *stm)
 #endif
 }
 
-std::ostream *
+ostream *
 Console::get_stream() const
 {
   return out_;
+}
+
+void
+Console::write_pairs(ListPairVector &pairs) const
+{
+  static size_t ansi_width = 0;
+
+  size_t       max_width  = 0;
+  size_t       elem_width = 0;
+  stringstream ss;
+
+  if (ansi_width == 0) {
+    ansi_width = ::strlen(ANSI_WHITE) + ::strlen(ANSI_NONE) + 2;
+  };
+
+  for (auto &it : pairs) {
+    elem_width = it.first.length() + ansi_width;
+
+    if (elem_width > max_width) {
+      max_width = elem_width;
+    }
+  }
+  max_width++;
+
+  for (auto &it : pairs) {
+    elem_width = max_width - (it.first.length() + ansi_width);
+
+    ss << ANSI_WHITE << it.first << ANSI_NONE << ":"
+       << string(elem_width, ' ') << " "
+       << it.second << "\n";
+  }
+
+  *out_ << ss.str();
 }
 
 Console &

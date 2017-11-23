@@ -53,8 +53,7 @@ VersionInfo::VersionInfo()
     build_(0),
     patch_(0),
     base_year_(1970),
-    incr_type_(IncrementType::Simple),
-    overflow_(false)
+    incr_type_(IncrementType::Simple)
 {}
 
 VersionInfo::VersionInfo(const uint32_t major,
@@ -68,8 +67,7 @@ VersionInfo::VersionInfo(const uint32_t major,
     build_(build),
     patch_(patch),
     base_year_(baseyear),
-    incr_type_(type),
-    overflow_(false)
+    incr_type_(type)
 {}
 
 VersionInfo::~VersionInfo()
@@ -111,12 +109,6 @@ VersionInfo::get_increment_type() const
   return incr_type_;
 }
 
-const bool &
-VersionInfo::get_overflow() const
-{
-  return overflow_;
-}
-
 void
 VersionInfo::set_major(const uint32_t major)
 {
@@ -151,12 +143,6 @@ void
 VersionInfo::set_increment_type(const IncrementType type)
 {
   incr_type_ = type;
-}
-
-void
-VersionInfo::set_overflow(const bool overflow)
-{
-  overflow_ = overflow;
 }
 
 void
@@ -361,10 +347,9 @@ VersionInfo::operator!=(const VersionInfo &other)
 uint32_t
 VersionInfo::incr(const uint32_t lhs) const
 {
-  if (overflow_) {
-    if ((UINT_MAX - 1) < lhs) {
-      return UINT_MAX;
-    }
+  // This is just to be safe... 
+  if ((UINT_MAX - 1) < lhs) {
+    return UINT_MAX;
   }
 
   return lhs + 1;
@@ -373,10 +358,9 @@ VersionInfo::incr(const uint32_t lhs) const
 uint32_t
 VersionInfo::add(const uint32_t lhs, const uint32_t rhs) const
 {
-  if (overflow_) {
-    if ((UINT_MAX - rhs) < lhs) {
-      return UINT_MAX;
-    }
+  // This is just to be safe...
+  if ((UINT_MAX - rhs) < lhs) {
+    return UINT_MAX;
   }
 
   return lhs + rhs;

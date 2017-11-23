@@ -39,6 +39,8 @@
 
 #include "Support.hpp"
 
+#include <string>
+#include <vector>
 #include <iostream>
 #include <ostream>
 #include <utility>
@@ -49,6 +51,9 @@
 #define DEBUG_MEDIUM     2
 #define DEBUG_LOW        1
 #define DEBUG_NONE       0
+
+typedef std::pair<std::string, std::string> ListPair;
+typedef std::vector<ListPair>               ListPairVector;
 
 template <typename TF>
 void
@@ -84,6 +89,8 @@ public:
   void write() {
     *out_ << std::endl;
   }
+
+  void write_pairs(ListPairVector &) const;
 
   Console &log();
   Console &debug(const int, const char *, const int, const char *);

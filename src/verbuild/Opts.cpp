@@ -39,9 +39,10 @@
 #include "Enums.hpp"
 #include "Utils.hpp"
 #include "IncrModeParser.hpp"
-#include "Settings.hpp"
 
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/program_options.hpp>
+
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -50,7 +51,9 @@
 #include <cstdlib>
 
 using namespace std;
-namespace po = boost::program_options;
+
+namespace po   = boost::program_options;
+namespace date = boost::gregorian;
 
 namespace Callbacks
 {
@@ -73,7 +76,33 @@ generate_format_string(po::options_description &desc)
       ->default_value(IncrModeParser("*.*.+.*"))
       ->value_name("format")
       /*->notifier(Callbacks::format_string_cb)*/,
-      "Version number format string.");
+      "Version number format string.\n\n"
+      "This string represents how a version will be incremented.  "
+      "The fields are:\n"
+      "    <major>.<minor>.<build>.<patch>\n\n"
+      "The options available are:\n"
+      "    *   - Leave field as is.\n"
+      "    +   - Increment field.\n\n"
+      "If this flag is not specified, then the default will increment the "
+      "build field only.");
+}
+
+static
+void
+generate_debug(po::options_description &desc)
+{
+  desc.add_options()
+    ("debug,D",
+     po::value<int>()
+       ->default_value(0)
+       ->implicit_value(1)
+       ->value_name("level"),
+     "When set, debugging messages will be shown.  The higher the level, "
+     "the more verbose the debugging.\n\n"
+     "If this flag is given with no argument, the level is set to 1; "
+     "otherwise the level is set to the given value.\n\n"
+     "If the flag is not given, the level defaults to 0.\n\n"
+     "This flag does nothing if verbuild was built in debug mode.");
 }
 
 static
@@ -81,9 +110,13 @@ void
 generate_misc(po::options_description &desc)
 {
   desc.add_options()
-    ("help,h", "Show this help message.")
-    ("version,v", "Show program version.")
-    ("verbose,V", "Show verbose output.");
+    ("help,h",
+     "Show this help message.")
+    ("version,v",
+     "Show program version.")
+    ("verbose,V",
+     "Enables verbose output, which will result in various "
+     "information being displayed when the program runs");
 }
 
 Opts::Opts()
@@ -95,27 +128,50 @@ Opts::~Opts()
 void
 Opts::parse(int argc, char **argv)
 {
-  po::variables_map        vm;
-  po::options_description  desc("VerBuild");
-  Settings                *settings = new Settings();
+  date::date today(date::day_clock::local_day());
 
-  desc.add_options()
+  desc_.add_options()
     ("output,o",
      po::value<string>(),
      "File containing version information.")
-    ("base-year,y",
-     po::value<int>()->default_value(1970),
-     "The year the project was started.")
+    ("year,y",
+     po::value<int>()
+       ->default_value(1970)
+       ->implicit_value(today.year())
+       ->value_name("year"),
+     "The year used for calendar offset calculations.\n\n"
+     "If this flag is given with no argument, the year is set "
+     "to the current year; otherwise the year is set to the "
+     "given year.\n\n"
+     "If the flag is not given, then the year is set to 1970.")
     ("increment,i",
      po::value<int>(),
-     "Type of increment to use.");
+     "Type of increment to use.")
+    ("create,c",
+     "If enabled, verbuild will create the output file if it "
+     "does not exist.\n\n"
+     "If this flag is not enabled, verbuild will exit with a fatal error "
+     "if the output file does not exist.")
+    ("transform,t",
+     "Select a transform to use when writing version information.\n\n"
+     "This allows you to create files for use with other languages "
+     "besides C and C++.")
+    ("groups,g",
+     "Select which groups to write.\n\n"
+     "Each file is made up of a few groups that are used for different "
+     "purposes, such as a structure, preprocessor definitions, or "
+     "comments that can be parsed by tools like Doxygen.")
+    ("prefix,p",
+     "A string that is prepended to symbols created by the transform "
+     "module.");
 
-  generate_misc(desc);
-  generate_format_string(desc);
+  generate_misc(desc_);
+  generate_debug(desc_);
+  generate_format_string(desc_);
 
   try {
-    po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);
+    po::store(po::parse_command_line(argc, argv, desc_), vmap_);
+    po::notify(vmap_);
   }
   catch (std::exception &e) {
     FATAL(e.what());
@@ -126,36 +182,42 @@ Opts::parse(int argc, char **argv)
     exit(EXIT_FAILURE);
   }
 
-  if (vm.count("help")) {
-    std::cout << desc << std::endl;
+  if (vmap_.count("help")) {
+    std::cout << desc_ << std::endl;
     exit(EXIT_FAILURE);
   }
 
-  if (vm.count("verbose")) {
+  if (vmap_.count("verbose")) {
     set_verbose(true);
     LSAY("Verbose mode enabled");
   }
 
-  if (vm.count("format")) {
-    IncrModeParser format = vm["format"].as<IncrModeParser>();
+  if (vmap_.count("format")) {
+    IncrModeParser format = vmap_["format"].as<IncrModeParser>();
     LSAY("Format set to:", format);
-    settings->set_increment_mode(format.get_mode());
+    incr_mode_ = format.get_mode();
   } else {
     FATAL("No output formatter was specified.");
   }
 
-  if (vm.count("base-year")) {
-    int year = vm["base-year"].as<int>();
+  if (vmap_.count("year")) {
+    int year = vmap_["year"].as<int>();
 
     if (year < 1970) {
       FATAL("Base year must be 1970 or greater.");
       exit(EXIT_FAILURE);
     }
     LSAY("Base year set to:", year);
-    settings->set_base_year(year);
+    base_year_ = year;
   }
 
-  std::cout << *settings << std::endl;
+  ListPairVector lpv;
+
+  lpv.push_back(ListPair("Wooties", "Nope"));
+  lpv.push_back(ListPair("Isn't this great", "Yeah, whatever"));
+  lpv.push_back(ListPair("Nice", "Are you still here?"));
+
+  Console(&std::cout).write_pairs(lpv);
 }
 
 // Opts.cpp ends here.

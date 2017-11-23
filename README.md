@@ -106,8 +106,8 @@ namespace SomeNamespace
   class SomeClass
     : public SomeInheritedClass
   {
-  private
-    bool some_private_variable_
+  private:
+    bool some_private_variable_;
       
   public:
     SomeClass();

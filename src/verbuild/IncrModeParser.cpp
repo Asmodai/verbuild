@@ -45,17 +45,21 @@
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 using namespace std;
 namespace po = boost::program_options;
 
 IncrModeParser::IncrModeParser()
   : mode_(IncrementMode::None)
-{}
+{
+  cache_string();
+}
 
 IncrModeParser::IncrModeParser(const string &other)
 {
   parse(other);
+  cache_string();
 }
 
 IncrModeParser::~IncrModeParser()
@@ -71,8 +75,21 @@ void
 IncrModeParser::set_mode(const IncrementMode val)
 {
   mode_ = val;
+  cache_string();
 }
 
+void
+IncrModeParser::set_mode(const std::string &val)
+{
+  parse(val);
+  cache_string();
+}
+
+const string &
+IncrModeParser::to_string() const
+{
+  return str_;
+}
 
 void
 IncrModeParser::parse(const string &what)
@@ -103,10 +120,45 @@ IncrModeParser::parse(const string &what)
     : IncrementMode::None);
 }
 
+void
+IncrModeParser::cache_string()
+{
+  stringstream    ss;
+  vector<string>  modes;
+
+  if ((mode_ & IncrementMode::Major) != IncrementMode::None) {
+    modes.push_back("+");
+  } else {
+    modes.push_back("*");
+  }
+
+  if ((mode_ & IncrementMode::Minor) != IncrementMode::None) {
+    modes.push_back("+");
+  } else {
+    modes.push_back("*");
+  }
+
+  if ((mode_ & IncrementMode::Build) != IncrementMode::None) {
+    modes.push_back("+");
+  } else {
+    modes.push_back("*");
+  }
+
+  if ((mode_ & IncrementMode::Patch) != IncrementMode::None) {
+    modes.push_back("+");
+  } else {
+    modes.push_back("*");
+  }
+
+  ss << boost::algorithm::join(modes, ".");
+  str_.assign(ss.str());
+  ss.clear();
+}
+
 ostream &
 operator<<(ostream &os, const IncrModeParser &obj)
 {
-  os << obj.get_mode();
+  os << obj.to_string();
 
   return os;
 }
@@ -134,4 +186,5 @@ validate(boost::any &v,
 
   v = boost::any(IncrModeParser{ s });
 }
+
 // IncrModeParser.cpp ends here.

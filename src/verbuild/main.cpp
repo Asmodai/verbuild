@@ -41,10 +41,11 @@
 
 #include "VersionInfo.hpp"
 
+
 int
 main(int argc, char **argv)
 {
-  Opts *opts = new Opts();
+  Opts      *opts = new Opts();
 
   set_verbose(false);
 

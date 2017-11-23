@@ -1,3 +1,35 @@
+/* -*- mode: c -*- */
+/*
+ * resource.rc --- Resources for Microsoft Windows.
+ *
+ * Copyright (c) 2017 Paul Ward <asmodai@gmail.com>
+ *
+ * Author:     Paul Ward <asmodai@gmail.com>
+ * Maintainer: Paul Ward <asmodai@gmail.com>
+ * Created:    23 Nov 2017 20:53:45
+ */
+/* {{{ License: */
+/*
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+/* }}} */
+/* {{{ Commentary: */
+/*
+ *
+ */
+/* }}} */
+
 # if defined(UNDER_CE)
 #  include <winbase.h>
 # else
@@ -7,7 +39,7 @@
 #include "version.hpp"
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION VERSION_MAJOR,VERSION_MINOR,VERSION_BUILD,VERSION_PATCH
+ FILEVERSION    VERSION_MAJOR,VERSION_MINOR,VERSION_BUILD,VERSION_PATCH
  PRODUCTVERSION VERSION_MAJOR,VERSION_MINOR,VERSION_BUILD,VERSION_PATCH
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -33,14 +65,15 @@ VS_VERSION_INFO VERSIONINFO
    END
   END
   BLOCK "VarFileInfo"
- BEGIN
-  /* The following line should only be modified for localized versions.     */
-  /* It consists of any number of WORD,WORD pairs, with each pair           */
-  /* describing a language,codepage combination supported by the file.      */
-  /*                                                                        */
-  /* For example, a file might have values "0x409,1252" indicating that it  */
-  /* supports English language (0x409) in the Windows ANSI codepage (1252). */
-  VALUE "Translation", 0x409, 1252
+  BEGIN
+   /* The following line should only be modified for localized versions.     */
+   /* It consists of any number of WORD,WORD pairs, with each pair           */
+   /* describing a language,codepage combination supported by the file.      */
+   /*                                                                        */
+   /* For example, a file might have values "0x409,1252" indicating that it  */
+   /* supports English language (0x409) in the Windows ANSI codepage (1252). */
+   VALUE "Translation", 0x409, 1252
+  END
  END
- END
-/* End of Version info */
+
+/* resource.rc ends here. */

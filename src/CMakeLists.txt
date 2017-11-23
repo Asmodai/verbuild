@@ -27,24 +27,48 @@
 #
 # }}}
 
+# Code shared between app and tests.
+file(GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} verbuild/*.cpp)
+list(REMOVE_ITEM SOURCES "verbuild/main.cpp")
+
+# Test sources.
+file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} tests/*.cpp)
+
+# Object 'library' of shared code.
+add_library(COMMON_OBJECTS OBJECT ${SOURCES})
+
+# Main binary.
 add_executable(
-    verbuild 
-        "verbuild/Utils.cpp"
-        "verbuild/Enums.cpp"
-        "verbuild/Console.cpp"
-        "verbuild/IncrModeParser.cpp"
-        "verbuild/VersionInfo.cpp"
-        "verbuild/Opts.cpp"
-        "verbuild/main.cpp"
-        "verbuild/resource.rc"
+  verbuild 
+    "verbuild/main.cpp"
+    "verbuild/resource.rc"
+  $<TARGET_OBJECTS:COMMON_OBJECTS>
 )
 
+# Set libraries to link with.
 target_link_libraries(
-    verbuild PRIVATE
-        ${Boost_LIBRARIES}
+  verbuild PRIVATE
+    ${Boost_LIBRARIES}
 )
 
+# Set up include paths.
+message(STATUS "Boost includes at '${Boost_INCLUDE_DIRS}'")
 target_include_directories(
-    verbuild PRIVATE
-        ${Boost_INCLUDE_DIRS}
+  verbuild PUBLIC
+    ${Boost_INCLUDE_DIRS}
 )
+target_include_directories(
+  COMMON_OBJECTS PUBLIC
+    ${Boost_INCLUDE_DIRS}
+)
+
+# Generate tests.
+foreach(testSrc ${TEST_SRCS})
+  get_filename_component(testName ${testSrc} NAME_WE)
+  add_executable(${testName} ${testSrc} $<TARGET_OBJECTS:COMMON_OBJECTS>)
+  target_link_libraries(${testName} ${Boost_LIBRARIES})
+  target_include_directories(${testName} PRIVATE ${Boost_INCLUDE_DIRS})
+  add_test(NAME ${testName} COMMAND ${testName} -r detailed)
+endforeach(testSrc)
+
+# EOF

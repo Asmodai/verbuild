@@ -71,26 +71,4 @@ find_package(Boost 1.65.0 REQUIRED COMPONENTS
   date_time
   unit_test_framework)
 
-# Add Boost includes
-if (Boost_FOUND)
-  message(STATUS "Boost inc  = '${Boost_INCLUDE_DIRS}'")
-  message(STATUS "Boost libs = '${Boost_LIBRARIES}'")
-  include_directories(${Boost_INCLUDE_DIRS})
-endif()
-
-# Unit tests
-file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/tests/*.cpp)
-file(GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/verbuild/*.cpp)
-list(REMOVE_ITEM SOURCES "src/verbuild/main.cpp")
-foreach(testSrc ${TEST_SRCS})
-  get_filename_component(testName ${testSrc} NAME_WE)
-  add_executable(${testName} ${testSrc} ${SOURCES})
-  target_link_libraries(${testName} ${Boost_LIBRARIES})
-  set_target_properties(${testName} PROPERTIES 
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/testBin)
-  add_test(NAME ${testName} 
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/testBin 
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/testBin/${testName} -r detailed)
-endforeach(testSrc)
-
 add_subdirectory("src")

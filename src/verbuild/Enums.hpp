@@ -40,16 +40,17 @@
 #include <ostream>
 
 #include "bitmask.hpp"
+#include "Utils.hpp"
 
 enum class IncrementType {
   ByMonths,
   ByYears,
   ByDate,
-  Simple
+  Simple,
 };
 
 enum class IncrementMode : unsigned char {
-  None    = 0x0,
+  None  = 0x0,
   Major = 0x01,
   Minor = 0x02,
   Build = 0x04,
@@ -58,22 +59,25 @@ enum class IncrementMode : unsigned char {
 
   BuildAndPatch      = Build | Patch,
   MinorAndBuild      = Minor | Build,
-  MinorBuildAndPatch = MinorAndBuild | Patch
+  MinorBuildAndPatch = MinorAndBuild | Patch,
+
+  First = None,
+  Last  = All
 };
 ENABLE_BITMASK_OPS(IncrementMode)
 
-enum class OutputMode : unsigned char {
+enum class OutputGroups : unsigned char {
   None    = 0x0,
   Basic   = 0x01,
   Struct  = 0x02,
   Doxygen = 0x04,
   All     = 0xFF
 };
-ENABLE_BITMASK_OPS(OutputMode);
+ENABLE_BITMASK_OPS(OutputGroups);
 
 std::ostream &operator<<(std::ostream &, const IncrementType &);
 std::ostream &operator<<(std::ostream &, const IncrementMode &);
-std::ostream &operator<<(std::ostream &, const OutputMode &);
+std::ostream &operator<<(std::ostream &, const OutputGroups &);
 
 #endif // !_Enums_hpp_
 

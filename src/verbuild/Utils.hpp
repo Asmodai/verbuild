@@ -37,7 +37,39 @@
 #ifndef _Utils_hpp_
 #define _Utils_hpp_
 
+#include "Support.hpp"
 
+#include <string>
+#include <vector>
+
+typedef std::vector<std::string> StringVector;
+typedef StringVector::iterator   StringVecIterator;
+
+typedef std::pair<std::string, std::string> ListPair;
+typedef std::vector<ListPair>               ListPairVector;
+typedef ListPairVector::iterator            ListPairVecIterator;
+
+void ltrim(std::string &);
+void rtrim(std::string &);
+void trim(std::string &);
+
+std::string ltrim_copy(std::string);
+std::string rtrim_copy(std::string);
+std::string trim_copy(std::string);
+
+void delete_whitespace(std::string &);
+void delete_whitespace(std::string &);
+
+std::string delete_whitespace_copy(std::string);
+std::string delete_whitespace_copy(std::string);
+
+void downcase(std::string &);
+void upcase(std::string &);
+
+std::string downcase_copy(std::string);
+std::string upcase_copy(std::string);
+
+uint32_t safe_stoi(const std::string &, size_t * = 0, int = 10);
 
 #endif // !_Utils_hpp_
 

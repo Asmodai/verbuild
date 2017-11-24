@@ -40,18 +40,24 @@
 #include <cstdlib>
 
 #include "VersionInfo.hpp"
+#include "version.hpp"
+#include "Enums.hpp"
 
+#include "Transform_C.hpp"
+#include "Transform_Shell.hpp"
 
 int
 main(int argc, char **argv)
 {
-  Opts      *opts = new Opts();
+  Opts *opts = new Opts();
+
+  set_program_name(argv[0]);
 
   set_verbose(false);
 
   opts->parse(argc, argv);
-  std::cout << "Starting verbuild " << _GIT_VERSION << std::endl;
 
+  /*
   VersionInfo bydate(1, 2, 20171121, 0, 2017, IncrementType::ByDate);
   VersionInfo bymonth(1, 2, 1121, 0, 2017, IncrementType::ByMonths);
   VersionInfo byyear(1, 2, 41121, 0, 2013, IncrementType::ByYears);
@@ -69,6 +75,7 @@ main(int argc, char **argv)
   std::cout << "By Date:  " << bydate.to_date() << " - " << bydate << std::endl
     << "By Month: " << bymonth.to_date() << " - " << bymonth << std::endl
     << "By Year:  " << byyear.to_date() << " - " << byyear << std::endl;
+    */
 
   return EXIT_SUCCESS;
 }

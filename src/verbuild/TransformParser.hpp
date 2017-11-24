@@ -1,11 +1,11 @@
 //
-// IncrModeParser.hpp --- Increment mode parser
+// TransformParser.hpp --- Transform parser.
 //
-// Copyright (c) 2013-2017 Paul Ward <asmodai@gmail.com>
+// Copyright (c) 2017 Paul Ward <asmodai@gmail.com>
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
-// Created:    22 Nov 2017 00:06:49
+// Created:    24 Nov 2017 00:37:50
 //
 // {{{ License:
 //
@@ -28,18 +28,20 @@
 // }}}
 
 /**
- * @file IncrModeParser.hpp
+ * @file TransformParser.hpp
  * @author Paul Ward
- * @brief Increment mode parser
+ * @brief Transform parser.
  */
 
 #pragma once
-#ifndef _IncrModeParser_hpp_
-#define _IncrModeParser_hpp_
+#ifndef _TransformParser_hpp_
+#define _TransformParser_hpp_
 
 #include "Support.hpp"
 #include "Enums.hpp"
 #include "Parser.hpp"
+#include "Utils.hpp"
+#include "Transform.hpp"
 
 #include <string>
 #include <ostream>
@@ -49,33 +51,13 @@
 
 #include <boost/any.hpp>
 
-#define LITERAL_MAJOR    0
-#define LITERAL_MINOR    1
-#define LITERAL_BUILD    2
-#define LITERAL_PATCH    3
-
-class IncrModeParser
+class TransformParser
   : public Parser
 {
 public:
-  typedef std::pair<bool, std::uint32_t> LiteralValue;
-  typedef std::array<LiteralValue, 4>    LiteralArray;
-
-private:
-  LiteralArray  literals_;
-  IncrementMode mode_;
-
-public:
-  IncrModeParser();
-  IncrModeParser(const std::string &);
-  ~IncrModeParser();
-
-  const IncrementMode &get_mode() const;
-
-  void set_mode(const IncrementMode);
-  void set_mode(const std::string &);
-
-  bool get_literal(size_t, std::uint32_t &) const;
+  TransformParser();
+  TransformParser(const std::string &);
+  ~TransformParser();
 
 private:
   void generate_allowed();
@@ -85,9 +67,9 @@ private:
 
 void validate(boost::any         &,
               const StringVector &,
-              IncrModeParser     *,
+              TransformParser    *,
               int);
 
-#endif // !_IncrModeParser_hpp_
+#endif // !_TransformParser_hpp_
 
-// IncrModeParser.hpp ends here.
+// TransformParser.hpp ends here.

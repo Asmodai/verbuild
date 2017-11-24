@@ -1,11 +1,11 @@
 //
-// Enums_test.cpp --- Enums test.
+// Transform_C.hpp --- C/C++ transform interface.
 //
 // Copyright (c) 2017 Paul Ward <asmodai@gmail.com>
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
-// Created:    22 Nov 2017 01:05:08
+// Created:    23 Nov 2017 23:02:15
 //
 // {{{ License:
 //
@@ -24,54 +24,42 @@
 //
 // }}}
 // {{{ Commentary:
-//
+
 // }}}
 
 /**
- * @file Enums_test.cpp
+ * @file Transform_C.hpp
  * @author Paul Ward
- * @brief Enums test.
+ * @brief C/C++ transform interface.
  */
- 
-#define BOOST_TEST_MODULE Enums_test
-#include <boost/test/unit_test.hpp>
 
-#include <sstream>
+#pragma once
+#ifndef _Transform_C_hpp_
+#define _Transform_C_hpp_
 
-#include "../verbuild/Enums.hpp"
+#include "Transform.hpp"
 
-BOOST_AUTO_TEST_SUITE(Enums_test_suite)
+#define C_KEY    "c"
+#define C_PRETTY "C/C++"
 
-BOOST_AUTO_TEST_CASE(IncrementType_ostream)
+class CTransform
+  : public Transform
 {
-  IncrementType     test(IncrementType::Simple);
-  std::stringstream ss;
+private:
+  std::string name_ = C_PRETTY;
 
-  ss << test;
+public:
+  bool read(VersionInfo &) { return true; }
+  bool write(VersionInfo &) { return true; }
+};
 
-  BOOST_CHECK_EQUAL(ss.str(), "simple");
-}
+static const bool registered_c_transform =
+  get_transform_factory().register_transform(
+    C_KEY,
+    C_PRETTY,
+    create_transform<CTransform>
+  );
 
-BOOST_AUTO_TEST_CASE(IncrementMode_ostream)
-{
-  IncrementMode     test(IncrementMode::Patch);
-  std::stringstream ss;
+#endif // !_Transform_C_hpp_
 
-  ss << test;
-
-  BOOST_CHECK_EQUAL(ss.str(), "patch");
-}
-
-BOOST_AUTO_TEST_CASE(OutputMode_ostream)
-{
-  OutputGroups        test(OutputGroups::Doxygen);
-  std::stringstream ss;
-
-  ss << test;
-
-  BOOST_CHECK_EQUAL(ss.str(), "doxygen");
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-
-// Enums_test.cpp ends here.
+// Transform_C.hpp ends here.

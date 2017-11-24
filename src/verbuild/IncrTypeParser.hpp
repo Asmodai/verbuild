@@ -1,11 +1,11 @@
 //
-// Opts.hpp --- Program options.
+// IncrTypeParser.hpp --- Increment type parser.
 //
 // Copyright (c) 2013-2017 Paul Ward <asmodai@gmail.com>
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
-// Created:    22 Nov 2017 00:10:55
+// Created:    23 Nov 2017 18:05:02
 //
 // {{{ License:
 //
@@ -28,58 +28,51 @@
 // }}}
 
 /**
- * @file Opts.hpp
+ * @file IncrTypeParser.hpp
  * @author Paul Ward
- * @brief Program options..
+ * @brief Increment type parser.
  */
 
 #pragma once
-#ifndef _Opts_hpp_
-#define _Opts_hpp_
+#ifndef _IncrTypeParser_hpp_
+#define _IncrTypeParser_hpp_
 
-#include "Support.hpp"
 #include "Enums.hpp"
-#include "Utils.hpp"
-#include "IncrModeParser.hpp"
+#include "Parser.hpp"
 
 #include <string>
+#include <ostream>
+#include <vector>
 
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
+#include <boost/any.hpp>
 
-void set_program_name(const char *);
-
-class Opts
+class IncrTypeParser
+  : public Parser
 {
 private:
-  po::variables_map       vmap_;
-  po::options_description desc_;
-
-private:
-  std::uint32_t base_year_;
-  IncrementMode incr_mode_;
-  IncrementType incr_type_;
-  std::string   transform_;
-  std::string   prefix_;
-  bool          create_;
+  IncrementType type_;
 
 public:
-  Opts();
-  Opts(const Opts &) = delete;
-  ~Opts();
+  IncrTypeParser();
+  IncrTypeParser(const std::string &);
+  ~IncrTypeParser();
 
-  void parse(int, char **);
+  const IncrementType &get_type() const;
 
-  const std::uint32_t  get_base_year() const;
-  const IncrementMode &get_increment_mode() const;
+  void set_type(const IncrementType);
+  void set_type(const std::string &);
 
 private:
-  void show_help() const;
-  void show_list_transforms() const;
-  void show_list_increments() const;
-  void show_list_groups() const;
+  void generate_allowed();
+  void parse(const std::string &);
+  void cache_string();
 };
 
-#endif // !_Opts_hpp_
+void validate(boost::any         &,
+              const StringVector &,
+              IncrTypeParser     *,
+              int);
 
-// Opts.hpp ends here.
+#endif // !_IncrTypeParser_hpp_
+
+// IncrTypeParser.hpp ends here.

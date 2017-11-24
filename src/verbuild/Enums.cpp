@@ -89,19 +89,19 @@ operator<<(ostream &os, const IncrementMode &obj)
 }
 
 ostream &
-operator<<(ostream &os, const OutputMode &obj)
+operator<<(ostream &os, const OutputGroups &obj)
 {
   vector<string> modes;
 
-  if ((obj & OutputMode::Basic) != OutputMode::None) {
+  if ((obj & OutputGroups::Basic) != OutputGroups::None) {
     modes.push_back("basic");
   }
 
-  if ((obj & OutputMode::Struct) != OutputMode::None) {
+  if ((obj & OutputGroups::Struct) != OutputGroups::None) {
     modes.push_back("struct");
   }
 
-  if ((obj & OutputMode::Doxygen) != OutputMode::None) {
+  if ((obj & OutputGroups::Doxygen) != OutputGroups::None) {
     modes.push_back("doxygen");
   }
 

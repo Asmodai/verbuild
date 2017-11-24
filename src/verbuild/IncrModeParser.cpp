@@ -41,6 +41,8 @@
 #include <vector>
 #include <sstream>
 #include <ostream>
+#include <regex>
+#include <cstdlib>
 
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -50,13 +52,91 @@
 using namespace std;
 namespace po = boost::program_options;
 
+IncrModeParser::LiteralValue
+extract_literal(string &val)
+{
+  IncrModeParser::LiteralValue res(false, 0);
+
+  try {
+    res.first = true;
+    res.second = static_cast<uint32_t>(stoi(val));
+  }
+  catch (invalid_argument &e) {
+    DSAY(DEBUG_HIGH, "Invalid argument: ", e.what());
+    res.first = false;
+    res.second = 0;
+  }
+  catch (out_of_range &) {
+    DSAY(DEBUG_HIGH,
+         "The given number is too large. "
+         "Defaulting to 'ignore'.");
+    res.first = false;
+    res.second = 0;
+  }
+  catch (...) {
+    DSAY(DEBUG_EVERYTHING, "Unhandled exception.");
+    FATAL("Terminating.");
+    exit(EXIT_FAILURE);
+  }
+
+  return res;
+}
+
+string
+make_string_element(IncrementMode                &mode,
+                    IncrModeParser::LiteralArray &vals,
+                    IncrementMode                 what,
+                    size_t                        offset)
+{
+  if (vals.at(offset).first) {
+    return to_string(vals.at(offset).second);
+  }
+
+  if ((mode & what) != IncrementMode::None) {
+    return "+";
+  }
+
+  return "*";
+}
+
+void
+set_field(const char                   *field,
+          StringVector                 &list,
+          IncrementMode                &mode,
+          IncrementMode                 set,
+          IncrModeParser::LiteralArray &literals,
+          size_t                        offset)
+{
+  switch (list.at(offset).at(0)) {
+    case '+':
+      mode |= set;
+      DSAY(DEBUG_MEDIUM, field, "set to 'increment'");
+      break;
+    case '*':
+      mode |= IncrementMode::None;
+      DSAY(DEBUG_MEDIUM, field, "set to 'ignore'");
+      break;
+    default:
+      mode |= IncrementMode::None;
+      literals.at(offset) = extract_literal(list.at(offset));
+      DSAY(DEBUG_MEDIUM,
+        field,
+        "set to literal:",
+        literals.at(offset).second);
+      break;
+  }
+}
+
 IncrModeParser::IncrModeParser()
-  : mode_(IncrementMode::None)
+  : literals_(),
+    mode_(IncrementMode::None)
 {
   cache_string();
 }
 
 IncrModeParser::IncrModeParser(const string &other)
+  : literals_(),
+    mode_(IncrementMode::None)
 {
   parse(other);
   cache_string();
@@ -85,17 +165,39 @@ IncrModeParser::set_mode(const std::string &val)
   cache_string();
 }
 
-const string &
-IncrModeParser::to_string() const
+bool
+IncrModeParser::get_literal(size_t index, std::uint32_t &out) const
 {
-  return str_;
+  if (index < 0 || index > 4) {
+    return false;
+  }
+
+  if (literals_.at(index).first) {
+    out = literals_.at(index).second;
+    return true;
+  }
+
+  return false;
+}
+
+void
+IncrModeParser::generate_allowed()
+{
+  if (allowed_.size() > 0) {
+    return;
+  }
+
+  allowed_.push_back("major");
+  allowed_.push_back("minor");
+  allowed_.push_back("build");
+  allowed_.push_back("patch");
 }
 
 void
 IncrModeParser::parse(const string &what)
 {
-  vector<string> list;
-  
+  StringVector list;
+
   mode_ = IncrementMode::None;
   boost::algorithm::split(list, what, boost::is_any_of("."));
 
@@ -103,87 +205,54 @@ IncrModeParser::parse(const string &what)
     throw std::runtime_error("Could not parse!");
   }
 
-  mode_ |= (list.at(0).at(0) == '+'
-    ? IncrementMode::Major
-    : IncrementMode::None);
-
-  mode_ |= (list.at(1).at(0) == '+'
-    ? IncrementMode::Minor
-    : IncrementMode::None);
-
-  mode_ |= (list.at(2).at(0) == '+'
-    ? IncrementMode::Build
-    : IncrementMode::None);
-
-  mode_ |= (list.at(3).at(0) == '+'
-    ? IncrementMode::Patch
-    : IncrementMode::None);
+  set_field("Major", list, mode_, IncrementMode::Major, literals_, 0);
+  set_field("Minor", list, mode_, IncrementMode::Minor, literals_, 1);
+  set_field("Build", list, mode_, IncrementMode::Build, literals_, 2);
+  set_field("Patch", list, mode_, IncrementMode::Patch, literals_, 3);
 }
 
 void
 IncrModeParser::cache_string()
 {
-  stringstream    ss;
-  vector<string>  modes;
+  stringstream ss;
+  StringVector modes;
 
-  if ((mode_ & IncrementMode::Major) != IncrementMode::None) {
-    modes.push_back("+");
-  } else {
-    modes.push_back("*");
-  }
-
-  if ((mode_ & IncrementMode::Minor) != IncrementMode::None) {
-    modes.push_back("+");
-  } else {
-    modes.push_back("*");
-  }
-
-  if ((mode_ & IncrementMode::Build) != IncrementMode::None) {
-    modes.push_back("+");
-  } else {
-    modes.push_back("*");
-  }
-
-  if ((mode_ & IncrementMode::Patch) != IncrementMode::None) {
-    modes.push_back("+");
-  } else {
-    modes.push_back("*");
-  }
+  modes.push_back(make_string_element(mode_, literals_, IncrementMode::Major, 0));
+  modes.push_back(make_string_element(mode_, literals_, IncrementMode::Minor, 1));
+  modes.push_back(make_string_element(mode_, literals_, IncrementMode::Build, 2));
+  modes.push_back(make_string_element(mode_, literals_, IncrementMode::Patch, 3));
 
   ss << boost::algorithm::join(modes, ".");
   str_.assign(ss.str());
   ss.clear();
 }
 
-ostream &
-operator<<(ostream &os, const IncrModeParser &obj)
-{
-  os << obj.to_string();
-
-  return os;
-}
-
 void
-validate(boost::any &v,
-         const vector<string> &vals,
-         IncrModeParser *,
+validate(boost::any         &v,
+         const StringVector &vals,
+         IncrModeParser     *,
          int)
 {
   po::validators::check_first_occurrence(v);
 
-  const string &s  = po::validators::get_single_string(vals);
-  size_t        n  = count(s.begin(), s.end(), '.');
-  bool          ok = all_of(s.begin(), s.end(), [](char i) {
-      return (i == '*' || i == '+' || i == '.');
-    });
+  const string &s = po::validators::get_single_string(vals);
 
-  if (n != 3 || s.length() != 7 || !ok) {
+  regex  re("([\\*\\+]|\\d+)\\.([\\*\\+]|\\d+)\\.([\\*\\+]|\\d+)\\.([\\*\\+]|\\d+)");
+  smatch matches;
+  bool   matched(false);
+
+  DSAY(DEBUG_HIGH, "Attempting to match format with regex.");
+  matched = regex_match(s, matches, re);
+
+  if (!matched || matches.size() != 5) {
+    DSAY(DEBUG_HIGH, "Format", s, "did not match regex.");
     stringstream ss;
 
     ss << "Invalid format: " << s;
     throw std::invalid_argument(ss.str().c_str());
   }
 
+  DSAY(DEBUG_HIGH, "Regex matched.");
   v = boost::any(IncrModeParser{ s });
 }
 

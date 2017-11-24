@@ -34,6 +34,7 @@
  */
  
 #include "VersionInfo.hpp"
+#include "Utils.hpp"
 
 #include <climits>
 #include <iostream>
@@ -244,9 +245,9 @@ VersionInfo::to_date() const
             DSAY(DEBUG_HIGH, "Matched", matches.size(), "via regex.");
 
             if (matched && matches.size() == 4) {
-              yy = static_cast<uint32_t>(stoul(matches[1]));
-              mm = static_cast<uint32_t>(stoul(matches[2]));
-              dd = static_cast<uint32_t>(stoul(matches[3]));
+              yy = static_cast<uint32_t>(safe_stoi(matches[1]));
+              mm = static_cast<uint32_t>(safe_stoi(matches[2]));
+              dd = static_cast<uint32_t>(safe_stoi(matches[3]));
               DSAY(DEBUG_VERYHIGH, "Years:", yy, " Months:", mm, " Days:", dd);
             } else {
               DSAY(DEBUG_VERYHIGH, "Regex failed to match.");
@@ -261,8 +262,8 @@ VersionInfo::to_date() const
 
             if (matched && matches.size() == 3) {
               yy = 0;
-              mm = static_cast<uint32_t>(stoul(matches[1]));
-              dd = static_cast<uint32_t>(stoul(matches[2]));
+              mm = static_cast<uint32_t>(safe_stoi(matches[1]));
+              dd = static_cast<uint32_t>(safe_stoi(matches[2]));
               DSAY(DEBUG_VERYHIGH, "Years:", yy, " Months:", mm, " Days:", dd);
             } else {
               DSAY(DEBUG_VERYHIGH, "Regex failed to match.");
@@ -399,7 +400,7 @@ VersionInfo::perform()
 
         try {
           DSAY(DEBUG_VERYHIGH, "setting build to", ss.str());
-          build_ = static_cast<uint32_t>(stoul(ss.str()));
+          build_ = static_cast<uint32_t>(safe_stoi(ss.str()));
         }
         catch (invalid_argument &e) {
           ESAY("Invalid argument:", e.what());
@@ -430,7 +431,7 @@ VersionInfo::perform()
 
         try {
           DSAY(DEBUG_VERYHIGH, "setting build to", ss.str());
-          build_ = static_cast<uint32_t>(stoul(ss.str()));
+          build_ = static_cast<uint32_t>(safe_stoi(ss.str()));
         }
         catch (invalid_argument &e) {
           ESAY("Invalid argument:", e.what());

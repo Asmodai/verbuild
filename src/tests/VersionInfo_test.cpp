@@ -32,7 +32,9 @@
  * @author Paul Ward
  * @brief VersionInfo tests.
  */
- 
+
+#include "../verbuild/Support.hpp"
+
 #define BOOST_TEST_MODULE VersionInfo_test
 #include <boost/test/unit_test.hpp>
 
@@ -40,6 +42,8 @@
 #include <iostream>
 #include <sstream>
 #include <ostream>
+#include <stdarg.h>  // For va_start, etc.
+#include <memory>    // For std::unique_ptr
 
 #include "../verbuild/VersionInfo.hpp"
 #include "../verbuild/Console.hpp"
@@ -47,6 +51,31 @@
 namespace date = boost::gregorian;
 using namespace std;
 
+std::string
+string_format(const std::string fmt_str, ...)
+{
+  int final_n = 0;
+  int       n = ((int)fmt_str.size()) * 2;
+  std::unique_ptr<char[]> formatted;
+  va_list ap;
+
+  while (1) {
+    formatted.reset(new char[n]);
+    strcpy(&formatted[0], fmt_str.c_str());
+
+    va_start(ap, fmt_str);
+    final_n = vsnprintf(&formatted[0], n, fmt_str.c_str(), ap);
+    va_end(ap);
+
+    if (final_n < 0 || final_n >= n) {
+      n += abs(final_n - n + 1);
+    } else {
+      break;
+    }
+  }
+
+  return std::string(formatted.get());
+}
 
 struct fixtures {
   fixtures() {
@@ -72,7 +101,6 @@ BOOST_AUTO_TEST_CASE(ctor_tests)
   BOOST_CHECK_EQUAL(obj1.get_patch(), 0);
   BOOST_CHECK_EQUAL(obj1.get_base_year(), 1970);
   BOOST_CHECK_EQUAL(obj1.get_increment_type(), IncrementType::Simple);
-  BOOST_CHECK_EQUAL(obj1.get_overflow(), false);
 
   BOOST_CHECK_EQUAL(obj2.get_major(), 1);
   BOOST_CHECK_EQUAL(obj2.get_minor(), 2);
@@ -80,7 +108,6 @@ BOOST_AUTO_TEST_CASE(ctor_tests)
   BOOST_CHECK_EQUAL(obj2.get_patch(), 4);
   BOOST_CHECK_EQUAL(obj2.get_base_year(), 2017);
   BOOST_CHECK_EQUAL(obj2.get_increment_type(), IncrementType::ByYears);
-  BOOST_CHECK_EQUAL(obj2.get_overflow(), false);
 }
 
 BOOST_AUTO_TEST_CASE(accessor_tests)
@@ -93,7 +120,6 @@ BOOST_AUTO_TEST_CASE(accessor_tests)
   obj.set_patch(4);
   obj.set_base_year(2017);
   obj.set_increment_type(IncrementType::ByDate);
-  obj.set_overflow(true);
 
   BOOST_CHECK_EQUAL(obj.get_major(), 1);
   BOOST_CHECK_EQUAL(obj.get_minor(), 2);
@@ -101,7 +127,6 @@ BOOST_AUTO_TEST_CASE(accessor_tests)
   BOOST_CHECK_EQUAL(obj.get_patch(), 4);
   BOOST_CHECK_EQUAL(obj.get_base_year(), 2017);
   BOOST_CHECK_EQUAL(obj.get_increment_type(), IncrementType::ByDate);
-  BOOST_CHECK_EQUAL(obj.get_overflow(), true);
 }
 
 BOOST_AUTO_TEST_CASE(string_conversion)
@@ -123,18 +148,34 @@ BOOST_AUTO_TEST_CASE(date_conversion)
   BOOST_CHECK_EQUAL(ss.str(), want);
 }
 
+#define MAGIC1(__y, __m, __d)        ((__y * 10000) + (__m * 100) + __d)
+#define MAGIC2(__m, __d)             ((__m * 100) + __d)
+#define MAGIC3(__y1, __y2, __m, __d) MAGIC1((__y1 - __y2), __m, __d)
+
 BOOST_AUTO_TEST_CASE(incrementing)
 {
-  VersionInfo   o1(1, 2, 20171121, 0, 2017, IncrementType::ByDate);
-  VersionInfo   o2(1, 2, 1121, 0, 2017, IncrementType::ByMonths);
-  VersionInfo   o3(1, 2, 41121, 0, 2013, IncrementType::ByYears);
-  VersionInfo   o4(1, 2, 1, 0, 2013, IncrementType::Simple);
-  string        w1("1.2.20171122.0");
-  string        w2("1.2.1122.0");
-  string        w3("1.2.41122.0");
+  date::date    now(date::day_clock::local_day());
+  date::date    then(now - date::days(1));
+  int           fyear(2013);
+  int           d1(then.day());
+  int           m1((int)then.month());
+  int           y1(then.year());
+  int           b1 = MAGIC1(y1, m1, d1);
+  int           b2 = MAGIC2(m1, d1);
+  int           b3 = MAGIC1((y1 - 2013), m1, d1);
+  int           r1 = MAGIC1(now.year(), (int)now.month(), now.day());
+  int           r2 = MAGIC2((int)now.month(), now.day());
+  int           r3 = MAGIC3(now.year(), fyear, (int)now.month(), now.day());
+  VersionInfo   o1(1, 2, b1, 0, y1, IncrementType::ByDate);
+  VersionInfo   o2(1, 2, b2, 0, y1, IncrementType::ByMonths);
+  VersionInfo   o3(1, 2, b3, 0, fyear, IncrementType::ByYears);
+  VersionInfo   o4(1, 2, 1, 0, y1, IncrementType::Simple);
+  string        w1 = string_format("1.2.%d.0", r1);
+  string        w2 = string_format("1.2.%d.0", r2);
+  string        w3 = string_format("1.2.%d.0", r3);
   string        w4("1.2.2.0");
   IncrementMode mode(IncrementMode::Build);
-  
+
   o1.increment(mode);
   o2.increment(mode);
   o3.increment(mode);

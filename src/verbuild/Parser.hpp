@@ -1,11 +1,11 @@
 //
-// Opts.hpp --- Program options.
+// Parser.hpp --- Parser abstract.
 //
 // Copyright (c) 2013-2017 Paul Ward <asmodai@gmail.com>
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
-// Created:    22 Nov 2017 00:10:55
+// Created:    23 Nov 2017 18:36:46
 //
 // {{{ License:
 //
@@ -28,58 +28,47 @@
 // }}}
 
 /**
- * @file Opts.hpp
+ * @file IncrModeParser.hpp
  * @author Paul Ward
- * @brief Program options..
+ * @brief Parser abstract.
  */
 
 #pragma once
-#ifndef _Opts_hpp_
-#define _Opts_hpp_
+#ifndef _Parser_hpp_
+#define _Parser_hpp_
 
-#include "Support.hpp"
-#include "Enums.hpp"
 #include "Utils.hpp"
-#include "IncrModeParser.hpp"
 
 #include <string>
+#include <ostream>
 
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
-
-void set_program_name(const char *);
-
-class Opts
+class Parser
 {
-private:
-  po::variables_map       vmap_;
-  po::options_description desc_;
-
-private:
-  std::uint32_t base_year_;
-  IncrementMode incr_mode_;
-  IncrementType incr_type_;
-  std::string   transform_;
-  std::string   prefix_;
-  bool          create_;
+protected:
+  StringVector allowed_;
+  std::string str_;
 
 public:
-  Opts();
-  Opts(const Opts &) = delete;
-  ~Opts();
+  Parser();
+  Parser(const std::string &);
+  virtual ~Parser();
 
-  void parse(int, char **);
+  virtual const int &get() const;
+  virtual void set(const std::string &);
 
-  const std::uint32_t  get_base_year() const;
-  const IncrementMode &get_increment_mode() const;
+  const std::string &to_string() const;
+
+  const StringVector &allowed_values();
 
 private:
-  void show_help() const;
-  void show_list_transforms() const;
-  void show_list_increments() const;
-  void show_list_groups() const;
+  virtual void generate_allowed();
+  virtual void parse(const std::string &);
+  virtual void cache_string();
+
+public:
+  friend std::ostream &operator<<(std::ostream &, const Parser &);
 };
+  
+#endif // !_Parser_hpp_
 
-#endif // !_Opts_hpp_
-
-// Opts.hpp ends here.
+// Parser.hpp ends here.

@@ -140,7 +140,7 @@ Console::get_stream() const
 }
 
 void
-Console::write_pairs(ListPairVector &pairs) const
+Console::write_pairs(ListPairVector &pairs, size_t indent) const
 {
   static size_t ansi_width = 0;
 
@@ -164,7 +164,8 @@ Console::write_pairs(ListPairVector &pairs) const
   for (auto &it : pairs) {
     elem_width = max_width - (it.first.length() + ansi_width);
 
-    ss << ANSI_WHITE << it.first << ANSI_NONE << ":"
+    ss << string(indent, ' ')
+       << ANSI_WHITE << it.first << ANSI_NONE << ":"
        << string(elem_width, ' ') << " "
        << it.second << "\n";
   }

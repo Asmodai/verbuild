@@ -1,11 +1,11 @@
 //
-// Opts.hpp --- Program options.
+// GroupsParser.hpp --- Group parser.
 //
-// Copyright (c) 2013-2017 Paul Ward <asmodai@gmail.com>
+// Copyright (c) 2017 Paul Ward <asmodai@gmail.com>
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
-// Created:    22 Nov 2017 00:10:55
+// Created:    24 Nov 2017 02:53:47
 //
 // {{{ License:
 //
@@ -28,58 +28,55 @@
 // }}}
 
 /**
- * @file Opts.hpp
+ * @file GroupsParser.hpp
  * @author Paul Ward
- * @brief Program options..
+ * @brief Group parser.
  */
 
 #pragma once
-#ifndef _Opts_hpp_
-#define _Opts_hpp_
+#ifndef _GroupsParser_hpp_
+#define _GroupsParser_hpp_
 
 #include "Support.hpp"
 #include "Enums.hpp"
+#include "Parser.hpp"
 #include "Utils.hpp"
-#include "IncrModeParser.hpp"
 
 #include <string>
+#include <ostream>
+#include <vector>
+#include <array>
+#include <utility>
 
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
+#include <boost/any.hpp>
 
-void set_program_name(const char *);
-
-class Opts
+class GroupsParser
+  : public Parser
 {
 private:
-  po::variables_map       vmap_;
-  po::options_description desc_;
-
-private:
-  std::uint32_t base_year_;
-  IncrementMode incr_mode_;
-  IncrementType incr_type_;
-  std::string   transform_;
-  std::string   prefix_;
-  bool          create_;
+  OutputGroups groups_;
 
 public:
-  Opts();
-  Opts(const Opts &) = delete;
-  ~Opts();
+  GroupsParser();
+  GroupsParser(const std::string &);
+  ~GroupsParser();
 
-  void parse(int, char **);
+  const OutputGroups &get_groups() const;
 
-  const std::uint32_t  get_base_year() const;
-  const IncrementMode &get_increment_mode() const;
+  void set_groups(const OutputGroups);
+  void set_groups(const std::string &);
 
 private:
-  void show_help() const;
-  void show_list_transforms() const;
-  void show_list_increments() const;
-  void show_list_groups() const;
+  void generate_allowed();
+  void parse(const std::string &);
+  void cache_string();
 };
 
-#endif // !_Opts_hpp_
+void validate(boost::any         &,
+              const StringVector &,
+              GroupsParser       *,
+              int);
 
-// Opts.hpp ends here.
+#endif // !_GroupsParser_hpp_
+
+// GroupsParser.hpp ends here.

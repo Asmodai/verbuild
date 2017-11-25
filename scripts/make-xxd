@@ -1,0 +1,128 @@
+#!/bin/bash
+# -*- Mode: Shell-script -*-
+#
+# make-xxd --- Update `xxd' hex dumps.
+#
+# Copyright (c) 2017 Paul Ward <asmodai@gmail.com>
+#
+# Author:     Paul Ward <asmodai@gmail.com>
+# Maintainer: Paul Ward <asmodai@gmail.com>
+# Created:    25 Nov 2017 05:56:58
+#
+# {{{ License:
+#
+# This program is free software: you can redistribute it
+# and/or modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any
+# later version.
+#
+# This program is distributed in the hope that it will be
+# useful, but WITHOUT ANY  WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+# PURPOSE.  See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public
+# License along with this program.  If not, see
+# <http://www.gnu.org/licenses/>.
+#
+# }}}
+# {{{ Commentary:
+#
+# }}}
+
+_scriptpath="$(cd "$(dirname "$0")" ; pwd -P)"
+_rsrc=${_scriptpath}/../src/resources
+_wimp=${_scriptpath}/../src/gui
+_help=${_scriptpath}/../src/help
+_root=${_scriptpath}/..
+
+do_preamble() {
+    local file="$1"
+    local symbol="$(basename ${file} | sed -e 's;\.;_;g')"
+
+    cat >${file} <<EOF
+#pragma once
+#ifndef __rsrcource_${symbol}__
+#define __rsrcource_${symbol}__
+
+EOF
+}
+
+do_postamble() {
+    local file="$1"
+
+    cat >>${file} <<EOF
+
+#endif
+EOF
+}
+
+make_include_all() {
+    local out="$1"
+    local prefix="$2"
+    local path="$3"
+
+    echo "    Creating $(basename ${out})."
+
+    do_preamble ${out}
+
+    for file in `ls ${path}/*.h`
+    do
+        echo "#include \"${prefix}/$(basename ${file})\"" >> ${out}
+    done
+
+    do_postamble ${out}
+}
+
+do_dump() {
+    local infile="$1"
+    local prefix="$2"
+    local outfile="$3"
+    local symbol="${prefix}_$(basename ${outfile%.*})"
+
+    [[ -d $(dirname ${outfile}) ]] || mkdir -p $(dirname ${outfile})
+
+    echo "    Dumping $(basename ${infile}) to $(basename ${outfile})."
+    do_preamble ${outfile}
+
+    (
+        echo "unsigned char res_${symbol}[] = {"
+        printf "%s" "$(xxd -i <${infile} | sed -e 's/0x0a$/0x00/')"
+        echo "};"
+    ) >>${outfile}
+
+    #xxd -i ${infile} | sed -e "s/${delete}/resource/g" >>${outfile}
+    do_postamble ${outfile}
+}
+
+# `Help' text.
+echo "Processing help text:"
+do_dump ${_help}/create.txt          "help" ${_rsrc}/help/create.h
+do_dump ${_help}/debug.txt           "help" ${_rsrc}/help/debug.h
+do_dump ${_help}/format.txt          "help" ${_rsrc}/help/format.h
+do_dump ${_help}/groups.txt          "help" ${_rsrc}/help/groups.h
+do_dump ${_help}/increment.txt       "help" ${_rsrc}/help/increment.h
+do_dump ${_help}/list_groups.txt     "help" ${_rsrc}/help/list_groups.h
+do_dump ${_help}/list_increments.txt "help" ${_rsrc}/help/list_increments.h
+do_dump ${_help}/list_transforms.txt "help" ${_rsrc}/help/list_transforms.h
+do_dump ${_help}/output.txt          "help" ${_rsrc}/help/output.h
+do_dump ${_help}/prefix.txt          "help" ${_rsrc}/help/prefix.h
+do_dump ${_help}/transform.txt       "help" ${_rsrc}/help/transform.h
+do_dump ${_help}/verbose.txt         "help" ${_rsrc}/help/verbose.h
+do_dump ${_help}/year.txt            "help" ${_rsrc}/help/year.h
+echo "Done."
+
+# UI resources.
+echo "Processing UI resources"
+do_dump ${_wimp}/gpl_banner.html  "gui" ${_rsrc}/gui/gpl_banner.h
+do_dump ${_root}/AUTHORS          "gui" ${_rsrc}/gui/authors.h
+echo "Done."
+
+# `include all' header generation.
+echo "Generating headers:"
+make_include_all ${_rsrc}/help.h 'help' ${_rsrc}/help
+echo "Done."
+
+# make-xxd ends here.

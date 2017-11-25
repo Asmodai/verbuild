@@ -1,0 +1,11 @@
+Version number format string.
+
+The format string dictates how a version will be incremented and uses the form:
+    <major>.<minor>.<build>.<patch>
+
+The options for each field are:
+    *   - Leave the field as-is.
+    +   - Increment the field.
+   num  - A literal value.
+
+If this flag is not specified, then it will default to incrementing the build field only.

@@ -1,0 +1,5 @@
+The year used for calendar offset calculations.
+
+If this flag is given with no argument, the year is set to the current year; otherwise the year is set to the year given with the flag.
+
+If this flag is not given, the year defaults to `1970'.

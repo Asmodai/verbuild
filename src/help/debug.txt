@@ -1,0 +1,7 @@
+Enable debug messages.
+
+The higher the level, the more verbose the debugging.
+
+If this flag is given with no value, the level is set to 1; otherwise the level is set to the given value.
+
+If the flag is not given, then the level defaults to 0.

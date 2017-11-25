@@ -1,0 +1,3 @@
+Select what output groups are written to the output.
+
+Each file is made up of various groups that have different purposes.  These groups include such things as putting version information into a data structure, or a preprocessor definition, Doxygen documentation etc.

@@ -54,6 +54,8 @@
 #include <cstdlib>
 #include <utility>
 
+#include "../resources/help.h"
+
 using namespace std;
 
 namespace po   = boost::program_options;
@@ -72,12 +74,9 @@ void
 generate_info(po::options_description &desc)
 {
   desc.add_options()
-    ("list-groups",
-     "List all available groups for use with the `groups' option.")
-    ("list-increments",
-     "List all available increments for use with the `increment' option.")
-    ("list-transforms",
-     "List all available transforms for use with the `transform' option.");
+    ("list-groups",     (const char *)res_help_list_groups)
+    ("list-increments", (const char *)res_help_list_increments)
+    ("list-transforms", (const char *)res_help_list_transforms);
 }
 
 static
@@ -89,16 +88,13 @@ generate_transform(po::options_description &desc)
      po::value<TransformParser>()
        ->default_value(TransformParser("c"))
        ->value_name("transform"),
-     "Select a transform to use when writing version information.\n\n"
-     "This allows you to create files for use with other languages "
-     "besides C and C++.")
+     (const char *)res_help_transform)
     ("prefix,p",
      po::value<string>()
        ->default_value("")
        ->implicit_value("")
        ->value_name("prefix"),
-     "A string that is prepended to symbols created by the transform "
-     "module.");
+     (const char *)res_help_prefix);
 }
 
 static
@@ -112,31 +108,18 @@ generate_increment(po::options_description &desc)
       po::value<IncrModeParser>()
         ->default_value(IncrModeParser("*.*.+.*"))
         ->value_name("format"),
-      "Version number format string.\n\n"
-      "This string represents how a version will be incremented.  "
-      "The fields are:\n"
-      "    <major>.<minor>.<build>.<patch>\n\n"
-      "The options available are:\n"
-      "    *   - Leave field as is.\n"
-      "    +   - Increment field.\n"
-      "   num  - Literal value.\n\n"
-      "If this flag is not specified, then the default will increment the "
-      "build field only.")
+      (const char *)res_help_format)
     ("increment,i",
      po::value<IncrTypeParser>()
        ->default_value(IncrTypeParser("simple"))
        ->value_name("type"),
-     "Type of increment to use.")
+     (const char *)res_help_increment)
     ("year,y",
      po::value<int>()
        ->default_value(1970)
        ->implicit_value(today.year())
        ->value_name("year"),
-     "The year used for calendar offset calculations.\n\n"
-     "If this flag is given with no argument, the year is set "
-     "to the current year; otherwise the year is set to the "
-     "given year.\n\n"
-     "If the flag is not given, then the year is set to 1970.");
+     (const char *)res_help_year);
 }
 
 static
@@ -145,22 +128,16 @@ generate_output(po::options_description &desc)
 {
   desc.add_options()
     ("create,c",
-      "If enabled, verbuild will create the output file if it "
-      "does not exist.\n\n"
-      "If this flag is not enabled, verbuild will exit with a fatal error "
-      "if the output file does not exist.")
+     (const char *)res_help_create)
     ("groups,g",
      po::value<GroupsParser>()
        ->default_value(GroupsParser("basic"))
        ->value_name("groups"),
-     "Select which groups to write.\n\n"
-     "Each file is made up of a few groups that are used for different "
-     "purposes, such as a structure, preprocessor definitions, or "
-     "comments that can be parsed by tools like Doxygen.")
+     (const char *)res_help_groups)
     ("output,o",
      po::value<string>()
        ->value_name("file"),
-     "File containing version information.");
+     (const char *)res_help_output);
 }
 
 static
@@ -169,19 +146,13 @@ generate_debug(po::options_description &desc)
 {
   desc.add_options()
     ("verbose,V",
-      "Enables verbose output, which will result in various "
-      "information being displayed when the program runs")
+      (const char *)res_help_verbose)
     ("debug,D",
      po::value<int>()
        ->default_value(0)
        ->implicit_value(1)
        ->value_name("level"),
-     "When set, debugging messages will be shown.  The higher the level, "
-     "the more verbose the debugging.\n\n"
-     "If this flag is given with no argument, the level is set to 1; "
-     "otherwise the level is set to the given value.\n\n"
-     "If the flag is not given, the level defaults to 0.\n\n"
-     "This flag does nothing if verbuild was built in debug mode.");
+     (const char *)res_help_debug);
 }
 
 static
@@ -189,10 +160,8 @@ void
 generate_misc(po::options_description &desc)
 {
   desc.add_options()
-  ("help,h",
-   "Show this help message.")
-  ("version,v",
-   "Show program version.");
+    ("help,h",    "Show this help message.")
+    ("version,v", "Show program version.");
 }
 
 Opts::Opts()

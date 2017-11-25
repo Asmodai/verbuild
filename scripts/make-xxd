@@ -38,6 +38,12 @@ _wimp=${_scriptpath}/../src/gui
 _help=${_scriptpath}/../src/help
 _root=${_scriptpath}/..
 
+dos2unix() {
+    local file="$1"
+
+    awk '{ sub("\r$", ""); print }' <${file}
+}
+
 do_preamble() {
     local file="$1"
     local symbol="$(basename ${file} | sed -e 's;\.;_;g')"
@@ -89,7 +95,7 @@ do_dump() {
 
     (
         echo "const unsigned char res_${symbol}[] = {"
-        printf "%s\n" "$(xxd -i <${infile} | sed -e 's/0x0a$/0x00/')"
+        printf "%s\n" "$(dos2unix ${infile} | xxd -i | sed -e 's/0x0a$/0x00/')"
         echo "};"
     ) >>${outfile}
 

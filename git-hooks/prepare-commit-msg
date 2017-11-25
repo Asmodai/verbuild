@@ -35,7 +35,7 @@ case "$2,$3" in
 
   # Non-merges with no prior messages
   *)
-    addMyBranchName $1
+    addBranchName $1
   ;;
 esac
 

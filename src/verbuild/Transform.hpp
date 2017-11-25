@@ -39,7 +39,10 @@
 
 #include "Enums.hpp"
 #include "VersionInfo.hpp"
+#include "Opts.hpp"
 
+#include <fstream>
+#include <streambuf>
 #include <string>
 #include <map>
 #include <functional>
@@ -49,9 +52,6 @@ class Transform
 protected:
   std::string name_;
   std::string option_;
-  OutputGroups  mode_;
-  std::string filename_;
-  std::string prefix_;
 
 public:
   Transform();
@@ -59,17 +59,12 @@ public:
 
   const std::string &get_name() const;
 
-  const OutputGroups get_mode() const;
-  void             set_mode(const OutputGroups);
+  bool read(VersionInfo &, std::string &);
+  bool write(VersionInfo &, std::string &);
 
-  const std::string &get_filename() const;
-  void               set_filename(const std::string &);
-
-  const std::string &get_prefix() const;
-  void               set_prefix(const std::string &);
-
-  virtual bool read(VersionInfo &);
-  virtual bool write(VersionInfo &);
+private:
+  virtual bool read_impl(VersionInfo &, std::string &);
+  virtual bool write_impl(VersionInfo &, std::string &);
 };
 
 class TransformFactory

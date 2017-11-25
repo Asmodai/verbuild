@@ -54,7 +54,7 @@ class GroupsParser
   : public Parser
 {
 private:
-  OutputGroups groups_;
+  OutputGroups groups_ = OutputGroups::None;
 
 public:
   GroupsParser();

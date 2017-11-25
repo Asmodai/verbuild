@@ -46,6 +46,10 @@
 #include "Transform_C.hpp"
 #include "Transform_Shell.hpp"
 
+#ifdef WITH_FLTK
+# include <FL/fl.h>
+#endif
+
 int
 main(int argc, char **argv)
 {
@@ -55,7 +59,37 @@ main(int argc, char **argv)
 
   set_verbose(false);
 
+#ifdef WITH_FLTK
+  DSAY(DEBUG_EVERYTHING, "Using FLTK!");
+#endif
+
   opts->parse(argc, argv);
+  opts->print_config();
+
+  Transform *transform = GET_TRANSFORM_CREATE(opts->get_transform());
+  VersionInfo test;
+  std::string fname(opts->get_filename());
+  bool res = transform->read(test, fname);
+
+  if (res) {
+    test.set_increment_type(opts->get_increment_type());
+
+    if (test.get_base_year() != opts->get_base_year()) {
+      test.set_base_year(opts->get_base_year());
+    }
+
+    test.increment(opts->get_increment_mode());
+    OK("Version:", test);
+    std::cout << "Base year was: " << test.get_base_year() << std::endl;
+
+    transform->write(test, fname);
+  } else {
+    FATAL("Nope");
+  }
+
+#if PLATFORM_EQ(PLATFORM_WINDOWS)
+  ::getchar();
+#endif
 
   /*
   VersionInfo bydate(1, 2, 20171121, 0, 2017, IncrementType::ByDate);

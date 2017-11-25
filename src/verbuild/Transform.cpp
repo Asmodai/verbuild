@@ -51,54 +51,56 @@ Transform::get_name() const
   return name_;
 }
 
-const OutputGroups
-Transform::get_mode() const
+bool
+Transform::read(VersionInfo &vi,
+                string      &filename)
 {
-  return mode_;
-}
+  ifstream strm(filename);
 
-void
-Transform::set_mode(const OutputGroups mode)
-{
-  mode_ = mode;
-}
+  DSAY(DEBUG_MEDIUM, "Reading", filename);
 
-const string &
-Transform::get_filename() const
-{
-  return filename_;
-}
+  if (strm.good()) {
+    string buffer;
 
-void
-Transform::set_filename(const string &val)
-{
-  filename_ = val;
-}
+    DSAY(DEBUG_HIGH, "File exists.");
 
-const string &
-Transform::get_prefix() const
-{
-  return prefix_;
-}
+    strm.seekg(0, ios::end);
+    buffer.reserve(strm.tellg());
+    strm.seekg(0, ios::beg);
 
-void
-Transform::set_prefix(const string &val)
-{
-  prefix_ = val;
+    buffer.assign((istreambuf_iterator<char>(strm)),
+                   istreambuf_iterator<char>());
+
+    read_impl(vi, buffer);
+
+    return true;
+  }
+  // add exceptions!
+
+  return false;
 }
 
 bool
-Transform::read(VersionInfo &)
+Transform::write(VersionInfo &vi,
+                 string      &filename)
+
+{
+  write_impl(vi, filename);
+
+  return false;
+}
+
+bool
+Transform::read_impl(VersionInfo &, string &)
 {
   throw runtime_error("Not implemented");
 }
 
 bool
-Transform::write(VersionInfo &)
+Transform::write_impl(VersionInfo &, string &)
 {
   throw runtime_error("Not implemented");
 }
-
 
 bool
 TransformFactory::register_transform(const std::string &key,

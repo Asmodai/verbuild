@@ -27,6 +27,15 @@
 #
 # }}}
 
+# Set up includes and libraries
+set(WITH_INCS "${Boost_INCLUDE_DIRS}")
+set(WITH_LIBS "${Boost_LIBRARIES}")
+message(STATUS "FUCK YOU: ${WITH_INCS}")
+if(FLTK_FOUND)
+  set(WITH_INCS "${WITH_INCS};${FLTK_INCLUDE_DIR}")
+  set(WITH_LIBS "${WITH_LIBS};${FLTK_BASE_LIBRARY}")
+endif()
+
 # Code shared between app and tests.
 file(GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} verbuild/*.cpp)
 list(REMOVE_ITEM SOURCES "verbuild/main.cpp")
@@ -46,28 +55,18 @@ add_executable(
 )
 
 # Set libraries to link with.
-target_link_libraries(
-  verbuild PRIVATE
-    ${Boost_LIBRARIES}
-)
+target_link_libraries(verbuild PUBLIC ${WITH_LIBS})
 
 # Set up include paths.
-message(STATUS "Boost includes at '${Boost_INCLUDE_DIRS}'")
-target_include_directories(
-  verbuild PUBLIC
-    ${Boost_INCLUDE_DIRS}
-)
-target_include_directories(
-  COMMON_OBJECTS PUBLIC
-    ${Boost_INCLUDE_DIRS}
-)
+target_include_directories(verbuild PUBLIC ${WITH_INCS})
+target_include_directories(COMMON_OBJECTS PUBLIC ${WITH_INCS})
 
 # Generate tests.
 foreach(testSrc ${TEST_SRCS})
   get_filename_component(testName ${testSrc} NAME_WE)
   add_executable(${testName} ${testSrc} $<TARGET_OBJECTS:COMMON_OBJECTS>)
-  target_link_libraries(${testName} ${Boost_LIBRARIES})
-  target_include_directories(${testName} PRIVATE ${Boost_INCLUDE_DIRS})
+  target_link_libraries(${testName} ${WITH_LIBS})
+  target_include_directories(${testName} PUBLIC ${WITH_INCS})
   add_test(NAME ${testName} COMMAND ${testName} -r detailed)
 endforeach(testSrc)
 

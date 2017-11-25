@@ -63,7 +63,7 @@ public:
 
 private:
   LiteralArray  literals_;
-  IncrementMode mode_;
+  IncrementMode mode_ = IncrementMode::None;
 
 public:
   IncrModeParser();

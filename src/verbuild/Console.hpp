@@ -62,11 +62,12 @@ write_debug_output(std::ostream *out, TF const &val)
 class Console
 {
 private:
-  std::ostream *out_;
+  std::ostream *out_ = nullptr;
 
 public:
   Console();
   Console(std::ostream *);
+  Console(const Console &) = delete;
 
   std::ostream *get_stream() const;
 

@@ -48,9 +48,9 @@ class ShellTransform
 private:
   std::string name_ = SHELL_PRETTY;
 
-public:
-  bool read(VersionInfo &) { return true; }
-  bool write(VersionInfo &) { return true; }
+private:
+  bool read_impl(VersionInfo &, std::string &) { return true; }
+  bool write_impl(VersionInfo &, std::string &) { return true; }
 };
 
 static const bool registered_shell_transform = 

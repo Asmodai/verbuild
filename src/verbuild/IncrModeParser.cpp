@@ -41,9 +41,9 @@
 #include <vector>
 #include <sstream>
 #include <ostream>
-#include <regex>
 #include <cstdlib>
 
+#include <boost/regex.hpp>
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -237,12 +237,14 @@ validate(boost::any         &v,
 
   const string &s = po::validators::get_single_string(vals);
 
-  regex  re("([\\*\\+]|\\d+)\\.([\\*\\+]|\\d+)\\.([\\*\\+]|\\d+)\\.([\\*\\+]|\\d+)");
-  smatch matches;
-  bool   matched(false);
+  boost::regex  re{
+    "([\\*\\+]|\\d+)\\.([\\*\\+]|\\d+)\\.([\\*\\+]|\\d+)\\.([\\*\\+]|\\d+)"
+  };
+  boost::smatch matches;
+  bool          matched(false);
 
   DSAY(DEBUG_HIGH, "Attempting to match format with regex.");
-  matched = regex_match(s, matches, re);
+  matched = boost::regex_search(s, matches, re);
 
   if (!matched || matches.size() != 5) {
     DSAY(DEBUG_HIGH, "Format", s, "did not match regex.");

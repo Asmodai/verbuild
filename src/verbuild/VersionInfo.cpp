@@ -113,36 +113,42 @@ VersionInfo::get_increment_type() const
 void
 VersionInfo::set_major(const uint32_t major)
 {
+  DSAY(DEBUG_HIGH, "Setting major to", major);
   major_ = major;
 }
 
 void
 VersionInfo::set_minor(const uint32_t minor)
 {
+  DSAY(DEBUG_HIGH, "Setting minor to", minor);
   minor_ = minor;
 }
 
 void
 VersionInfo::set_build(const uint32_t build)
 {
+  DSAY(DEBUG_HIGH, "Setting build to", build);
   build_ = build;
 }
 
 void
 VersionInfo::set_patch(const uint32_t patch)
 {
+  DSAY(DEBUG_HIGH, "Setting patch to", patch);
   patch_ = patch;
 }
 
 void
 VersionInfo::set_base_year(const uint32_t year)
 {
+  DSAY(DEBUG_HIGH, "Setting base year to", year);
   base_year_ = year;
 }
 
 void
 VersionInfo::set_increment_type(const IncrementType type)
 {
+  DSAY(DEBUG_HIGH, "Setting increment type to", type);
   incr_type_ = type;
 }
 

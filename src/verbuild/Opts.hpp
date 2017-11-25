@@ -41,6 +41,7 @@
 #include "Enums.hpp"
 #include "Utils.hpp"
 #include "IncrModeParser.hpp"
+#include "Config.hpp"
 
 #include <string>
 
@@ -62,6 +63,7 @@ private:
   std::string   transform_;
   std::string   prefix_;
   bool          create_;
+  std::string   filename_;
 
 public:
   Opts();
@@ -72,6 +74,11 @@ public:
 
   const std::uint32_t  get_base_year() const;
   const IncrementMode &get_increment_mode() const;
+  const IncrementType &get_increment_type() const;
+  const std::string   &get_filename() const;
+  const std::string   &get_transform() const;
+
+  void print_config();
 
 private:
   void show_help() const;

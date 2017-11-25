@@ -60,6 +60,7 @@ private:
 public:
   VersionInfo();
   ~VersionInfo();
+  VersionInfo(const VersionInfo &) = delete;
 
   VersionInfo(const std::uint32_t,      // major
               const std::uint32_t,      // minor

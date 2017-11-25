@@ -52,6 +52,7 @@
 #include <sstream>
 #include <ostream>
 #include <cstdlib>
+#include <utility>
 
 using namespace std;
 
@@ -313,6 +314,48 @@ Opts::parse(int argc, char **argv)
     LSAY("Will not create file if it does not exist.");
     create_ = false;
   }
+
+  if (vmap_.count("output")) {
+    string tmp = vmap_["output"].as<string>();
+
+    if (tmp.length() > 0) {
+      filename_.assign(tmp);
+      LSAY("Output file set to:", filename_);
+    }
+  } else {
+    FATAL("No filename was provided!");
+    exit(EXIT_FAILURE);
+  }
+}
+
+const std::uint32_t
+Opts::get_base_year() const
+{
+  return base_year_;
+}
+
+const IncrementMode &
+Opts::get_increment_mode() const
+{
+  return incr_mode_;
+}
+
+const IncrementType &
+Opts::get_increment_type() const
+{
+  return incr_type_;
+}
+
+const string &
+Opts::get_filename() const
+{
+  return filename_;
+}
+
+const string &
+Opts::get_transform() const
+{
+  return transform_;
 }
 
 void
@@ -366,6 +409,34 @@ Opts::show_list_groups() const
   }
 
   exit(EXIT_SUCCESS);
+}
+
+void
+Opts::print_config()
+{
+  ListPairVector lpv;
+
+  lpv.push_back(ListPair("File name", filename_));
+  lpv.push_back(ListPair("Create file", (create_ ? "Yes" : "No")));
+  lpv.push_back(ListPair("Transform", transform_));
+
+  lpv.push_back(ListPair("Prefix", prefix_));
+
+  {
+    stringstream ss;
+
+    ss << incr_mode_;
+    lpv.push_back(ListPair("Increment format", ss.str()));
+  }
+
+  {
+    stringstream ss;
+
+    ss << incr_type_;
+    lpv.push_back(ListPair("Increment type", ss.str()));
+  }
+  
+  Console(&cout).write_pairs(lpv);
 }
 
 // Opts.cpp ends here.

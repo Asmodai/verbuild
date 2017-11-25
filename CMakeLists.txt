@@ -69,6 +69,17 @@ find_package(Boost 1.65.0 REQUIRED COMPONENTS
   locale
   program_options
   date_time
+  regex
   unit_test_framework)
+
+# FLTK
+set(FLTK_SKIP_OPENGL true)
+set(FLTK_SKIP_FLUID true)
+find_package(FLTK)
+if(FLTK_FOUND)
+   message(STATUS "FLTK found")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DWITH_FLTK")
+   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DWITH_FLTK")
+endif()
 
 add_subdirectory("src")

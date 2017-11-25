@@ -50,7 +50,7 @@ class IncrTypeParser
   : public Parser
 {
 private:
-  IncrementType type_;
+  IncrementType type_ = IncrementType::Simple;
 
 public:
   IncrTypeParser();

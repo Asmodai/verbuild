@@ -60,9 +60,6 @@ enum class IncrementMode : unsigned char {
   BuildAndPatch      = Build | Patch,
   MinorAndBuild      = Minor | Build,
   MinorBuildAndPatch = MinorAndBuild | Patch,
-
-  First = None,
-  Last  = All
 };
 ENABLE_BITMASK_OPS(IncrementMode)
 

@@ -43,13 +43,13 @@
  */
 #define VERSION_MAJOR      2
 #define VERSION_MINOR      0
-#define VERSION_BUILD      0
+#define VERSION_BUILD      601
 #define VERSION_PATCH      0
 
 #define VERSION_BASE_YEAR  2017
 #define VERSION_DATE       "Wed Nov 22 2017"
 #define VERSION_TIME       "05:24:13"
-#define VERSION_STRING     "2.0.0.0"
+#define VERSION_STRING     "2.0.601.0"
 
 #define VERBUILD_GIT_VERSION _GIT_VERSION
 #define VERBUILD_GIT_SHA1    _GIT_SHA1

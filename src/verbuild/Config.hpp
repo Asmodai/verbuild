@@ -1,11 +1,11 @@
 //
-// Transform_C.hpp --- C/C++ transform interface.
+// Config.hpp --- Configuration.
 //
 // Copyright (c) 2017 Paul Ward <asmodai@gmail.com>
 //
 // Author:     Paul Ward <asmodai@gmail.com>
 // Maintainer: Paul Ward <asmodai@gmail.com>
-// Created:    23 Nov 2017 23:02:15
+// Created:    24 Nov 2017 22:00:15
 //
 // {{{ License:
 //
@@ -28,38 +28,36 @@
 // }}}
 
 /**
- * @file Transform_C.hpp
+ * @file Config.hpp
  * @author Paul Ward
- * @brief C/C++ transform interface.
+ * @brief Configuration.
  */
 
 #pragma once
-#ifndef _Transform_C_hpp_
-#define _Transform_C_hpp_
+#ifndef _Config_hpp_
+#define _Config_hpp_
 
-#include "Transform.hpp"
+#include "Support.hpp"
+#include "Enums.hpp"
 
-#define C_KEY    "c"
-#define C_PRETTY "C/C++"
+#include <string>
 
-class CTransform
-  : public Transform
+struct Config
 {
-private:
-  std::string name_ = C_PRETTY;
+  std::uint32_t base_year;
+  IncrementMode incr_mode;
+  IncrementType incr_type;
+  OutputGroups  groups;
+  std::string   transform;
+  std::string   prefix;
+  bool          create;
+  std::string   filename;
 
-private:
-  bool read_impl(VersionInfo &, std::string &);
-  bool write_impl(VersionInfo &, std::string &);
+  Config() {};
+  Config(const Config &) = delete;
+  ~Config() {};
 };
 
-static const bool registered_c_transform =
-  get_transform_factory().register_transform(
-    C_KEY,
-    C_PRETTY,
-    create_transform<CTransform>
-  );
+#endif // !_Config_hpp_
 
-#endif // !_Transform_C_hpp_
-
-// Transform_C.hpp ends here.
+// Config.hpp ends here.

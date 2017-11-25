@@ -88,8 +88,8 @@ do_dump() {
     do_preamble ${outfile}
 
     (
-        echo "unsigned char res_${symbol}[] = {"
-        printf "%s" "$(xxd -i <${infile} | sed -e 's/0x0a$/0x00/')"
+        echo "const unsigned char res_${symbol}[] = {"
+        printf "%s\n" "$(xxd -i <${infile} | sed -e 's/0x0a$/0x00/')"
         echo "};"
     ) >>${outfile}
 

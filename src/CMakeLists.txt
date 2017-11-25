@@ -30,12 +30,20 @@
 # Set up includes and libraries
 set(WITH_INCS "${Boost_INCLUDE_DIRS}")
 set(WITH_LIBS "${Boost_LIBRARIES}")
-message(STATUS "FUCK YOU: ${WITH_INCS}")
-if(FLTK_FOUND)
-  set(WITH_INCS "${WITH_INCS};${FLTK_INCLUDE_DIR}")
-  set(WITH_LIBS "${WITH_LIBS};${FLTK_BASE_LIBRARY}")
-endif()
+#if(FLTK_FOUND)
+#  set(WITH_INCS "${WITH_INCS};${FLTK_INCLUDE_DIR}")
+#  set(WITH_LIBS "${WITH_LIBS};${FLTK_BASE_LIBRARY}")
+#endif()
 
+# GUI components
+#if(FLTK_FOUND)
+#  file(GLOB UI_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} gui/*.cpp)
+#else()
+#  set(UI_OBJECTS "")
+#endif()
+#add_library(UI_OBJECTS OBJECT ${UI_SOURCES})
+#target_include_directories(UI_OBJECTS PUBLIC ${WITH_INCS})
+#
 # Code shared between app and tests.
 file(GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} verbuild/*.cpp)
 list(REMOVE_ITEM SOURCES "verbuild/main.cpp")

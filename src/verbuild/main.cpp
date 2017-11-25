@@ -32,7 +32,7 @@
  * @author Paul Ward
  * @brief Main function.
  */
- 
+
 #include "Console.hpp"
 #include "Opts.hpp"
 #include "Enums.hpp"
@@ -46,9 +46,6 @@
 #include "Transform_C.hpp"
 #include "Transform_Shell.hpp"
 
-#ifdef WITH_FLTK
-# include <FL/fl.h>
-#endif
 
 int
 main(int argc, char **argv)
@@ -59,9 +56,8 @@ main(int argc, char **argv)
 
   set_verbose(false);
 
-#ifdef WITH_FLTK
-  DSAY(DEBUG_EVERYTHING, "Using FLTK!");
-#endif
+
+
 
   opts->parse(argc, argv);
   opts->print_config();

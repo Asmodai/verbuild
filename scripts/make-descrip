@@ -1,0 +1,74 @@
+#!/bin/bash
+# -*- Mode: Shell-script -*-
+#
+# make-descrip --- Modify branch description.
+#
+# Copyright (c) 2017 Paul Ward <asmodai@gmail.com>
+#
+# Author:     Paul Ward <asmodai@gmail.com>
+# Maintainer: Paul Ward <asmodai@gmail.com>
+# Created:    25 Nov 2017 04:24:12
+#
+# {{{ License:
+#
+# This program is free software: you can redistribute it
+# and/or modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any
+# later version.
+#
+# This program is distributed in the hope that it will be
+# useful, but WITHOUT ANY  WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+# PURPOSE.  See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public
+# License along with this program.  If not, see
+# <http://www.gnu.org/licenses/>.
+#
+# }}}
+# {{{ Commentary:
+#
+# }}}
+
+TRUE="true"
+FALSE="false"
+
+_branch=$(git branch | grep '*' | sed 's/* //')
+_descr=$(git config branch.${_branch}.description)
+
+yesOrNo() {
+    local msg="$1"
+
+    echo -n "${msg}? [Y/n] "
+
+    while true;
+    do
+        read -N 1 input
+        echo
+
+        case ${input} in
+            [yY]) YESORNO=${TRUE} ; return ;;
+            [nN]) YESORNO=${FALSE} ; return ;;
+        esac
+    done
+}
+
+if [[ -z ${_descr} ]]
+then
+    echo "Branch '${_branch}' currently has no description."
+else
+    echo "Branch '${_branch}' description is currently:"
+    echo 
+    echo ${_descr} | fold -w ${COLUMNS:-75}
+fi
+echo
+
+yesOrNo "Edit branch description"
+if [[ "${YESORNO}" = ${TRUE} ]]
+then
+    git branch --edit-description
+fi
+
+# make-descrip ends here.

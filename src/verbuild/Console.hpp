@@ -105,7 +105,7 @@ extern void set_debug_level(int);
 extern bool debug_level_met(int);
 
 #define LSAY(...)                                                       \
-  Console(&std::cout)                                                   \
+  Console()                                                             \
       .log()                                                            \
       .write(__VA_ARGS__)
 #define DSAY(__l, ...)                                                  \
@@ -121,8 +121,8 @@ extern bool debug_level_met(int);
       .error(__FILE__, __LINE__, __PRETTY_FUNCTION__)                   \
       .write(__VA_ARGS__)
 
-#define FATAL(...) Console(&std::cout).fatal().write(__VA_ARGS__)
-#define OK(...)    Console(&std::cout).ok().write(__VA_ARGS__)
+#define FATAL(...) Console().fatal().write(__VA_ARGS__)
+#define OK(...)    Console().ok().write(__VA_ARGS__)
 
 #endif // !_Console_hpp_
 

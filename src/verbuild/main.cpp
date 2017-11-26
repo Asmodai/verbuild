@@ -63,12 +63,9 @@ main(int argc, char **argv)
 
   Transform   *transform = GET_TRANSFORM_CREATE(conf.transform);
   VersionInfo  vi;
-  bool         res = false;
 
   transform->set_config(conf);
-  res = transform->read(vi);
-
-  if (res) {
+  if (transform->read(vi)) {
     vi.set_increment_type(conf.incr_type);
 
     if (vi.get_base_year() < conf.base_year) {
@@ -80,10 +77,10 @@ main(int argc, char **argv)
 
     OK("Version incremented to:", vi);
   } else {
-    if (conf.create) {
+    if (conf.create || conf.filename.length() == 0) {
       vi.set_base_year(conf.base_year);
       vi.set_major(0);
-      vi.set_minor(1);
+      vi.set_minor(0);
       vi.set_build(0);
       vi.set_patch(0);
       vi.increment(conf.incr_mode);

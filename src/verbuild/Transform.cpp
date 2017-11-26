@@ -94,7 +94,13 @@ Transform::read(VersionInfo &vi)
 bool
 Transform::write(VersionInfo &vi)
 {
-  ofstream strm(conf_.filename);
+  ofstream strm;
+  
+  if (conf_.filename.length() > 0) {
+    strm.open(conf_.filename);
+  } else {
+    strm.basic_ios<char>::rdbuf(cout.rdbuf());
+  }
 
   DSAY(DEBUG_MEDIUM, "Attempting write to", conf_.filename);
 

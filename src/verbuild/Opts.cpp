@@ -304,9 +304,6 @@ Opts::parse(Config &conf, int argc, char **argv)
       conf.filename.assign(tmp);
       LSAY("Output file set to:", conf.filename);
     }
-  } else {
-    FATAL("No filename was provided!");
-    exit(EXIT_FAILURE);
   }
 
   if (vmap_.count("groups")) {

@@ -13,10 +13,9 @@ If so, then please do NOT create an issue, email the author!
 
 * [ ] Put an X between the brackets on this line if and only if you have
       done all of the following:
+    * Reproduced the problem.
+    * Ran verbuild with `-V -D 9` to ensure it's not a user issue.
     * Checked that your issue isn't already filed.
-    * Written tests.
-    * Checked that `ctest` reports all tests passed.
-    * Written tests.
 
 ### Description
 

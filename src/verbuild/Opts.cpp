@@ -233,6 +233,14 @@ Opts::parse(Config &conf, int argc, char **argv)
     LSAY("Verbose mode enabled");
   }
 
+#ifndef DEBUG
+  if (vmap_.count("debug")) {
+    int level = vmap_["debug"].as<int>();
+    LSAY("Setting debug level to", level);
+    set_debug_level(level);
+  }
+#endif
+
   if (vmap_.count("format")) {
     IncrModeParser format = vmap_["format"].as<IncrModeParser>();
     LSAY("Format set to:", format);

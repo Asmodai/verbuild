@@ -36,6 +36,7 @@ _scriptpath="$(cd "$(dirname "$0")" ; pwd -P)"
 _rsrc=${_scriptpath}/../src/resources
 _wimp=${_scriptpath}/../src/gui
 _help=${_scriptpath}/../src/help
+_cmdl=${_scriptpath}/../src/verbuild
 _root=${_scriptpath}/..
 
 dos2unix() {
@@ -118,6 +119,11 @@ do_dump ${_help}/prefix.txt          "help" ${_rsrc}/help/prefix.h
 do_dump ${_help}/transform.txt       "help" ${_rsrc}/help/transform.h
 do_dump ${_help}/verbose.txt         "help" ${_rsrc}/help/verbose.h
 do_dump ${_help}/year.txt            "help" ${_rsrc}/help/year.h
+echo "Done."
+
+# CLI resources
+echo "Processing CLI resources"
+do_dump ${_cmdl}/banner.txt       "cli" ${_rsrc}/cli/banner.h
 echo "Done."
 
 # UI resources.

@@ -39,9 +39,10 @@
 
 #include "Enums.hpp"
 #include "VersionInfo.hpp"
-#include "Opts.hpp"
+#include "Config.hpp"
 
 #include <fstream>
+#include <sstream>
 #include <streambuf>
 #include <string>
 #include <map>
@@ -52,6 +53,7 @@ class Transform
 protected:
   std::string name_;
   std::string option_;
+  Config      conf_;
 
 public:
   Transform();
@@ -59,12 +61,15 @@ public:
 
   const std::string &get_name() const;
 
-  bool read(VersionInfo &, std::string &);
-  bool write(VersionInfo &, std::string &);
+  const Config &get_config() const;
+  void          set_config(Config &);
+
+  bool read(VersionInfo &);
+  bool write(VersionInfo &);
 
 private:
   virtual bool read_impl(VersionInfo &, std::string &);
-  virtual bool write_impl(VersionInfo &, std::string &);
+  virtual bool write_impl(VersionInfo &, std::stringstream &);
 };
 
 class TransformFactory
@@ -103,8 +108,8 @@ Transform *create_transform() { return new DerivedT(); }
 
 TransformFactory &get_transform_factory();
 
-#define GET_TRANSFORM_CREATE(__k)  get_transform_factory().build(__k)
-#define GET_TRANSFORM_PRETTY(__k)  get_transform_factory().get_pretty(__k)
+#define GET_TRANSFORM_CREATE(__k) get_transform_factory().build(__k)
+#define GET_TRANSFORM_PRETTY(__k) get_transform_factory().get_pretty(__k)
 
 #define FIND_TRANSFORM_PRETTY(__k) get_transform_factory().find(__k)
 #define TRANSFORM_BEGIN()          get_transform_factory().begin()

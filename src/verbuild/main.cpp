@@ -42,70 +42,60 @@
 #include "VersionInfo.hpp"
 #include "version.hpp"
 #include "Enums.hpp"
+#include "Config.hpp"
 
 #include "Transform_C.hpp"
-#include "Transform_Shell.hpp"
-
 
 int
 main(int argc, char **argv)
 {
-  Opts *opts = new Opts();
+  Config  conf;
+  Opts   *opts = new Opts();
 
   set_program_name(argv[0]);
-
   set_verbose(false);
 
-
-
-
-  opts->parse(argc, argv);
-  opts->print_config();
-
-  Transform *transform = GET_TRANSFORM_CREATE(opts->get_transform());
-  VersionInfo test;
-  std::string fname(opts->get_filename());
-  bool res = transform->read(test, fname);
-
-  if (res) {
-    test.set_increment_type(opts->get_increment_type());
-
-    if (test.get_base_year() != opts->get_base_year()) {
-      test.set_base_year(opts->get_base_year());
-    }
-
-    test.increment(opts->get_increment_mode());
-    OK("Version:", test);
-    std::cout << "Base year was: " << test.get_base_year() << std::endl;
-
-    transform->write(test, fname);
-  } else {
-    FATAL("Nope");
+  opts->parse(conf, argc, argv);
+  if (get_verbose()) {
+    LSAY("Configuration:");
+    conf.print();
   }
 
-#if PLATFORM_EQ(PLATFORM_WINDOWS)
-  ::getchar();
-#endif
+  Transform   *transform = GET_TRANSFORM_CREATE(conf.transform);
+  VersionInfo  vi;
+  bool         res = false;
 
-  /*
-  VersionInfo bydate(1, 2, 20171121, 0, 2017, IncrementType::ByDate);
-  VersionInfo bymonth(1, 2, 1121, 0, 2017, IncrementType::ByMonths);
-  VersionInfo byyear(1, 2, 41121, 0, 2013, IncrementType::ByYears);
+  transform->set_config(conf);
+  res = transform->read(vi);
 
-  //vi.increment(IncrementMode::Build);
+  if (res) {
+    vi.set_increment_type(conf.incr_type);
 
-  std::cout << "By Date:  " << bydate.to_date()  << " - " << bydate  << std::endl
-            << "By Month: " << bymonth.to_date() << " - " << bymonth << std::endl
-            << "By Year:  " << byyear.to_date()  << " - " << byyear  << std::endl;
+    if (vi.get_base_year() < conf.base_year) {
+      vi.set_base_year(conf.base_year);
+    }
 
-  bydate.increment(IncrementMode::Build);
-  bymonth.increment(IncrementMode::Build);
-  byyear.increment(IncrementMode::Build);
+    vi.increment(conf.incr_mode);
+    transform->write(vi);
 
-  std::cout << "By Date:  " << bydate.to_date() << " - " << bydate << std::endl
-    << "By Month: " << bymonth.to_date() << " - " << bymonth << std::endl
-    << "By Year:  " << byyear.to_date() << " - " << byyear << std::endl;
-    */
+    OK("Version incremented to:", vi);
+  } else {
+    if (conf.create) {
+      vi.set_base_year(conf.base_year);
+      vi.set_major(0);
+      vi.set_minor(1);
+      vi.set_build(0);
+      vi.set_patch(0);
+      vi.increment(conf.incr_mode);
+      transform->write(vi);
+
+      OK("Version incremented to:", vi);
+    } else {
+      FATAL("Could not open", conf.filename, "for reading.");
+      FATAL("Did you forget to specify `-c'?");
+      return EXIT_FAILURE;
+    }
+  }
 
   return EXIT_SUCCESS;
 }

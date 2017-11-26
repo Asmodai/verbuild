@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(ctor_tests)
   BOOST_CHECK_EQUAL(obj1.get_minor(), 0);
   BOOST_CHECK_EQUAL(obj1.get_build(), 0);
   BOOST_CHECK_EQUAL(obj1.get_patch(), 0);
-  BOOST_CHECK_EQUAL(obj1.get_base_year(), 1970);
+  BOOST_CHECK_EQUAL(obj1.get_base_year(), 0);
   BOOST_CHECK_EQUAL(obj1.get_increment_type(), IncrementType::Simple);
 
   BOOST_CHECK_EQUAL(obj2.get_major(), 1);

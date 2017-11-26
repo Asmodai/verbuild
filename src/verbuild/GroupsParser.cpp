@@ -115,24 +115,25 @@ GroupsParser::parse(const string &what)
   boost::algorithm::split(list, what, boost::is_any_of(","));
 
   for (auto &it : list) {
+    if (it == "all") {
+      DSAY(DEBUG_VERYHIGH, "Adding group `all'.");
+      groups_ |= OutputGroups::All;
+      return;
+    }
+
     if (it == "basic") {
+      DSAY(DEBUG_VERYHIGH, "Adding group `basic'.");
       groups_ |= OutputGroups::Basic;
-      continue;
     }
 
     if (it == "struct") {
+      DSAY(DEBUG_VERYHIGH, "Adding group `struct'.");
       groups_ |= OutputGroups::Struct;
-      continue;
     }
 
     if (it == "doxygen") {
+      DSAY(DEBUG_VERYHIGH, "Adding group `doxygen'.");
       groups_ |= OutputGroups::Doxygen;
-      continue;
-    }
-
-    if (it == "all") {
-      groups_ |= OutputGroups::All;
-      return;
     }
   }
 }
@@ -143,7 +144,7 @@ GroupsParser::cache_string()
   stringstream ss;
   StringVector list;
 
-  if ((groups_ & OutputGroups::All) == OutputGroups::All) {
+  if ((groups_ & OutputGroups::All) != OutputGroups::None) {
     list.push_back("all");
     goto done;
   }

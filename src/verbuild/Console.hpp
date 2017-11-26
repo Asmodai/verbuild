@@ -100,6 +100,7 @@ public:
 };
 
 extern void set_verbose(bool);
+extern bool get_verbose();
 extern void set_debug_level(int);
 extern bool debug_level_met(int);
 

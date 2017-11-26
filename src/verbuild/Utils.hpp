@@ -42,6 +42,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/any.hpp>
+
 typedef std::vector<std::string> StringVector;
 typedef StringVector::iterator   StringVecIterator;
 

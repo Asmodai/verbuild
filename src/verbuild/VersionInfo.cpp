@@ -53,7 +53,7 @@ VersionInfo::VersionInfo()
     minor_(0),
     build_(0),
     patch_(0),
-    base_year_(1970),
+    base_year_(0),
     incr_type_(IncrementType::Simple)
 {}
 
@@ -61,7 +61,7 @@ VersionInfo::VersionInfo(const uint32_t major,
                          const uint32_t minor,
                          const uint32_t build     = 0,
                          const uint32_t patch     = 0,
-                         const uint32_t baseyear  = 1970,
+                         const uint32_t baseyear  = 0,
                          const IncrementType type = IncrementType::Simple)
   : major_(major),
     minor_(minor),
@@ -155,6 +155,8 @@ VersionInfo::set_increment_type(const IncrementType type)
 void
 VersionInfo::increment(const IncrementMode mode)
 {
+  DSAY(DEBUG_LOW, "Performing increment");
+
   if ((mode & IncrementMode::Major) == IncrementMode::Major) {
     major_ = incr(major_);
   }
@@ -323,6 +325,10 @@ VersionInfo::to_date() const
           FATAL("Terminating.");
           exit(EXIT_FAILURE);
         }
+        break;
+
+      case IncrementType::Simple:
+        result = date::day_clock::local_day();
         break;
 
       default:

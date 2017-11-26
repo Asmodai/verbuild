@@ -56,35 +56,19 @@ private:
   po::variables_map       vmap_;
   po::options_description desc_;
 
-private:
-  std::uint32_t base_year_;
-  IncrementMode incr_mode_;
-  IncrementType incr_type_;
-  std::string   transform_;
-  std::string   prefix_;
-  bool          create_;
-  std::string   filename_;
-
 public:
   Opts();
   Opts(const Opts &) = delete;
   ~Opts();
 
-  void parse(int, char **);
-
-  const std::uint32_t  get_base_year() const;
-  const IncrementMode &get_increment_mode() const;
-  const IncrementType &get_increment_type() const;
-  const std::string   &get_filename() const;
-  const std::string   &get_transform() const;
-
-  void print_config();
+  void parse(Config &, int, char **);
 
 private:
-  void show_help() const;
-  void show_list_transforms() const;
-  void show_list_increments() const;
-  void show_list_groups() const;
+  __noreturn show_help() const;
+  __noreturn show_version() const;
+  __noreturn show_list_transforms() const;
+  __noreturn show_list_increments() const;
+  __noreturn show_list_groups() const;
 };
 
 #endif // !_Opts_hpp_

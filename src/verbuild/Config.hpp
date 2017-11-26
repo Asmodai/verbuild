@@ -56,7 +56,10 @@ struct Config
   Config() {};
   Config(const Config &) = delete;
   ~Config() {};
+
+  void print();
 };
+
 
 #endif // !_Config_hpp_
 

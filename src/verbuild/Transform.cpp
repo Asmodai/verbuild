@@ -51,13 +51,24 @@ Transform::get_name() const
   return name_;
 }
 
-bool
-Transform::read(VersionInfo &vi,
-                string      &filename)
+const Config &
+Transform::get_config() const
 {
-  ifstream strm(filename);
+  return conf_;
+}
 
-  DSAY(DEBUG_MEDIUM, "Reading", filename);
+void
+Transform::set_config(Config &config)
+{
+  conf_ = config;
+}
+
+bool
+Transform::read(VersionInfo &vi)
+{
+  ifstream strm(conf_.filename);
+
+  DSAY(DEBUG_MEDIUM, "Attempting read of", conf_.filename);
 
   if (strm.good()) {
     string buffer;
@@ -70,23 +81,33 @@ Transform::read(VersionInfo &vi,
 
     buffer.assign((istreambuf_iterator<char>(strm)),
                    istreambuf_iterator<char>());
+    strm.close();
 
     read_impl(vi, buffer);
 
     return true;
   }
-  // add exceptions!
 
   return false;
 }
 
 bool
-Transform::write(VersionInfo &vi,
-                 string      &filename)
-
+Transform::write(VersionInfo &vi)
 {
-  write_impl(vi, filename);
+  ofstream strm(conf_.filename);
 
+  DSAY(DEBUG_MEDIUM, "Attempting write to", conf_.filename);
+
+  if (strm.good()) {
+    stringstream buffer;
+    write_impl(vi, buffer);
+
+    strm << buffer.rdbuf();
+    strm.close();
+
+    return true;
+  }
+  
   return false;
 }
 
@@ -97,7 +118,7 @@ Transform::read_impl(VersionInfo &, string &)
 }
 
 bool
-Transform::write_impl(VersionInfo &, string &)
+Transform::write_impl(VersionInfo &, stringstream &)
 {
   throw runtime_error("Not implemented");
 }

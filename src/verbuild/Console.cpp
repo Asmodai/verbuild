@@ -95,6 +95,12 @@ set_verbose(bool flag)
   verbose = flag;
 }
 
+bool
+get_verbose()
+{
+  return verbose;
+}
+
 void
 set_debug_level(int level)
 {

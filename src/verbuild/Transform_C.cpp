@@ -43,6 +43,7 @@
 #include <regex>
 
 #include <boost/regex.hpp>
+#include <boost/locale.hpp>
 
 using namespace std;
 
@@ -73,27 +74,134 @@ static
 void
 write_header_postamble(stringstream &strm)
 {
-  // Doesn't need a trailing newline, that gets written by write_impl.
   strm <<
     "#endif // !__VersionInfo_Header__";
+}
+
+static
+void
+write_doxygen_preamble(Config &conf, stringstream &strm)
+{
+  strm <<
+    "/**\n"
+    " * @file " << conf.filename << "\n"
+    " * @author Verbuild " << VERSION_STRING << "\n"
+    " * @brief Provides version information.\n"
+    " */\n\n";
+}
+
+static
+void
+write_doxygen_define_comment(Config &conf, stringstream &strm)
+{
+  string prefix;
+
+  prefix.assign(conf.prefix);
+  upcase(prefix);
+
+  strm <<
+    "/**\n"
+    " * @def " << prefix << "VERSION_MAJOR\n"
+    " * @brief Major version number.\n"
+    " *\n"
+    " * @def " << prefix << "VERSION_MINOR\n"
+    " * @brief Minoir version number.\n"
+    " *\n"
+    " * @def " << prefix << "VERSION_BUILD\n"
+    " * @brief Build number.\n"
+    " *\n"
+    " * @def " << prefix << "VERSION_PPATCH\n"
+    " * @brief Patch number.\n"
+    " *\n"
+    " * @def " << prefix << "VERSION_BASE_YEAR\n"
+    " * @brief The year the project was started.\n"
+    " *\n"
+    " * @def " << prefix << "VERSION_DATE\n"
+    " * @brief The date this build was compiled.\n"
+    " *\n"
+    " * @def " << prefix << "VERSION_TIME\n"
+    " * @brief The time this build was compiled.\n"
+    " *\n"
+    " * @def " << prefix << "VERSION_STRING\n"
+    " * @brief String representation of the version.\n"
+    " */\n";
+}
+
+static
+void
+write_doxygen_struct_comment(Config &conf, stringstream &strm)
+{
+  string prefix;
+
+  prefix.assign(conf.prefix);
+  upcase(prefix);
+
+  strm <<
+    "/**\n"
+    " * @Brief Version number structure.\n"
+    " *\n"
+    " * @var baseYear\n"
+    " * @brief The year the project was started.\n"
+    " *\n"
+    " * @var major\n"
+    " * @brief Major version number.\n"
+    " *\n"
+    " * @var minor\n"
+    " * @brief Minor version number.\n"
+    " *\n"
+    " * @var build\n"
+    " * @brief Build number.\n"
+    " *\n"
+    " * @var patch\n"
+    " * @brief Patch number.\n"
+    " */\n";
 }
       
 static
 void
-write_defines(stringstream &strm, VersionInfo &vi)
+write_defines(Config &conf, VersionInfo &vi, stringstream &strm)
 {
+  string prefix;
+  boost::locale::generator gen;
+
+  std::locale::global(gen(""));
+
+  boost::locale::date_time now;
+
+  strm.imbue(locale());
+  prefix.assign(conf.prefix);
+  upcase(prefix);  
+
   strm <<
-    "#define " << "" << "VERSION_MAJOR      " << vi.get_major() << "\n"
-    "#define " << "" << "VERSION_MINOR      " << vi.get_minor() << "\n"
-    "#define " << "" << "VERSION_BUILD      " << vi.get_build() << "\n"
-    "#define " << "" << "VERSION_PATCH      " << vi.get_patch() << "\n\n"
-    "#define " << "" << "VERSION_BASE_YEAR  " << vi.get_base_year() << "\n"
-    "#define " << "" << "VERSION_DATE       " << "\"Nope\"" << "\n"
-    "#define " << "" << "VERSION_TIME       " << "\"Nope\"" << "\n"
-    "#define " << "" << "VERSION_STRING     " << "\"Derp\"" << "\n\n";
+    "#define " << prefix << "VERSION_MAJOR      " << vi.get_major() << "\n"
+    "#define " << prefix << "VERSION_MINOR      " << vi.get_minor() << "\n"
+    "#define " << prefix << "VERSION_BUILD      " << vi.get_build() << "\n"
+    "#define " << prefix << "VERSION_PATCH      " << vi.get_patch() << "\n\n"
+    "#define " << prefix << "VERSION_BASE_YEAR  " << vi.get_base_year() << "\n"
+    "#define " << prefix << "VERSION_DATE       \"" << vi.to_date() << "\"\n"
+    "#define " << prefix << "VERSION_TIME       \"" <<
+    boost::locale::as::ftime("%H:%M:%S") << now << "\"\n"
+    "#define " << prefix << "VERSION_STRING     \"" << vi.to_string() << "\"\n\n";
 }
 
-
+static
+void
+write_struct(Config &conf, VersionInfo &vi, stringstream &strm)
+{
+  strm <<
+    "static struct " << conf.prefix << "VersionNumber_s {\n"
+    "    int baseYear;\n"
+    "    int major;\n"
+    "    int build;\n"
+    "    int patch;\n"
+    "} " << conf.prefix << "VersionNumber = {\n"
+    "    " << vi.get_base_year() << ",\n"
+    "    " << vi.get_major() << ",\n"
+    "    " << vi.get_minor() << ",\n"
+    "    " << vi.get_build() << ",\n"
+    "    " << vi.get_patch() << "\n"
+    "};\n\n";
+}
 
 bool
 CTransform::read_impl(VersionInfo &vi, std::string &buffer)
@@ -101,7 +209,7 @@ CTransform::read_impl(VersionInfo &vi, std::string &buffer)
   DSAY(DEBUG_MEDIUM, "Reading C file");
 
   if (buffer.length() > 0) {
-    boost::regex  rgx;
+    boost::regex rgx;
 
     rgx.set_expression("\\s*\n\\s*");
     boost::regex_replace(buffer.begin(),
@@ -119,6 +227,7 @@ CTransform::read_impl(VersionInfo &vi, std::string &buffer)
           return false;
         }
 
+        DSAY(DEBUG_HIGH, "Reading version info.");
         vi.set_base_year(safe_stoi(matches[1]));
         vi.set_major(safe_stoi(matches[2]));
         vi.set_minor(safe_stoi(matches[3]));
@@ -146,22 +255,27 @@ CTransform::read_impl(VersionInfo &vi, std::string &buffer)
       while (it != end) {
         if (*it == "MAJOR") {
           *it++;
+          DSAY(DEBUG_HIGH, "Reading major:", *it);
           vi.set_major(safe_stoi(*it));
           ok = true;
         } else if (*it == "MINOR") {
           *it++;
+          DSAY(DEBUG_HIGH, "Reading minor:", *it);
           vi.set_minor(safe_stoi(*it));
           ok = true;
         } else if (*it == "BUILD") {
           *it++;
+          DSAY(DEBUG_HIGH, "Reading build:", *it);
           vi.set_build(safe_stoi(*it));
           ok = true;
         } else if (*it == "PATCH") {
           *it++;
           ok = true;
+          DSAY(DEBUG_HIGH, "Reading patch:", *it);
           vi.set_patch(safe_stoi(*it));
         } else if (*it == "BASE_YEAR") {
           *it++;
+          DSAY(DEBUG_HIGH, "Reading base year:", *it);
           vi.set_base_year(safe_stoi(*it));
           ok = true;
         } else {
@@ -178,18 +292,40 @@ CTransform::read_impl(VersionInfo &vi, std::string &buffer)
   return false;
 }
 
+#define IS_GROUP(__p)   ((conf_.groups & __p) == __p)
 bool
-CTransform::write_impl(VersionInfo &vi, std::string &)
+CTransform::write_impl(VersionInfo &vi, stringstream &strm)
 {
-  stringstream ss;
+  bool with_doxygen = IS_GROUP(OutputGroups::Doxygen);
+  bool with_basic   = IS_GROUP(OutputGroups::Basic);
+  bool with_struct  = IS_GROUP(OutputGroups::Struct);
 
-  write_header_preamble(ss);
-  write_defines(ss, vi);
-  write_header_postamble(ss);
+  write_header_preamble(strm);
+  if (with_doxygen) {
+    write_doxygen_preamble(conf_, strm);
+  }
 
-  cout << ss.str() << endl;
+  if (with_basic) {
+    if (with_doxygen) {
+      write_doxygen_define_comment(conf_, strm);
+    }
+    
+    write_defines(conf_, vi, strm);
+  }
+
+  if (with_struct) {
+    if (with_doxygen) {
+      write_doxygen_struct_comment(conf_, strm);
+    }
+
+    write_struct(conf_, vi, strm);
+  }
+
+  write_header_postamble(strm);
+  strm << endl;
 
   return true;
 }
+#undef IS_GROUP
 
 // Transform_C.cpp ends here.

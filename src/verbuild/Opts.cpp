@@ -42,6 +42,7 @@
 #include "IncrTypeParser.hpp"
 #include "TransformParser.hpp"
 #include "GroupsParser.hpp"
+#include "version.hpp"
 
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/program_options.hpp>
@@ -55,6 +56,7 @@
 #include <utility>
 
 #include "../resources/help.h"
+#include "../resources/cli/banner.h"
 
 using namespace std;
 
@@ -116,8 +118,7 @@ generate_increment(po::options_description &desc)
      (const char *)res_help_increment)
     ("year,y",
      po::value<int>()
-       ->default_value(1970)
-       ->implicit_value(today.year())
+       ->default_value(today.year())
        ->value_name("year"),
      (const char *)res_help_year);
 }
@@ -192,7 +193,7 @@ Opts::~Opts()
 {}
 
 void
-Opts::parse(int argc, char **argv)
+Opts::parse(Config &conf, int argc, char **argv)
 {
   try {
     po::store(po::parse_command_line(argc, argv, desc_), vmap_);
@@ -209,6 +210,10 @@ Opts::parse(int argc, char **argv)
 
   if (vmap_.count("help")) {
     show_help();
+  }
+
+  if (vmap_.count("version")) {
+    show_version();
   }
 
   if (vmap_.count("list-transforms")) {
@@ -231,7 +236,7 @@ Opts::parse(int argc, char **argv)
   if (vmap_.count("format")) {
     IncrModeParser format = vmap_["format"].as<IncrModeParser>();
     LSAY("Format set to:", format);
-    incr_mode_ = format.get_mode();
+    conf.incr_mode = format.get_mode();
   } else {
     FATAL("No output formatter was specified.");
     exit(EXIT_FAILURE);
@@ -240,7 +245,7 @@ Opts::parse(int argc, char **argv)
   if (vmap_.count("increment")) {
     IncrTypeParser incr = vmap_["increment"].as<IncrTypeParser>();
     LSAY("Increment type set to:", incr);
-    incr_type_ = incr.get_type();
+    conf.incr_type = incr.get_type();
   } else {
     FATAL("No increment type was specified.");
     exit(EXIT_FAILURE);
@@ -254,13 +259,13 @@ Opts::parse(int argc, char **argv)
       exit(EXIT_FAILURE);
     }
     LSAY("Base year set to:", year);
-    base_year_ = year;
+    conf.base_year = year;
   }
 
   if (vmap_.count("transform")) {
     TransformParser transform = vmap_["transform"].as<TransformParser>();
     LSAY("Transform set to:", transform);
-    transform_ = transform.to_string();
+    conf.transform = transform.to_string();
   } else {
     FATAL("No transform was specified.");
     exit(EXIT_FAILURE);
@@ -270,64 +275,40 @@ Opts::parse(int argc, char **argv)
     string tmp = vmap_["prefix"].as<string>();
 
     if (tmp.length() > 0) {
-      prefix_.assign(tmp);
-      delete_whitespace(prefix_);
-      LSAY("Prefix set to:", prefix_);
+      delete_whitespace(tmp);
+      conf.prefix.assign(tmp);
+      LSAY("Prefix set to:", conf.prefix);
     }
   }
 
   if (vmap_.count("create")) {
     LSAY("Will create file if it does not exist.");
-    create_ = true;
+    conf.create = true;
   } else {
     LSAY("Will not create file if it does not exist.");
-    create_ = false;
+    conf.create = false;
   }
 
   if (vmap_.count("output")) {
     string tmp = vmap_["output"].as<string>();
 
     if (tmp.length() > 0) {
-      filename_.assign(tmp);
-      LSAY("Output file set to:", filename_);
+      conf.filename.assign(tmp);
+      LSAY("Output file set to:", conf.filename);
     }
   } else {
     FATAL("No filename was provided!");
     exit(EXIT_FAILURE);
   }
+
+  if (vmap_.count("groups")) {
+    GroupsParser groups = vmap_["groups"].as<GroupsParser>();
+    LSAY("Output groups set to:", groups);
+    conf.groups = groups.get_groups();
+  }
 }
 
-const std::uint32_t
-Opts::get_base_year() const
-{
-  return base_year_;
-}
-
-const IncrementMode &
-Opts::get_increment_mode() const
-{
-  return incr_mode_;
-}
-
-const IncrementType &
-Opts::get_increment_type() const
-{
-  return incr_type_;
-}
-
-const string &
-Opts::get_filename() const
-{
-  return filename_;
-}
-
-const string &
-Opts::get_transform() const
-{
-  return transform_;
-}
-
-void
+__noreturn
 Opts::show_help() const
 {
   cout << "Usage: " << program_name << " [OPTION]...\n"
@@ -337,7 +318,16 @@ Opts::show_help() const
   exit(EXIT_FAILURE);
 }
 
-void
+__noreturn
+Opts::show_version() const
+{
+  cout << "Verbuilld " << VERSION_STRING << endl
+       << (const char *)res_cli_banner
+       << endl;
+  exit(EXIT_SUCCESS);
+}
+
+__noreturn
 Opts::show_list_transforms() const
 {
   ListPairVector lpv;
@@ -352,7 +342,7 @@ Opts::show_list_transforms() const
   exit(EXIT_SUCCESS);
 }
 
-void
+__noreturn
 Opts::show_list_increments() const
 {
   IncrTypeParser parser;
@@ -366,7 +356,7 @@ Opts::show_list_increments() const
   exit(EXIT_SUCCESS);
 }
 
-void
+__noreturn
 Opts::show_list_groups() const
 {
   GroupsParser parser;
@@ -378,34 +368,6 @@ Opts::show_list_groups() const
   }
 
   exit(EXIT_SUCCESS);
-}
-
-void
-Opts::print_config()
-{
-  ListPairVector lpv;
-
-  lpv.push_back(ListPair("File name", filename_));
-  lpv.push_back(ListPair("Create file", (create_ ? "Yes" : "No")));
-  lpv.push_back(ListPair("Transform", transform_));
-
-  lpv.push_back(ListPair("Prefix", prefix_));
-
-  {
-    stringstream ss;
-
-    ss << incr_mode_;
-    lpv.push_back(ListPair("Increment format", ss.str()));
-  }
-
-  {
-    stringstream ss;
-
-    ss << incr_type_;
-    lpv.push_back(ListPair("Increment type", ss.str()));
-  }
-  
-  Console(&cout).write_pairs(lpv);
 }
 
 // Opts.cpp ends here.

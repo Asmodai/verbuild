@@ -50,7 +50,7 @@ private:
 
 private:
   bool read_impl(VersionInfo &, std::string &);
-  bool write_impl(VersionInfo &, std::string &);
+  bool write_impl(VersionInfo &, std::stringstream &);
 };
 
 static const bool registered_c_transform =

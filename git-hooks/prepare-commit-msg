@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# Automatically add branch name and branch description to every commit
+# message except merge commit.
+#
+
+COMMIT_EDITMSG=$1
+
+addBranchName() {
+  NAME=$(git branch | grep '*' | sed 's/* //') 
+  DESCRIPTION=$(git config branch."$NAME".description)
+  echo "[$NAME]: $(cat $COMMIT_EDITMSG)" > $COMMIT_EDITMSG
+  if [ -n "$DESCRIPTION" ] 
+  then
+     echo "" >> $COMMIT_EDITMSG
+     echo $DESCRIPTION >> $COMMIT_EDITMSG
+  fi 
+}
+
+# You might need to consider squashes
+case "$2,$3" in
+  # Commits that already have a message
+  commit,?*)
+  ;;
+
+  # Messages are one line messages you decide how to handle
+  message,)
+  ;;
+
+  # Merge commits
+  merge,)
+    # Comments out the "Conflicts:" part of a merge commit.
+    perl -i.bak -ne 's/^/# /, s/^# #/#/ if /^Conflicts/ .. /#/; print' "$1"
+  ;;
+
+  # Non-merges with no prior messages
+  *)
+    addBranchName $1
+  ;;
+esac
+

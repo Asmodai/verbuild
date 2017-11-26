@@ -12,14 +12,23 @@
 *.la
 *.a
 
-# qmake output
+# Cmake-generated makefile
 Makefile
 
 # Backup files
 *~
 *.bak
 *.BAK
+\#*
 
 # Junk
 *.exe
 
+# Visual Studio
+.vs
+CMakeSettings.json
+
+# CMake
+build/
+testBin/
+Debug/

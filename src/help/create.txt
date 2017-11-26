@@ -1,0 +1,3 @@
+If this flag is enabled, then the output file will be created if it does not exist.
+
+If this flag is not enabled, then an error will be signalled if the file does not exist.

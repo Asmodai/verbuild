@@ -1,0 +1,11 @@
+#!/bin/bash
+
+base_dir=$(pwd)
+failed=0
+
+echo -n "Checking whether tests pass..."
+cd ${base_dir}/build
+ctest -E smpi
+failed=$?
+
+echo ${failed}

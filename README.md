@@ -1,8 +1,12 @@
+Hi, Emacs: -*- mode: gfm -*-
+
 verbuild
 ========
 
 Version number auto-incrementing and build numbering tool.
 
+Incrementing
+============
 
 This tool maintains version numbers with 4 components:
 

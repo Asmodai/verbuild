@@ -1,0 +1,1 @@
+The file to which version information will be written.

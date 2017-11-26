@@ -1,0 +1,5 @@
+Select a transform to use when writing version information.
+
+Transforms will write data in a structure usable by the language for which they are written.
+
+For example, the `c' transform will write a C header.

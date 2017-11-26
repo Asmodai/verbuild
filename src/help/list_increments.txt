@@ -1,0 +1,1 @@
+List all available increments for use with the `increments` option.

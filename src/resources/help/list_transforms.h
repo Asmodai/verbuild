@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_list_transforms_h__
-#define __rsrcource_list_transforms_h__
+#ifndef __resource_list_transforms_h__
+#define __resource_list_transforms_h__
 
 const unsigned char res_help_list_transforms[] = {
   0x4c, 0x69, 0x73, 0x74, 0x20, 0x61, 0x6c, 0x6c, 0x20, 0x61, 0x76, 0x61,

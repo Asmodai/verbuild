@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_prefix_h__
-#define __rsrcource_prefix_h__
+#ifndef __resource_prefix_h__
+#define __resource_prefix_h__
 
 const unsigned char res_help_prefix[] = {
   0x41, 0x20, 0x73, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x20, 0x74, 0x68, 0x61,

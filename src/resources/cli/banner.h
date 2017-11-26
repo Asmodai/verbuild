@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_banner_h__
-#define __rsrcource_banner_h__
+#ifndef __resource_banner_h__
+#define __resource_banner_h__
 
 const unsigned char res_cli_banner[] = {
   0x43, 0x6f, 0x70, 0x79, 0x72, 0x69, 0x67, 0x68, 0x74, 0x20, 0x28, 0x43,

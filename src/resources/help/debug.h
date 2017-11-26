@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_debug_h__
-#define __rsrcource_debug_h__
+#ifndef __resource_debug_h__
+#define __resource_debug_h__
 
 const unsigned char res_help_debug[] = {
   0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x20, 0x64, 0x65, 0x62, 0x75, 0x67,

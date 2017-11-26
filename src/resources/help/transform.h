@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_transform_h__
-#define __rsrcource_transform_h__
+#ifndef __resource_transform_h__
+#define __resource_transform_h__
 
 const unsigned char res_help_transform[] = {
   0x53, 0x65, 0x6c, 0x65, 0x63, 0x74, 0x20, 0x61, 0x20, 0x74, 0x72, 0x61,

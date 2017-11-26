@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_year_h__
-#define __rsrcource_year_h__
+#ifndef __resource_year_h__
+#define __resource_year_h__
 
 const unsigned char res_help_year[] = {
   0x54, 0x68, 0x65, 0x20, 0x79, 0x65, 0x61, 0x72, 0x20, 0x75, 0x73, 0x65,

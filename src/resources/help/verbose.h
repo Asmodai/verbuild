@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_verbose_h__
-#define __rsrcource_verbose_h__
+#ifndef __resource_verbose_h__
+#define __resource_verbose_h__
 
 const unsigned char res_help_verbose[] = {
   0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x20, 0x76, 0x65, 0x72, 0x62, 0x6f,

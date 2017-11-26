@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_create_h__
-#define __rsrcource_create_h__
+#ifndef __resource_create_h__
+#define __resource_create_h__
 
 const unsigned char res_help_create[] = {
   0x49, 0x66, 0x20, 0x74, 0x68, 0x69, 0x73, 0x20, 0x66, 0x6c, 0x61, 0x67,

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_increment_h__
-#define __rsrcource_increment_h__
+#ifndef __resource_increment_h__
+#define __resource_increment_h__
 
 const unsigned char res_help_increment[] = {
   0x54, 0x68, 0x65, 0x20, 0x69, 0x6e, 0x63, 0x72, 0x65, 0x6d, 0x65, 0x6e,

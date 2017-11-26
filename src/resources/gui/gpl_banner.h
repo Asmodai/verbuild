@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_gpl_banner_h__
-#define __rsrcource_gpl_banner_h__
+#ifndef __resource_gpl_banner_h__
+#define __resource_gpl_banner_h__
 
 const unsigned char res_gui_gpl_banner[] = {
   0x3c, 0x68, 0x74, 0x6d, 0x6c, 0x3e, 0x0a, 0x3c, 0x68, 0x65, 0x61, 0x64,

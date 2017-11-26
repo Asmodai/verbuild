@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_format_h__
-#define __rsrcource_format_h__
+#ifndef __resource_format_h__
+#define __resource_format_h__
 
 const unsigned char res_help_format[] = {
   0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x20, 0x6e, 0x75, 0x6d, 0x62,

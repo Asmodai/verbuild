@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_authors_h__
-#define __rsrcource_authors_h__
+#ifndef __resource_authors_h__
+#define __resource_authors_h__
 
 const unsigned char res_gui_authors[] = {
   0x6f, 0x72, 0x69, 0x67, 0x69, 0x6e, 0x61, 0x6c, 0x20, 0x61, 0x75, 0x74,

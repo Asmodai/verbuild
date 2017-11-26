@@ -51,8 +51,8 @@ do_preamble() {
 
     cat >${file} <<EOF
 #pragma once
-#ifndef __rsrcource_${symbol}__
-#define __rsrcource_${symbol}__
+#ifndef __resource_${symbol}__
+#define __resource_${symbol}__
 
 EOF
 }

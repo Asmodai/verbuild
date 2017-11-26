@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_output_h__
-#define __rsrcource_output_h__
+#ifndef __resource_output_h__
+#define __resource_output_h__
 
 const unsigned char res_help_output[] = {
   0x54, 0x68, 0x65, 0x20, 0x66, 0x69, 0x6c, 0x65, 0x20, 0x74, 0x6f, 0x20,

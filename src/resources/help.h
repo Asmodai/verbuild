@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_help_h__
-#define __rsrcource_help_h__
+#ifndef __resource_help_h__
+#define __resource_help_h__
 
 #include "help/create.h"
 #include "help/debug.h"

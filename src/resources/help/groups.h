@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __rsrcource_groups_h__
-#define __rsrcource_groups_h__
+#ifndef __resource_groups_h__
+#define __resource_groups_h__
 
 const unsigned char res_help_groups[] = {
   0x53, 0x65, 0x6c, 0x65, 0x63, 0x74, 0x20, 0x77, 0x68, 0x61, 0x74, 0x20,

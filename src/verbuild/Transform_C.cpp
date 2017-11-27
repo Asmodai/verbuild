@@ -41,9 +41,11 @@
 #include <iostream>
 #include <sstream>
 #include <regex>
+#include <cstdlib>
+#include <cstdio>
+#include <ctime>
 
 #include <boost/regex.hpp>
-#include <boost/locale.hpp>
 
 using namespace std;
 
@@ -162,13 +164,14 @@ void
 write_defines(Config &conf, VersionInfo &vi, stringstream &strm)
 {
   string prefix;
-  boost::locale::generator gen;
+  time_t now = time(nullptr);
+  char   buf[100] = { 0 };
 
-  std::locale::global(gen(""));
-
-  boost::locale::date_time now;
-
-  strm.imbue(locale());
+  if (strftime(buf, sizeof(buf), "%H:%M:%S", localtime(&now)) == 0) {
+    perror("strftime");
+    exit(EXIT_FAILURE);
+  }
+  
   prefix.assign(conf.prefix);
   upcase(prefix);  
 
@@ -179,8 +182,7 @@ write_defines(Config &conf, VersionInfo &vi, stringstream &strm)
     "#define " << prefix << "VERSION_PATCH      " << vi.get_patch() << "\n\n"
     "#define " << prefix << "VERSION_BASE_YEAR  " << vi.get_base_year() << "\n"
     "#define " << prefix << "VERSION_DATE       \"" << vi.to_date() << "\"\n"
-    "#define " << prefix << "VERSION_TIME       \"" <<
-    boost::locale::as::ftime("%H:%M:%S") << now << "\"\n"
+    "#define " << prefix << "VERSION_TIME       \"" << buf << "\"\n"
     "#define " << prefix << "VERSION_STRING     \"" << vi.to_string() << "\"\n\n";
 }
 

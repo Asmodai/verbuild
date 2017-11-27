@@ -7,7 +7,9 @@ Version number auto-incrementing and build numbering tool.
 ## Table of Contents
 
    * [verbuild](#verbuild)
-      * [Incrementing](#incrementing)
+      * [How to build](#how-to-build)
+         * [CMake options](#cmake-options)
+      * [How it works](#how-it-works)
          * [Simple incrementation](#simple-incrementation)
          * [Month offset incrementation](#month-offset-incrementation)
          * [Year offset incrementation](#year-offset-incrementation)
@@ -23,8 +25,47 @@ Version number auto-incrementing and build numbering tool.
          * [Debug options](#debug-options)
       * [Examples](#examples)
 
+## How to build
 
-## Incrementing
+Verbuild uses [CMake](https://cmake.org) as its build system, and requires
+[Boost](https://www.boost.org) 1.65 or higher to be installed.
+
+To build verbuild with CMake, issue the following instructions:
+
+### Unix and Unix-like
+
+``` shell
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+```
+
+### Windows
+
+Unfortunately, there is no easy way to install on Windows right now.
+You will probably need to use Explorer or PowerShell to copy the
+executable to a place on your path.
+
+### CMake options
+
+For a more complete list of what CMake can do, please refer to the CMake
+manual.  Here are some common recipes, however:
+
+#### -DCMAKE_BUILD_TYPE=Release
+
+This will build a release build, with various compiler optimisation flags.
+
+#### -DCMAKE_BUILD_TYPE=Debug
+
+This will build a debug build.
+
+#### -DSTATIC:bool=TRUE
+
+With this option enabled, CMake will build a static binary.
+
+## How it works
 
 This tool maintains version numbers with 4 components:
 

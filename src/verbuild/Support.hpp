@@ -352,6 +352,20 @@
 #endif
 
 /**
+ * @def __unused_variable
+ * @brief Inform the compiler that a variable is unused.
+ */
+#if COMPILER_EQ(COMPILER_GNU) || COMPILER_EQ(CLANG)
+# define UNUSED_VARIABLE(__v) \
+  __v __attribute__((unused))
+#elif COMPILER_EQ(COMPILER_MICROSOFT)
+# define UNUSED_VARIABLE(__v) \
+  __pragma(warning(suppress: 4100 4101)) __v
+#else
+# define UNUSED_VARIABLE(__v) __v
+#endif
+
+/**
  * @def __PRETTY_FUNCTION__
  * @brief Define the @em __PRETTY_FUNCTION__ macro on platforms that lack their
  *        definition.

@@ -37,4 +37,7 @@ _scriptpath="$(cd "$(dirname "$0")" ; pwd -P)"
 echo "Copying git hooks: "
 cp -v ${_scriptpath}/../git-hooks/* ${_scriptpath}/../.git/hooks/
 
+# Let's play it safe.
+chmod 755 ${_scriptpath}/../.git/hooks/*
+
 # install-hooks ends here.

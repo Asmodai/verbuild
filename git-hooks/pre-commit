@@ -8,4 +8,4 @@ cd ${base_dir}/build
 ctest -E smpi
 failed=$?
 
-echo ${failed}
+exit ${failed}

@@ -29,7 +29,20 @@
 
 # Set up includes and libraries
 set(WITH_INCS "${Boost_INCLUDE_DIRS}")
-set(WITH_LIBS "${Boost_LIBRARIES}")
+
+if(STATIC)
+  set(WITH_LIBS "${WITH_LIBS};${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}")
+  set(WITH_LIBS "${WITH_LIBS};${Boost_REGEX_LIBRARY}")
+  set(WITH_LIBS "${WITH_LIBS};${Boost_DATE_TIME_LIBRARY}")
+  set(WITH_LIBS "${WITH_LIBS};${Boost_PROGRAM_OPTIONS_LIBRARY}")
+  set(WITH_LIBS "${WITH_LIBS};${Boost_LOCALE_LIBRARY}")
+  set(WITH_LIBS "${WITH_LIBS};${Boost_FILESYSTEM_LIBRARY}")
+  set(WITH_LIBS "${WITH_LIBS};${PTHREAD_LIBRARY};${Boost_SYSTEM_LIBRARY}")
+  message(STATUS "Static libraries: ${WITH_LIBS}")
+else()
+  set(WITH_LIBS "${Boost_LIBRARIES}")
+endif()
+
 #if(FLTK_FOUND)
 #  set(WITH_INCS "${WITH_INCS};${FLTK_INCLUDE_DIR}")
 #  set(WITH_LIBS "${WITH_LIBS};${FLTK_BASE_LIBRARY}")
@@ -63,7 +76,10 @@ add_executable(
 )
 
 # Set libraries to link with.
-target_link_libraries(verbuild PUBLIC ${WITH_LIBS})
+target_link_libraries(verbuild PUBLIC
+  ${WITH_LIBS}
+  ${CMAKE_THREAD_LIBS_INIT}
+)
 
 # Set up include paths.
 target_include_directories(verbuild PUBLIC ${WITH_INCS})
@@ -77,5 +93,8 @@ foreach(testSrc ${TEST_SRCS})
   target_include_directories(${testName} PUBLIC ${WITH_INCS})
   add_test(NAME ${testName} COMMAND ${testName} -r detailed)
 endforeach(testSrc)
+
+# Set up installation
+install(TARGETS verbuild DESTINATION bin)
 
 # EOF

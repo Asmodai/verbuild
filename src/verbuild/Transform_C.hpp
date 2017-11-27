@@ -37,6 +37,7 @@
 #ifndef _Transform_C_hpp_
 #define _Transform_C_hpp_
 
+#include "Support.hpp"
 #include "Transform.hpp"
 
 #define C_KEY    "c"
@@ -53,7 +54,7 @@ private:
   bool write_impl(VersionInfo &, std::stringstream &);
 };
 
-static const bool registered_c_transform =
+static const bool UNUSED_VARIABLE(registered_c_transform) =
   get_transform_factory().register_transform(
     C_KEY,
     C_PRETTY,

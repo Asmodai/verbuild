@@ -54,18 +54,37 @@ add_definitions(-D_GIT_VERSION="${GIT_DESCRIBE}")
 get_git_head_revision(GIT_REFSPEC GIT_SHA1)
 add_definitions(-D_GIT_SHA1="${GIT_SHA1}")
 
+# Static support
+if(STATIC)
+  message(STATUS "Setting up for static build.")
+  set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+  set(BUILD_SHARED_LIBRARIES OFF)
+  set(CMAKE_STATIC_LINKER_FLAGS "-static")
+  set(CMAKE_MODULE_LINKER_FLAGS "-static")
+  set(CMAKE_EXE_LINKER_FLAGS "-static")
+endif()
+
 # Boost
-if(UNIX)
-  add_definitions(-DBOOST_ALL_DYN_LINK)
-  set(Boost_USE_STATIC_LIBS OFF)
-else()
+if(STATIC)
+  find_package(Threads)
+  find_library(PTHREAD_LIBRARY libpthread.a)
   set(Boost_USE_STATIC_LIBS ON)
+  set(Boost_USE_STATIC_RUNTIME ON)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBOOST_SYSTEM_NO_DEPRECATED")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -DBOOST_SYSTEM_NO_DEPRECATED")
+else()
+  if(UNIX)
+    add_definitions(-DBOOST_ALL_DYN_LINK)
+    set(Boost_USE_STATIC_LIBS OFF)
+    set(Boost_USE_STATIC_RUNTIME OFF)
+  else()
+    set(Boost_USE_STATIC_LIBS ON)
+    set(Boost_USE_STATIC_RUNTIME OFF)
+  endif()
 endif()
 set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost 1.65.0 REQUIRED COMPONENTS
   system
-  filesystem
   locale
   program_options
   date_time

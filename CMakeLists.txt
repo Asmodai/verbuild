@@ -85,11 +85,11 @@ endif()
 set(Boost_USE_MULTITHREADED ON)
 find_package(Boost 1.65.0 REQUIRED COMPONENTS
   system
-  locale
   program_options
   date_time
   regex
-  unit_test_framework)
+  unit_test_framework
+)
 
 # FLTK
 set(FLTK_SKIP_OPENGL true)

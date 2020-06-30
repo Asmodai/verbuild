@@ -2,8 +2,8 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
-assignees: ''
+labels: 'bug,needs-review'
+assignees: 'Asmodai'
 
 ---
 
@@ -55,4 +55,3 @@ version.
 
 Any additional information, configuration, or data that might be
 necessary or of use when reproducing the issue.
-

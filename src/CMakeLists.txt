@@ -47,15 +47,14 @@ include_directories(${LUA_INCLUDE})
 add_subdirectory(sol2)
 include_directories(sol2/include)
 
+add_definitions(-DSOL_USING_CXX_LUA -DSOL_EXCEPTIONS_SAFE_PROPAGATION)
+
 # Code shared between app and tests.
 file(GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} verbuild/*.cpp)
 list(REMOVE_ITEM SOURCES "verbuild/main.cpp")
 
-# Test sources.
-file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} tests/*.cpp)
-
-# Object 'library' of shared code.
-# add_library(COMMON_OBJECTS OBJECT ${SOURCES})
+# Ensure Lua is compiled with C++ compiler.
+set_source_files_properties(${LUA_SRCS} PROPERTIES LANGUAGE CXX)
 
 # Main binary.
 add_executable(
@@ -83,16 +82,6 @@ set_target_properties(
 
 # Set up include paths.
 target_include_directories(verbuild PUBLIC ${WITH_INCS})
-# target_include_directories(COMMON_OBJECTS PUBLIC ${WITH_INCS})
-
-# Generate tests.
-foreach(testSrc ${TEST_SRCS})
-  get_filename_component(testName ${testSrc} NAME_WE)
-  add_executable(${testName} ${testSrc} ${SOURCES})
-  target_link_libraries(${testName} ${WITH_LIBS})
-  target_include_directories(${testName} PUBLIC ${WITH_INCS})
-  add_test(NAME ${testName} COMMAND ${testName} -r detailed)
-endforeach(testSrc)
 
 # Something about dog food.
 if(WIN32)

@@ -1,5 +1,5 @@
 # CMake for Lua
-file(GLOB LUA_C_SRC *.h *.c)
+file(GLOB LUA_C_SRC *.c)
 
 # Remove onalua.c and lua.c
 list(FILTER LUA_C_SRC EXCLUDE REGEX ".*onelua.c$")

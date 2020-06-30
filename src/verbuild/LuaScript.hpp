@@ -39,7 +39,9 @@
 
 #include <string>
 
+#define SOL_PRINT_ERRORS   0
 #include <sol/sol.hpp>
+#undef SOL_PRINT_ERRORS
 
 #include "VersionInfo.hpp"
 

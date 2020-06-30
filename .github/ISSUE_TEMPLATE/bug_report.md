@@ -1,3 +1,12 @@
+---
+name: Bug report
+about: Create a report to help us improve
+title: ''
+labels: ''
+assignees: ''
+
+---
+
 <!--
 
 Have you read the Code of Conduct?  By filling in an issue, you are expected
@@ -8,15 +17,6 @@ Do you want to ask a question?  Are you looking for support?
 If so, then please do NOT create an issue, email the author!
 
 -->
-
----
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
----
 
 ### Prerequisites
 

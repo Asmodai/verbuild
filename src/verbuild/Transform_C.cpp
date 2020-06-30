@@ -188,7 +188,10 @@ write_defines(Config &conf, VersionInfo &vi, stringstream &strm)
 
 static
 void
-write_struct(Config &conf, VersionInfo &vi, stringstream &strm)
+write_struct(Config       &conf,
+             VersionInfo  &vi,
+             stringstream &strm,
+             bool         use_preprocessor = false)
 {
   strm <<
     "static struct " << conf.prefix << "VersionNumber_s {\n"
@@ -196,13 +199,31 @@ write_struct(Config &conf, VersionInfo &vi, stringstream &strm)
     "    int major;\n"
     "    int build;\n"
     "    int patch;\n"
-    "} " << conf.prefix << "VersionNumber = {\n"
-    "    " << vi.get_base_year() << ",\n"
-    "    " << vi.get_major() << ",\n"
-    "    " << vi.get_minor() << ",\n"
-    "    " << vi.get_build() << ",\n"
-    "    " << vi.get_patch() << "\n"
-    "};\n\n";
+    "} " << conf.prefix << "VersionNumber = {\n";
+
+  switch (use_preprocessor) {
+    case true: {
+        string prefix;
+        prefix.assign(conf.prefix);
+        strm
+          << "    " << prefix << "VERSION_BASE_YEAR" << ",\n"
+          << "    " << prefix << "VERSION_MAJOR" << ",\n"
+          << "    " << prefix << "VERSION_MINOR" << ",\n"
+          << "    " << prefix << "VERSION_BUILD" << ",\n"
+          << "    " << prefix << "VERSION_PATCH" << "\n";
+      }
+      break;
+
+    case false:
+      strm
+        << "    " << vi.get_base_year() << ",\n"
+        << "    " << vi.get_major() << ",\n"
+        << "    " << vi.get_minor() << ",\n"
+        << "    " << vi.get_build() << ",\n"
+        << "    " << vi.get_patch() << "\n";
+      break;
+  }
+   strm << "};\n\n";
 }
 
 bool
@@ -320,7 +341,7 @@ CTransform::write_impl(VersionInfo &vi, stringstream &strm)
       write_doxygen_struct_comment(conf_, strm);
     }
 
-    write_struct(conf_, vi, strm);
+    write_struct(conf_, vi, strm, with_basic);
   }
 
   write_header_postamble(strm);

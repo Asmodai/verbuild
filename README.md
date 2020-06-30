@@ -146,7 +146,7 @@ what is required, please take a look at the CFormatting.hpp file.
 Usage:
 
     verbuild [-c] [-f <x.x.x.x>] [-g <basic|struct|doxygen|all>]
-             [-i <simple|mydate|bymonths|byyears] [-o <string>] [-p <string>]
+             [-i <simple|bydate|bymonths|byyears] [-o <string>] [-p <string>]
              [-t <c>] [-v] [-y <[1970...]>] [-V] [-D <number] [-h]
 
 ### General options
@@ -292,7 +292,7 @@ which results in the following output to stdout:
 A more advanced example would be:
 
 ``` shell
-verbuild -t c -y 2010 -i btyears -f 10.*.+.* -g struct
+verbuild -t c -y 2010 -i byyears -f 10.*.+.* -g struct
 ```
 
 which yields:
@@ -327,7 +327,7 @@ static struct VersionNumber_s {
 To deal with a file, one can use:
 
 ``` shell
-verbuild -t c -y 2010 -i months -f 13.04.*.1 -g basic -g doxygen -o test.h -c
+verbuild -t c -y 2010 -i bymonths -f 13.04.*.1 -g basic -g doxygen -o test.h -c
 ```
 
 The resulting file will look like this:

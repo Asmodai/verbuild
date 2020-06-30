@@ -92,6 +92,31 @@ foreach(testSrc ${TEST_SRCS})
   add_test(NAME ${testName} COMMAND ${testName} -r detailed)
 endforeach(testSrc)
 
+# Something about dog food.
+if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/verbuild")
+  set(DOG_FOOD_BINARY "${CMAKE_CURRENT_BINARY_DIR}/verbuild")
+else()
+  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/verbuild.exe")
+  set(DOG_FOOD_BINARY "${CMAKE_CURRENT_BINARY_DIR}/verbuild.exe")
+  else()
+    set(DOG_FOOD_BINARY "NO")
+    message(STATUS "No verbuild binary available, cannot eat own dog food.")
+  endif()
+endif()
+
+if(NOT ${DOG_FOOD_BINARY} EQUAL "NO")
+  add_custom_command(
+    TARGET verbuild
+    PRE_BUILD COMMAND
+	${DOG_FOOD_BINARY}
+    -c
+    -f "*.*.+.*"
+    -i simple
+    -t c
+    -g basic 
+    -o ${CMAKE_CURRENT_SOURCE_DIR}/verbuild/version.hpp)
+endif()
+
 # Set up installation
 install(TARGETS verbuild DESTINATION bin)
 

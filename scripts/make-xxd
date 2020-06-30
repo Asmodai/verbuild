@@ -126,12 +126,6 @@ echo "Processing CLI resources"
 do_dump ${_cmdl}/banner.txt       "cli" ${_rsrc}/cli/banner.h
 echo "Done."
 
-# UI resources.
-echo "Processing UI resources"
-do_dump ${_wimp}/gpl_banner.html  "gui" ${_rsrc}/gui/gpl_banner.h
-do_dump ${_root}/AUTHORS          "gui" ${_rsrc}/gui/authors.h
-echo "Done."
-
 # `include all' header generation.
 echo "Generating headers:"
 make_include_all ${_rsrc}/help.h 'help' ${_rsrc}/help

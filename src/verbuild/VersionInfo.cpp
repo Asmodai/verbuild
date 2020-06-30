@@ -49,12 +49,7 @@ using namespace std;
 namespace       date = boost::gregorian;
 
 VersionInfo::VersionInfo()
-  : major_(0),
-    minor_(0),
-    build_(0),
-    patch_(0),
-    base_year_(0),
-    incr_type_(IncrementType::Simple)
+  : VersionInfo(0, 0, 0, 0, 0, IncrementType::Simple)
 {}
 
 VersionInfo::VersionInfo(const uint32_t major,

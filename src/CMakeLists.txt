@@ -41,10 +41,10 @@ else()
   set(WITH_LIBS "${Boost_LIBRARIES}")
 endif()
 
-#if(FLTK_FOUND)
-#  set(WITH_INCS "${WITH_INCS};${FLTK_INCLUDE_DIR}")
-#  set(WITH_LIBS "${WITH_LIBS};${FLTK_BASE_LIBRARY}")
-#endif()
+# Add Lua
+add_subdirectory(lua)
+include_directories(${LUA_INCLUDE})
+add_subdirectory(sol2)
 
 # Code shared between app and tests.
 file(GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} verbuild/*.cpp)
@@ -62,12 +62,14 @@ add_executable(
     "verbuild/main.cpp"
     "verbuild/resource.rc"
   $<TARGET_OBJECTS:COMMON_OBJECTS>
+  ${LUA_SRCS}
 )
 
 # Set libraries to link with.
 target_link_libraries(verbuild PUBLIC
   ${WITH_LIBS}
   ${CMAKE_THREAD_LIBS_INIT}
+  sol2::sol2
 )
 
 # Set up properties.

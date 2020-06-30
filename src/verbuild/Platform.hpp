@@ -37,12 +37,11 @@
 #ifndef _Platform_hpp_
 #define _Platform_hpp_
 
-#define PLATFORM_WINDOWS   0x01000000   /*!< Microsoft Windows. */
-#define PLATFORM_UNIX      0x02000000   /*!< Unix or Unix-like. */
-#define PLATFORM_BSD       0x02100000   /*!< BSD. */
-#define PLATFORM_MACH      0x02110000   /*!< CMU Mach. */
-#define PLATFORM_MACOSX    0x02110001   /*!< Apple MacOS X. */
-#define PLATFORM_LINUX     0x02200000   /*!< GNU/Linux. */
+#define PLATFORM_WINDOWS   1   /*!< Microsoft Windows. */
+#define PLATFORM_UNIX      2   /*!< Unix or Unix-like. */
+#define PLATFORM_BSD       3   /*!< BSD. */
+#define PLATFORM_MACOSX    5   /*!< Apple MacOS X. */
+#define PLATFORM_LINUX     6   /*!< GNU/Linux. */
 
 /*
  * Detect the operating system.
@@ -70,28 +69,6 @@
  */
 #define PLATFORM_EQ(__p)                        \
   (PLATFORM & __p)
-
-/**
- * @brief Is the platform greater than or equal to a specific platform?
- * @param __f The platform family (e.g. PLATFORM_UNIX)
- * @param __c The platform to test against (e.g. PLATFORM_BSD)
- * @see PLATFORM_LT
- *
- * The platform list is laid out numerically to support platform families,
- * such as FreeBSD being a member of the BSD family, which in turn is a
- * member of the Unix family.
- */
-#define PLATFORM_GT(__f,__c)                    \
-  (PLATFORM & __f) && (PLATFORM >= __c)
-
-/**
- * @brief Is the platform lesser than or equal to a specific platform?
- * @param __f The platform family (e.g. PLATFORM_UNIX)
- * @param __c The platform to test against (e.g. PLATFORM_BSD)
- * @see PLATFORM_GT
- */
-#define PLATFORM_LT(__f,__c)                    \
-  (PLATFORM & __f) && (PLATFORM <  __c)
 
 #endif // !_Platform_hpp_
 

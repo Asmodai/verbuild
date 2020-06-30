@@ -292,16 +292,16 @@
 #  define __BYTE_ORDER __LITTLE_ENDIAN
 # endif
 #else
-# error "Unable to determine endianess of this platform."
+# error Unable to determine endianess of this platform.
 #endif
 
 /*
  * Standard integer types that may be missing.
  */
-#if __has_include(<cstdint>) || CXX_STANDARD_GT(STANDARD_CXX11)
+#if __has_include(<cstdint>)
 # include <cstdint>
 #else
-# include "cstdint.hpp"
+# error No cstdint available
 #endif
 
 /*
@@ -327,28 +327,13 @@
  * @note This only works with compilers that support this type of compiler
  *       hint.
  */
-#if COMPILER_EQ(COMPILER_MICROSOFT)
-# define __noreturn __declspec(noreturn) void
-#elif defined(__have_sd6_tests__)
-# if __has_cpp_attribute(noreturn)
-#  define __noreturn [[noreturn]] void
-# elif __has_attribute(noreturn)
-#  define __noreturn void __attribute__((noreturn))
-# else
-#  define __noreturn void
-# endif
+
+#if __has_cpp_attribute(noreturn)
+# define NORETURN [[noreturn]] void
+#elif __has_attribute(noreturn)
+# define NORETURN void __attribute__((noreturn))
 #else
-# if COMPILER_EQ(COMPILER_GNU)   ||           \
-     COMPILER_EQ(COMPILER_CLANG) ||           \
-     COMPILER_EQ(COMPILER_INTEL)
-#  if COMPILER_GT(COMPILER_GNU, COMPILER_GCC48)
-#   define __noreturn [[noreturn]] void
-#  else
-#   define __noreturn void __attribute__((noreturn))
-#  endif
-# else
-#  define __noreturn void
-# endif
+# define NORETURN void
 #endif
 
 /**
@@ -392,9 +377,9 @@
  * @note This probably isn't what you think it is, as some compilers already
  *       have ways to determine whether something should be inline or not.
  */
-#if COMPILER_GT(COMPILER_MICROSOFT, COMPILER_MSVC2012)
+#if COMPILER_EQ(COMPILER_MICROSOFT)
 # define FORCE_INLINE __forceinline
-#elif COMPILER_GT(COMPILER_GNU, COMPILER_GCC48)
+#elif COMPILER_EQ(COMPILER_GNU)
 # define FORCE_INLINE inline __attribute__((always_inline))
 #else
 # define FORCE_INLINE __inline
@@ -422,40 +407,20 @@
  * @def OVERRIDE
  * @brief Macro for the C++11 @em override specifier.
  */
-#if CXX_STANDARD_GT(STANDARD_CXX11)
-# define OVERRIDE override
-#else
-# define OVERRIDE
-#endif
+#define OVERRIDE override
+
 
 /**
  * @def DEPRECATED
  * @brief Mark a function as deprecated.
  */
-#if CXX_STANDARD_GT(STANDARD_CXX14)
-# define DEPRECATED [[deprecated]]
-#elif COMPILER_EQ(COMPILER_MICROSOFT)
-# define DEPRECATED __declspec(deprecated)
-#elif COMPILER_EQ(COMPILER_GNU) || COMPILER_EQ(COMPILER_CLANG)
-# define DEPRECATED __attribute__((deprecated))
-#else
-# pragma message("WARNING: You need to implement DEPRECATED for your compiler")
-# define DEPRECATED
-#endif
+#define DEPRICATED [[deprecated]]
 
 /**
  * @def DEPRECATED_EX
  * @brief Mark a function as deprecated, issuing a compiler warning if used.
  */
-#if CXX_STANDARD_GT(STANDARD_CXX14)
-# define DEPRECATED_EX(message) [[deprecated(message)]]
-#elif COMPILER_EQ(COMPILER_MICROSOFT)
-# define DEPRECATED_EX(message) __declspec(deprecated(message))
-#elif COMPILER_EQ(COMPILER_GNU) || COMPILER_EQ(COMPILER_CLANG)
-# define DEPRECATED_EX(message) __attribute__((deprecated))
-#else
-# define DEPRECATED_EX(__ignore)
-#endif
+#define DEPRICATED_EX(__msg) [[deprecated(__msg)]]
 
 /**
  * @def _EXPORT

@@ -75,7 +75,7 @@ target_link_libraries(verbuild PUBLIC
 # Set up properties.
 set_target_properties(
   verbuild
-  PROPERTIES CXX_STANDARD          14
+  PROPERTIES CXX_STANDARD          17
              CXX_STANDARD_REQUIRED ON
              CXX_EXTENSIONS        OFF
 )

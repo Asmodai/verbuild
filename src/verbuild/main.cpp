@@ -67,10 +67,7 @@ main(int argc, char **argv)
   transform->set_config(conf);
   if (transform->read(vi)) {
     vi.set_increment_type(conf.incr_type);
-
-    if (vi.get_base_year() < conf.base_year) {
-      vi.set_base_year(conf.base_year);
-    }
+    vi.set_base_year(conf.base_year);
 
     vi.increment(conf.incr_mode);
     transform->write(vi);

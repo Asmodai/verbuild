@@ -66,9 +66,16 @@ Transform::set_config(Config &config)
 bool
 Transform::read(VersionInfo &vi)
 {
+  if (conf_.filename.empty()) {
+    return false;
+  }
+
   ifstream strm(conf_.filename);
 
-  DSAY(DEBUG_MEDIUM, "Attempting read of", conf_.filename);
+  // If "STDOUT!" is ever printed, we dun gun gufed.
+  DSAY(DEBUG_MEDIUM,
+       "Attempting read of",
+       (conf_.filename.empty() ? "STDOUT!" : conf_.filename));
 
   if (strm.good()) {
     string buffer;
@@ -102,7 +109,10 @@ Transform::write(VersionInfo &vi)
     strm.basic_ios<char>::rdbuf(cout.rdbuf());
   }
 
-  DSAY(DEBUG_MEDIUM, "Attempting write to", conf_.filename);
+  // This time STDOUT is fine.
+  DSAY(DEBUG_MEDIUM,
+       "Attempting write to",
+       (conf_.filename.empty() ? "STDOUT" : conf_.filename));
 
   if (strm.good()) {
     stringstream buffer;

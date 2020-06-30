@@ -379,7 +379,10 @@
  */
 #if COMPILER_EQ(COMPILER_MICROSOFT)
 # if !defined(__PRETTY_FUNCTION__)
-#  define __PRETTY_FUNCTION__ __FUNCSIG__
+// Well, the above is all good and all, but man, __FUNCSIG__ outputs waaaay
+// too much stuff.  I've decided I don't care.
+
+#  define __PRETTY_FUNCTION__ __func__
 # endif
 #endif
 

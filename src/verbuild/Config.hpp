@@ -53,11 +53,23 @@ struct Config
   bool          create;
   std::string   filename;
 
-  Config() {};
-  Config(const Config &) = delete;
-  ~Config() {};
+  Config()
+    : base_year(1970),
+      incr_mode(IncrementMode::None),
+      incr_type(IncrementType::Simple),
+      groups(OutputGroups::None),
+      transform(""),
+      prefix(""),
+      create(false),
+      filename("")
+  {};
 
-  void print();
+  Config(const Config &) = delete;
+
+  ~Config()
+  {};
+
+  void print() const;
 };
 
 

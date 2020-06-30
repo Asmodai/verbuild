@@ -112,7 +112,8 @@ if(NOT ${DOG_FOOD_BINARY} EQUAL "NO")
             -f "*.*.+.*"
             -i simple
             -t c
-            -g basic 
+            -g basic
+            -y 2013
             -o ${CMAKE_CURRENT_SOURCE_DIR}/verbuild/version.hpp)
   add_dependencies(verbuild verbuild_version)
 endif()

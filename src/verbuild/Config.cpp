@@ -43,7 +43,7 @@
 using namespace std;
 
 void
-Config::print()
+Config::print() const
 {
   ListPairVector lpv;
 

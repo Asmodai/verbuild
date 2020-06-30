@@ -41,7 +41,7 @@ function match_struct()
       {1, 2, 3, 4, 5}
    )
 
-   print("Trying to match struct...")
+   debug("Trying to match struct...")
 
    if (res:size() == 5 and tonumber(res[1]) ~= nil) then
       dispatch["BASE_YEAR"](res[1])
@@ -66,7 +66,7 @@ function match_defines()
       {1, 2}
    )
 
-   print("Trying to match defines...")
+   debug("Trying to match defines...")
    
    if (res:size() == 10 and tonumber(res[2]) ~= nil) then
       local key, val
@@ -99,33 +99,40 @@ end
 function parse()
    local r = false
 
-   print("Parsing")
+   debug("parse() entered")
 
-  -- Try to match by structure first.
+   -- Try to match by structure first.
    r = match_struct()
 
    if r == false then
       -- That failed, let's try defines
 
-      print("Parsing again")
       r = match_defines()
    end
 
    -- If both failed, well, who cares.
-   print("Failing, meh", r)
    success = r
+
+   debug("parse() exited")
 end
 
 
 function build()
+   debug("build() entered")
+
    return write_header() .. write_footer()
 end
 
 function info()
+   debug("Setting module info")
    modinfo.transform = "c"
    modinfo.name      = "C/C++"
    modinfo.author    = "Paul Ward"
 end
+
+debug("Script loaded")
+
+diebitch()
 
 -- }}}
 -- ============================================================================

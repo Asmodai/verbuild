@@ -31,11 +31,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(verbuild)
 
-# Before anything, ensure we can C++11!
-if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14")
-endif()
-
 # Catch debug
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
@@ -91,14 +86,7 @@ find_package(Boost 1.65.0 REQUIRED COMPONENTS
   unit_test_framework
 )
 
-# FLTK
-set(FLTK_SKIP_OPENGL true)
-set(FLTK_SKIP_FLUID true)
-find_package(FLTK)
-if(FLTK_FOUND)
-   message(STATUS "FLTK found")
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DWITH_FLTK")
-   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DWITH_FLTK")
-endif()
-
+# Process subdirs.
 add_subdirectory("src")
+
+# EOF

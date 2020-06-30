@@ -46,15 +46,6 @@ endif()
 #  set(WITH_LIBS "${WITH_LIBS};${FLTK_BASE_LIBRARY}")
 #endif()
 
-# GUI components
-#if(FLTK_FOUND)
-#  file(GLOB UI_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} gui/*.cpp)
-#else()
-#  set(UI_OBJECTS "")
-#endif()
-#add_library(UI_OBJECTS OBJECT ${UI_SOURCES})
-#target_include_directories(UI_OBJECTS PUBLIC ${WITH_INCS})
-#
 # Code shared between app and tests.
 file(GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} verbuild/*.cpp)
 list(REMOVE_ITEM SOURCES "verbuild/main.cpp")
@@ -79,6 +70,14 @@ target_link_libraries(verbuild PUBLIC
   ${CMAKE_THREAD_LIBS_INIT}
 )
 
+# Set up properties.
+set_target_properties(
+  verbuild
+  PROPERTIES CXX_STANDARD          14
+             CXX_STANDARD_REQUIRED ON
+             CXX_EXTENSIONS        OFF
+)
+
 # Set up include paths.
 target_include_directories(verbuild PUBLIC ${WITH_INCS})
 target_include_directories(COMMON_OBJECTS PUBLIC ${WITH_INCS})
@@ -93,30 +92,20 @@ foreach(testSrc ${TEST_SRCS})
 endforeach(testSrc)
 
 # Something about dog food.
-if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/verbuild")
-  set(DOG_FOOD_BINARY "${CMAKE_CURRENT_BINARY_DIR}/verbuild")
-else()
-  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/verbuild.exe")
+if(WIN32)
+  set(DOG_FOOD_SCRIPT "${PROJECT_SOURCE_DIR}/scripts/dog-food.bat")
   set(DOG_FOOD_BINARY "${CMAKE_CURRENT_BINARY_DIR}/verbuild.exe")
-  else()
-    set(DOG_FOOD_BINARY "NO")
-    message(STATUS "No verbuild binary available, cannot eat own dog food.")
-  endif()
+else()
+  set(DOG_FOOD_SCRIPT "${PROJECT_SOURCE_DIR}/scripts/dog-food")
+  set(DOG_FOOD_BINARY "${CMAKE_CURRENT_BINARY_DIR}/verbuild")
 endif()
 
-if(NOT ${DOG_FOOD_BINARY} EQUAL "NO")
-  add_custom_target(
-    verbuild_version
-    COMMAND ${DOG_FOOD_BINARY}
-            -c
-            -f "*.*.+.*"
-            -i simple
-            -t c
-            -g basic
-            -y 2013
-            -o ${CMAKE_CURRENT_SOURCE_DIR}/verbuild/version.hpp)
-  add_dependencies(verbuild verbuild_version)
-endif()
+add_custom_target(
+  verbuild_version
+  COMMAND ${DOG_FOOD_SCRIPT}
+          ${DOG_FOOD_BINARY}
+          ${CMAKE_CURRENT_SOURCE_DIR}/verbuild/version.hpp)
+add_dependencies(verbuild verbuild_version)
 
 # Set up installation
 install(TARGETS verbuild DESTINATION bin)

@@ -105,16 +105,16 @@ else()
 endif()
 
 if(NOT ${DOG_FOOD_BINARY} EQUAL "NO")
-  add_custom_command(
-    TARGET verbuild
-    PRE_BUILD COMMAND
-	${DOG_FOOD_BINARY}
-    -c
-    -f "*.*.+.*"
-    -i simple
-    -t c
-    -g basic 
-    -o ${CMAKE_CURRENT_SOURCE_DIR}/verbuild/version.hpp)
+  add_custom_target(
+    verbuild_version
+    COMMAND ${DOG_FOOD_BINARY}
+            -c
+            -f "*.*.+.*"
+            -i simple
+            -t c
+            -g basic 
+            -o ${CMAKE_CURRENT_SOURCE_DIR}/verbuild/version.hpp)
+  add_dependencies(verbuild verbuild_version)
 endif()
 
 # Set up installation

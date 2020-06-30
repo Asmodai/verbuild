@@ -46,23 +46,67 @@
 
 #include "Transform_C.hpp"
 
+#include "LuaScript.hpp"
+#include <iostream>
+
+void test2()
+{
+  LuaScript lua = LuaScript();
+
+  std::string buffer(R"(
+#define VERSION_MAJOR      0
+#define VERSION_MINOR      1
+#define VERSION_BUILD      20200630
+#define VERSION_PATCH      7
+
+#define VERSION_BASE_YEAR  2020
+#define VERSION_DATE       "2020-Jun-30"
+#define VERSION_TIME       "09:53:16"
+#define VERSION_STRING     "0.1.20200630.7"
+
+static struct VersionNumber_s {
+    int baseYear;
+    int major;
+    int minor;
+    int build;
+    int patch;
+} VersionNumber = {
+    asd,
+    asd,
+    asd,
+    asd,
+    asd
+};
+)");
+
+  lua.LoadFile("C:\\Users\\asmod\\source\\repos\\verbuild\\src\\lualib\\c.lua");
+
+  lua.Info();
+  lua.Parse(buffer);
+
+  lua.GetInfo().print();
+}
+
 int
 main(int argc, char **argv)
 {
-  Config  conf;
-  Opts   *opts = new Opts();
+  Config conf{};
+  Opts   opts{};
+
+  //lua_test();
+  test2();
 
   set_program_name(argv[0]);
   set_verbose(false);
 
-  opts->parse(conf, argc, argv);
+  opts.parse(conf, argc, argv);
   if (get_verbose()) {
     LSAY("Configuration:");
     conf.print();
   }
 
-  Transform   *transform = GET_TRANSFORM_CREATE(conf.transform);
-  VersionInfo  vi;
+  Transform*  transform = GET_TRANSFORM_CREATE(conf.transform);
+  VersionInfo vi;
 
   transform->set_config(conf);
   if (transform->read(vi)) {

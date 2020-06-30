@@ -37,12 +37,14 @@ To build verbuild with CMake, issue the following instructions:
 ``` shell
 mkdir build
 cd build
-cmake ..
+cmake ...
 make
 sudo make install
 ```
 
-### Windows
+You can also use the CMake GUI tool.
+
+### Microsoft Windows
 
 Unfortunately, there is no easy way to install on Windows right now.
 You will probably need to use Explorer or PowerShell to copy the

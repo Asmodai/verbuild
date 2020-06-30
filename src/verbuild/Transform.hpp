@@ -106,7 +106,7 @@ public:
 template <typename DerivedT>
 Transform *create_transform() { return new DerivedT(); }
 
-TransformFactory &get_transform_factory();
+TransformFactory& get_transform_factory();
 
 #define GET_TRANSFORM_CREATE(__k) get_transform_factory().build(__k)
 #define GET_TRANSFORM_PRETTY(__k) get_transform_factory().get_pretty(__k)

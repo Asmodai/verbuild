@@ -64,7 +64,7 @@ struct Config
       filename("")
   {};
 
-  Config(const Config &) = delete;
+  Config(const Config&) = delete;
 
   ~Config()
   {};

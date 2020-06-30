@@ -117,9 +117,9 @@ debug_level_met(int level)
 
 static
 void
-print_preamble(ostream *stm,
-               const char   *color,
-               const char   *prefix)
+print_preamble(ostream*    stm,
+               const char* color,
+               const char* prefix)
 {
   *stm << ANSI_WHITE << "["
        << color << prefix
@@ -131,22 +131,22 @@ Console::Console()
   : Console(&cerr)
 {}
 
-Console::Console(ostream *stm)
-  : out_(stm)
+Console::Console(ostream* stm)
+  : _out(stm)
 {
 #if PLATFORM_EQ(PLATFORM_WINDOWS)
   enable_ansi_console();
 #endif
 }
 
-ostream *
+ostream*
 Console::get_stream() const
 {
-  return out_;
+  return _out;
 }
 
 void
-Console::write_pairs(ListPairVector &pairs, size_t indent) const
+Console::write_pairs(ListPairVector& pairs, size_t indent) const
 {
   static size_t ansi_width = 0;
 
@@ -158,7 +158,7 @@ Console::write_pairs(ListPairVector &pairs, size_t indent) const
     ansi_width = ::strlen(ANSI_WHITE) + ::strlen(ANSI_NONE) + 2;
   };
 
-  for (auto &it : pairs) {
+  for (auto& it : pairs) {
     elem_width = it.first.length() + ansi_width;
 
     if (elem_width > max_width) {
@@ -167,7 +167,7 @@ Console::write_pairs(ListPairVector &pairs, size_t indent) const
   }
   max_width++;
 
-  for (auto &it : pairs) {
+  for (auto& it : pairs) {
     elem_width = max_width - (it.first.length() + ansi_width);
 
     ss << string(indent, ' ')
@@ -176,33 +176,33 @@ Console::write_pairs(ListPairVector &pairs, size_t indent) const
        << it.second << "\n";
   }
 
-  *out_ << ss.str();
+  *_out << ss.str();
 }
 
-Console &
+Console&
 Console::log()
 {
   if (!verbose) {
     return nullcon;
   }
 
-  print_preamble(out_, ANSI_LIGHT_GREEN, "LOG");
+  print_preamble(_out, ANSI_LIGHT_GREEN, "LOG");
 
   return *this;
 }
 
-Console &
+Console&
 Console::debug(const int   level,
-               const char *file,
+               const char* file,
                const int   line,
-               const char *function)
+               const char* function)
 {
   if (!debug_level_met(level)) {
     return nullcon;
   }
 
-  print_preamble(out_, ANSI_YELLOW, "DEBUG");
-  *out_ << ANSI_WHITE << "[" << ANSI_LIGHT_CYAN
+  print_preamble(_out, ANSI_YELLOW, "DEBUG");
+  *_out << ANSI_WHITE << "[" << ANSI_LIGHT_CYAN
         << file << ":" << line
         << ANSI_WHITE << "]: ["
         << ANSI_LIGHT_BLUE << function << ANSI_WHITE << "]"
@@ -211,13 +211,13 @@ Console::debug(const int   level,
   return *this;
 }
 
-Console &
-Console::warn(const char *file,
+Console&
+Console::warn(const char* file,
               const int   line,
-              const char *function)
+              const char* function)
 {
-  print_preamble(out_, ANSI_LIGHT_MAGENTA, "WARN");
-  *out_ << ANSI_WHITE << "[" << ANSI_LIGHT_CYAN
+  print_preamble(_out, ANSI_LIGHT_MAGENTA, "WARN");
+  *_out << ANSI_WHITE << "[" << ANSI_LIGHT_CYAN
         << file << ":" << line
         << ANSI_WHITE << "]: ["
         << ANSI_LIGHT_BLUE << function << ANSI_WHITE << "]"
@@ -226,13 +226,13 @@ Console::warn(const char *file,
   return *this;
 }
 
-Console &
-Console::error(const char *file,
+Console&
+Console::error(const char* file,
                const int   line,
-               const char *function)
+               const char* function)
 {
-  print_preamble(out_, ANSI_LIGHT_RED, "ERROR");
-  *out_ << ANSI_WHITE << "[" << ANSI_LIGHT_CYAN
+  print_preamble(_out, ANSI_LIGHT_RED, "ERROR");
+  *_out << ANSI_WHITE << "[" << ANSI_LIGHT_CYAN
         << file << ":" << line
         << ANSI_WHITE << "]: ["
         << ANSI_LIGHT_BLUE << function << ANSI_WHITE << "]"
@@ -241,18 +241,18 @@ Console::error(const char *file,
   return *this;
 }
 
-Console &
+Console&
 Console::fatal()
 {
-  print_preamble(out_, ANSI_LIGHT_RED, "FATAL");
+  print_preamble(_out, ANSI_LIGHT_RED, "FATAL");
 
   return *this;
 }
 
-Console &
+Console&
 Console::ok()
 {
-  print_preamble(out_, ANSI_LIGHT_GREEN, "OK");
+  print_preamble(_out, ANSI_LIGHT_GREEN, "OK");
 
   return *this;
 }

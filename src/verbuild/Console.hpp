@@ -62,41 +62,41 @@ write_debug_output(std::ostream *out, TF const &val)
 class Console
 {
 private:
-  std::ostream *out_ = nullptr;
+  std::ostream* _out = nullptr;
 
 public:
   Console();
-  Console(std::ostream *);
-  Console(const Console &) = delete;
+  Console(std::ostream*);
+  Console(const Console&) = delete;
 
-  std::ostream *get_stream() const;
+  std::ostream* get_stream() const;
 
   template <typename First, typename ...Rest>
-  void write(First const &val, Rest const &...rest) {
-    write_debug_output(out_, val);
-    *out_ << " ";
+  void write(First const& val, Rest const& ...rest) {
+    write_debug_output(_out, val);
+    *_out << " ";
     write(rest...);
   }
 
   template <typename First>
-  void write(First const &val) {
-    write_debug_output(out_, val);
-    *out_ << std::endl;
+  void write(First const& val) {
+    write_debug_output(_out, val);
+    *_out << std::endl;
   }
 
   void write() {
-    *out_ << std::endl;
+    *_out << std::endl;
   }
 
-  void write_pairs(ListPairVector &, std::size_t = 0) const; 
+  void write_pairs(ListPairVector&, std::size_t = 0) const; 
 
-  Console &log();
-  Console &debug(const int, const char *, const int, const char *);
-  Console &warn(const char *, const int, const char *);
-  Console &error(const char *, const int, const char *);
+  Console& log();
+  Console& debug(const int, const char*, const int, const char*);
+  Console& warn(const char*, const int, const char*);
+  Console& error(const char*, const int, const char*);
 
-  Console &fatal();
-  Console &ok();
+  Console& fatal();
+  Console& ok();
 };
 
 extern void set_verbose(bool);

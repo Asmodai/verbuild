@@ -313,7 +313,7 @@ Opts::parse(Config &conf, int argc, char **argv)
   }
 }
 
-__noreturn
+NORETURN
 Opts::show_help() const
 {
   cout << "Usage: " << program_name << " [OPTION]...\n"
@@ -323,7 +323,7 @@ Opts::show_help() const
   exit(EXIT_FAILURE);
 }
 
-__noreturn
+NORETURN
 Opts::show_version() const
 {
   cout << "Verbuilld " << VERSION_STRING << endl
@@ -332,7 +332,7 @@ Opts::show_version() const
   exit(EXIT_SUCCESS);
 }
 
-__noreturn
+NORETURN
 Opts::show_list_transforms() const
 {
   ListPairVector lpv;
@@ -347,7 +347,7 @@ Opts::show_list_transforms() const
   exit(EXIT_SUCCESS);
 }
 
-__noreturn
+NORETURN
 Opts::show_list_increments() const
 {
   IncrTypeParser parser;
@@ -361,7 +361,7 @@ Opts::show_list_increments() const
   exit(EXIT_SUCCESS);
 }
 
-__noreturn
+NORETURN
 Opts::show_list_groups() const
 {
   GroupsParser parser;

@@ -197,6 +197,7 @@ write_struct(Config       &conf,
     "static struct " << conf.prefix << "VersionNumber_s {\n"
     "    int baseYear;\n"
     "    int major;\n"
+    "    int minor;\n"
     "    int build;\n"
     "    int patch;\n"
     "} " << conf.prefix << "VersionNumber = {\n";

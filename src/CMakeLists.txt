@@ -45,6 +45,7 @@ endif()
 add_subdirectory(lua)
 include_directories(${LUA_INCLUDE})
 add_subdirectory(sol2)
+include_directories(sol2/include)
 
 # Code shared between app and tests.
 file(GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} verbuild/*.cpp)
@@ -54,14 +55,14 @@ list(REMOVE_ITEM SOURCES "verbuild/main.cpp")
 file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} tests/*.cpp)
 
 # Object 'library' of shared code.
-add_library(COMMON_OBJECTS OBJECT ${SOURCES})
+# add_library(COMMON_OBJECTS OBJECT ${SOURCES})
 
 # Main binary.
 add_executable(
   verbuild 
-    "verbuild/main.cpp"
-    "verbuild/resource.rc"
-  $<TARGET_OBJECTS:COMMON_OBJECTS>
+  "verbuild/main.cpp"
+  "verbuild/resource.rc"
+  ${SOURCES}
   ${LUA_SRCS}
 )
 
@@ -82,12 +83,12 @@ set_target_properties(
 
 # Set up include paths.
 target_include_directories(verbuild PUBLIC ${WITH_INCS})
-target_include_directories(COMMON_OBJECTS PUBLIC ${WITH_INCS})
+# target_include_directories(COMMON_OBJECTS PUBLIC ${WITH_INCS})
 
 # Generate tests.
 foreach(testSrc ${TEST_SRCS})
   get_filename_component(testName ${testSrc} NAME_WE)
-  add_executable(${testName} ${testSrc} $<TARGET_OBJECTS:COMMON_OBJECTS>)
+  add_executable(${testName} ${testSrc} ${SOURCES})
   target_link_libraries(${testName} ${WITH_LIBS})
   target_include_directories(${testName} PUBLIC ${WITH_INCS})
   add_test(NAME ${testName} COMMAND ${testName} -r detailed)
@@ -106,6 +107,7 @@ add_custom_target(
   verbuild_version
   COMMAND ${DOG_FOOD_SCRIPT}
           ${DOG_FOOD_BINARY}
+          ${CMAKE_BUILD_TYPE}
           ${CMAKE_CURRENT_SOURCE_DIR}/verbuild/version.hpp)
 add_dependencies(verbuild verbuild_version)
 

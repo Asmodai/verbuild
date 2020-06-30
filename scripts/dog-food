@@ -32,7 +32,7 @@
 #
 # }}}
 
-if [ $# -ne 2 ];
+if [ $# -ne 3 ];
 then
     echo "No arguments provided"
     exit 1
@@ -44,12 +44,18 @@ then
     exit 0
 fi
 
+if [ x"${2}" == x"Debug" ];
+then
+    echo "Ignoring DEBUG mode"
+    exit 0
+fi
+
 $1 -c           \
    -f '*.*.+.*' \
    -i simple    \
    -t c         \
    -g basic     \
    -y 2013      \
-   -o $2
+   -o $3
 
 # dog-food ends here.

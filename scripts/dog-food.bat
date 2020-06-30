@@ -10,5 +10,10 @@ if NOT exist %1 (
    exit /b 0
 )
 
+if "%2"=="Debug" (
+   echo Ignoring DEBUG mode
+   exit /b 0
+)
+
 echo doing stuff
-%1 -c -f '*.*.+.*' -i simple -g basic -y 2013 -o %2
+%1 -c -f '*.*.+.*' -i simple -g basic -y 2013 -o %3

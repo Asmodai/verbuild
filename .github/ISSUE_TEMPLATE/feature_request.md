@@ -1,8 +1,8 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: '[DATE]: [FEATURE NAME]'
-labels: 'enhancement, needs review'
+title: ''
+labels: 'feature-request, needs-review,feedback'
 assignees: 'Asmodai'
 
 ---

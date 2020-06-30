@@ -1,9 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
+title: '[DATE]: [FEATURE NAME]'
+labels: 'enhancement, needs review'
+assignees: 'Asmodai'
 
 ---
 

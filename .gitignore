@@ -6,6 +6,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
+*.lib
 
 # Compiled Static libraries
 *.lai
@@ -23,6 +24,7 @@ Makefile
 
 # Junk
 *.exe
+*.dll
 
 # Visual Studio
 .vs
@@ -30,5 +32,6 @@ CMakeSettings.json
 
 # CMake
 build/
+out/
 testBin/
 Debug/

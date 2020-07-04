@@ -41,10 +41,6 @@
 
 #include <type_traits>
 
-#if CXX_STANDARD_LT(STANDARD_CXX11)
-# define ENABLE_BITMASK_OPS(__e)
-#else
-
 template <typename Enum>
 struct EnableBitMaskOperators
 {
@@ -139,8 +135,6 @@ operator^=(Enum &l, Enum r)
   struct EnableBitMaskOperators<__e> { \
     static const bool enable = true;   \
   };
-
-#endif  // CXX11
 
 #endif // !_bitmask_hpp_
 

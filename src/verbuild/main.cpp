@@ -64,6 +64,8 @@ main(int argc, char **argv)
   Transform   *transform = GET_TRANSFORM_CREATE(conf.transform);
   VersionInfo  vi;
 
+  vi.set_semver(conf.semver);
+  vi.set_metadata(conf.metadata);
   transform->set_config(conf);
   if (transform->read(vi)) {
     vi.set_increment_type(conf.incr_type);

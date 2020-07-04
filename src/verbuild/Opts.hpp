@@ -64,11 +64,11 @@ public:
   void parse(Config &, int, char **);
 
 private:
-  __noreturn show_help() const;
-  __noreturn show_version() const;
-  __noreturn show_list_transforms() const;
-  __noreturn show_list_increments() const;
-  __noreturn show_list_groups() const;
+  NORETURN show_help() const;
+  NORETURN show_version() const;
+  NORETURN show_list_transforms() const;
+  NORETURN show_list_increments() const;
+  NORETURN show_list_groups() const;
 };
 
 #endif // !_Opts_hpp_

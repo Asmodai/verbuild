@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_SUITE(VersionInfo_test_suite)
 BOOST_AUTO_TEST_CASE(ctor_tests)
 {
   VersionInfo obj1;
-  VersionInfo obj2(1, 2, 3, 4, 2017, IncrementType::ByYears);
+  VersionInfo obj2(1, 2, 3, 4, 2017, IncrementType::ByYears, false);
 
   BOOST_CHECK_EQUAL(obj1.get_major(), 0);
   BOOST_CHECK_EQUAL(obj1.get_minor(), 0);
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(accessor_tests)
 
 BOOST_AUTO_TEST_CASE(string_conversion)
 {
-  VersionInfo obj(1, 2, 3, 4, 2017, IncrementType::Simple);
+  VersionInfo obj(1, 2, 3, 4, 2017, IncrementType::Simple, false);
   string      want("1.2.3.4");
 
   BOOST_CHECK_EQUAL(obj.to_string(), want);
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(string_conversion)
 
 BOOST_AUTO_TEST_CASE(date_conversion)
 {
-  VersionInfo  obj(1, 0, 41122, 0, 2013, IncrementType::ByYears);
+  VersionInfo  obj(1, 0, 41122, 0, 2013, IncrementType::ByYears, false);
   string       want("2017-Nov-22");
   stringstream ss;
   
@@ -166,10 +166,10 @@ BOOST_AUTO_TEST_CASE(incrementing)
   int           r1 = MAGIC1(now.year(), (int)now.month(), now.day());
   int           r2 = MAGIC2((int)now.month(), now.day());
   int           r3 = MAGIC3(now.year(), fyear, (int)now.month(), now.day());
-  VersionInfo   o1(1, 2, b1, 0, y1, IncrementType::ByDate);
-  VersionInfo   o2(1, 2, b2, 0, y1, IncrementType::ByMonths);
-  VersionInfo   o3(1, 2, b3, 0, fyear, IncrementType::ByYears);
-  VersionInfo   o4(1, 2, 1, 0, y1, IncrementType::Simple);
+  VersionInfo   o1(1, 2, b1, 0, y1, IncrementType::ByDate, false);
+  VersionInfo   o2(1, 2, b2, 0, y1, IncrementType::ByMonths, false);
+  VersionInfo   o3(1, 2, b3, 0, fyear, IncrementType::ByYears, false);
+  VersionInfo   o4(1, 2, 1, 0, y1, IncrementType::Simple, false);
   string        w1 = string_format("1.2.%d.0", r1);
   string        w2 = string_format("1.2.%d.0", r2);
   string        w3 = string_format("1.2.%d.0", r3);
@@ -189,9 +189,9 @@ BOOST_AUTO_TEST_CASE(incrementing)
 
 BOOST_AUTO_TEST_CASE(operators)
 {
-  VersionInfo o1(1, 2, 1, 0, 2013, IncrementType::Simple);
-  VersionInfo o2(1, 2, 3, 0, 2017, IncrementType::Simple);
-  VersionInfo o3(1, 2, 1, 0, 2013, IncrementType::Simple);
+  VersionInfo o1(1, 2, 1, 0, 2013, IncrementType::Simple, false);
+  VersionInfo o2(1, 2, 3, 0, 2017, IncrementType::Simple, false);
+  VersionInfo o3(1, 2, 1, 0, 2013, IncrementType::Simple, false);
   bool        r1(o1 == o2);
   bool        r2(o1 != o2);
   bool        r3(o1 == o3);
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(operators)
 
 BOOST_AUTO_TEST_CASE(ostream_operator)
 {
-  VersionInfo  o1(1, 2, 3, 4, 2013, IncrementType::Simple);
+  VersionInfo  o1(1, 2, 3, 4, 2013, IncrementType::Simple, false);
   stringstream ss;
   string       want("1.2.3.4");
   

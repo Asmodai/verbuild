@@ -86,6 +86,17 @@ void
 generate_transform(po::options_description &desc)
 {
   desc.add_options()
+    ("semver,s",
+     po::value<bool>()
+       ->default_value(false)
+       ->value_name("semver"),
+     (const char *)res_help_semver)
+    ("metadata,m",
+     po::value<string>()
+       ->default_value("")
+       ->implicit_value("")
+       ->value_name("metadata"),
+     (const char *)res_help_metadata)
     ("transform,t",
      po::value<TransformParser>()
        ->default_value(TransformParser("c"))
@@ -270,6 +281,22 @@ Opts::parse(Config &conf, int argc, char **argv)
     conf.base_year = year;
   }
 
+  if (vmap_.count("semver")) {
+    bool semver = vmap_["semver"].as<bool>();
+
+    LSAY("SemVer set to:", semver);
+    conf.semver = semver;
+  }
+
+  if (vmap_.count("metadata")) {
+    string tmp = vmap_["metadata"].as<string>();
+
+    if (tmp.length() > 0) {
+      conf.metadata.assign(tmp);
+      LSAY("SemVer metadata set to:", conf.metadata);
+    }
+  }
+
   if (vmap_.count("transform")) {
     TransformParser transform = vmap_["transform"].as<TransformParser>();
     LSAY("Transform set to:", transform);
@@ -313,7 +340,7 @@ Opts::parse(Config &conf, int argc, char **argv)
   }
 }
 
-__noreturn
+NORETURN
 Opts::show_help() const
 {
   cout << "Usage: " << program_name << " [OPTION]...\n"
@@ -323,7 +350,7 @@ Opts::show_help() const
   exit(EXIT_FAILURE);
 }
 
-__noreturn
+NORETURN
 Opts::show_version() const
 {
   cout << "Verbuilld " << VERSION_STRING << endl
@@ -332,7 +359,7 @@ Opts::show_version() const
   exit(EXIT_SUCCESS);
 }
 
-__noreturn
+NORETURN
 Opts::show_list_transforms() const
 {
   ListPairVector lpv;
@@ -347,7 +374,7 @@ Opts::show_list_transforms() const
   exit(EXIT_SUCCESS);
 }
 
-__noreturn
+NORETURN
 Opts::show_list_increments() const
 {
   IncrTypeParser parser;
@@ -361,7 +388,7 @@ Opts::show_list_increments() const
   exit(EXIT_SUCCESS);
 }
 
-__noreturn
+NORETURN
 Opts::show_list_groups() const
 {
   GroupsParser parser;

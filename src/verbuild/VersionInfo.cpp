@@ -54,21 +54,24 @@ VersionInfo::VersionInfo()
     build_(0),
     patch_(0),
     base_year_(0),
-    incr_type_(IncrementType::Simple)
+    incr_type_(IncrementType::Simple),
+    is_semver_(false)
 {}
 
-VersionInfo::VersionInfo(const uint32_t major,
-                         const uint32_t minor,
-                         const uint32_t build     = 0,
-                         const uint32_t patch     = 0,
-                         const uint32_t baseyear  = 0,
-                         const IncrementType type = IncrementType::Simple)
+VersionInfo::VersionInfo(const uint32_t      major,
+                         const uint32_t      minor,
+                         const uint32_t      build     = 0,
+                         const uint32_t      patch     = 0,
+                         const uint32_t      baseyear  = 0,
+                         const IncrementType type      = IncrementType::Simple,
+                         const bool          is_semver = false)
   : major_(major),
     minor_(minor),
     build_(build),
     patch_(patch),
     base_year_(baseyear),
-    incr_type_(type)
+    incr_type_(type),
+    is_semver_(is_semver)
 {}
 
 VersionInfo::~VersionInfo()
@@ -108,6 +111,18 @@ const IncrementType &
 VersionInfo::get_increment_type() const
 {
   return incr_type_;
+}
+
+const bool
+VersionInfo::get_semver() const
+{
+  return is_semver_;
+}
+
+const std::string &
+VersionInfo::get_metadata() const
+{
+  return metadata_;
 }
 
 void
@@ -153,6 +168,20 @@ VersionInfo::set_increment_type(const IncrementType type)
 }
 
 void
+VersionInfo::set_semver(const bool value)
+{
+  DSAY(DEBUG_HIGH, "Setting SemVer to", value);
+  is_semver_ = value;
+}
+
+void
+VersionInfo::set_metadata(const std::string value)
+{
+  DSAY(DEBUG_HIGH, "Setting SemVer metadata to", value);
+  metadata_ = value;
+}
+
+void
 VersionInfo::increment(const IncrementMode mode)
 {
   DSAY(DEBUG_LOW, "Performing increment");
@@ -179,10 +208,22 @@ VersionInfo::to_string() const
 {
   stringstream ss;
 
-  ss << major_ << "."
-     << minor_ << "."
-     << build_ << "."
-     << patch_;
+  if (is_semver_) {
+    ss << major_ << "."
+       << minor_ << "."
+       << patch_;
+
+    if (!metadata_.empty()) {
+      ss << "-" << metadata_;
+    }
+
+    ss << "+" << build_;
+  } else {
+    ss << major_ << "."
+       << minor_ << "."
+       << build_ << "."
+       << patch_;
+  }
 
   return ss.str();
 }

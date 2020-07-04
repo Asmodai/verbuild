@@ -1,0 +1,1 @@
+Set to TRUE to enable Semantic Versioning.

@@ -56,6 +56,8 @@ private:
   std::uint32_t patch_;
   std::uint32_t base_year_;
   IncrementType incr_type_;
+  bool          is_semver_;
+  std::string   metadata_;
 
 public:
   VersionInfo();
@@ -67,7 +69,8 @@ public:
               const std::uint32_t,      // build
               const std::uint32_t,      // patch
               const std::uint32_t,      // base year
-              IncrementType);
+              const IncrementType,      // increment type
+              const bool);              // SemVer?
 
   const std::uint32_t &get_major() const;
   const std::uint32_t &get_minor() const;
@@ -75,6 +78,8 @@ public:
   const std::uint32_t &get_patch() const;
   const std::uint32_t &get_base_year() const;
   const IncrementType &get_increment_type() const;
+  const bool           get_semver() const;
+  const std::string   &get_metadata() const;
 
   void set_major(const std::uint32_t);
   void set_minor(const std::uint32_t);
@@ -82,6 +87,8 @@ public:
   void set_patch(const std::uint32_t);
   void set_base_year(const std::uint32_t);
   void set_increment_type(const IncrementType);
+  void set_semver(const bool);
+  void set_metadata(const std::string);
 
   void increment(const IncrementMode);
 

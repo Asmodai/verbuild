@@ -52,6 +52,8 @@ struct Config
   std::string   prefix;
   bool          create;
   std::string   filename;
+  bool          semver;
+  std::string   metadata;
 
   Config()
     : base_year(1970),
@@ -61,7 +63,9 @@ struct Config
       transform(""),
       prefix(""),
       create(false),
-      filename("")
+      filename(""),
+      semver(false),
+      metadata("")
   {};
 
   Config(const Config &) = delete;

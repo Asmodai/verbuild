@@ -51,7 +51,9 @@ Config::print() const
   lpv.push_back(ListPair("Create file", (create ? "Yes" : "No")));
   lpv.push_back(ListPair("Transform", transform));
   lpv.push_back(ListPair("Prefix", prefix));
-  lpv.push_back(ListPair("Base  year", to_string(base_year)));
+  lpv.push_back(ListPair("SemVer", (semver ? "Yes" : "No")));
+  lpv.push_back(ListPair("SemVer metadata", metadata));
+  lpv.push_back(ListPair("Base year", to_string(base_year)));
 
   {
     stringstream ss;

@@ -119,6 +119,8 @@ do_dump ${_help}/prefix.txt          "help" ${_rsrc}/help/prefix.h
 do_dump ${_help}/transform.txt       "help" ${_rsrc}/help/transform.h
 do_dump ${_help}/verbose.txt         "help" ${_rsrc}/help/verbose.h
 do_dump ${_help}/year.txt            "help" ${_rsrc}/help/year.h
+do_dump ${_help}/semver.txt          "help" ${_rsrc}/help/semver.h
+do_dump ${_help}/metadata.txt        "help" ${_rsrc}/help/metadata.h
 echo "Done."
 
 # CLI resources

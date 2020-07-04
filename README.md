@@ -149,6 +149,7 @@ Usage:
 
     verbuild [-c] [-f <x.x.x.x>] [-g <basic|struct|doxygen|all>]
              [-i <simple|bydate|bymonths|byyears] [-o <string>] [-p <string>]
+             [-s <bool>] [-m <string>]
              [-t <c>] [-v] [-y <[1970...]>] [-V] [-D <number] [-h]
 
 ### General options
@@ -200,6 +201,12 @@ If this flag is given with no argument, the year is set to the current year.
 If this flag is not given, the year defaults to the current year.
 
 ### Transform options
+
+##### -s, --semver
+Set to TRUE to enable support for Semantic Versioning.
+
+##### -m, --metadata
+Set Semantic Versioning metadata.
 
 ##### -t, --transform
 Select a transform to use when writing version information.
